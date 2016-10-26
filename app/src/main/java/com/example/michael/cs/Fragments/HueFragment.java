@@ -102,6 +102,7 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
 
         final ColorPickerView colorPickerView = (ColorPickerView) dialogView.findViewById(R.id.color_picker_view);
         final CheckBox hueCheckboxx = (CheckBox) dialogView.findViewById(R.id.hue_check);
+        //TODO Dimm Seekbar auch noch implementieren und Wert speichern
 
         try {
             colorPickerView.setSelectedColor(hueCurrentColor);
@@ -117,6 +118,8 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
         dialogBuilder.setNegativeButton("Fertig", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+
+                //TODO Lampe direkt bei Klick auf die Elemente steuern, nicht erst wenn der Dialog geschlossen wird.
 
                 int selectedColor = colorPickerView.getSelectedColor();
                 Log.i(TAG, "onClick: " + selectedColor);
@@ -136,8 +139,11 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
 
     private void startHueAsyncTask() {
 
-        new HueExampleAsyncTask(this, getContext()).execute("http://www.google.de");
+        String urlONOFF = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 " + (isHueOn ? "on" : "off");
+        String urlRGB = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 rgb " + intToHex(hueCurrentColor);
 
+        new HueExampleAsyncTask(this, getContext()).execute(urlONOFF);
+        new HueExampleAsyncTask(this, getContext()).execute(urlRGB);
     }
 
     @Override

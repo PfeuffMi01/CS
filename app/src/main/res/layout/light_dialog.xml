@@ -9,25 +9,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
         android:layout_marginBottom="50dp"
         android:layout_marginTop="30dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatCheckBox
-            android:layout_width="wrap_content"
             android:id="@+id/hue_check"
-            android:elegantTextHeight="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elegantTextHeight="true"
             android:text="   Philips Hue"
-            android:textSize="25sp"/>
+            android:textSize="25sp" />
 
     </LinearLayout>
 
     <com.flask.colorpicker.ColorPickerView
         android:id="@+id/color_picker_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:gravity="center_horizontal"
         app:alphaSlider="true"
         app:alphaSliderView="@+id/v_alpha_slider"
@@ -36,5 +36,23 @@
         app:lightnessSliderView="@+id/v_lightness_slider"
         app:wheelType="FLOWER" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dimmung: "
+            android:textSize="25sp" />
+
+        <SeekBar
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 </LinearLayout>
