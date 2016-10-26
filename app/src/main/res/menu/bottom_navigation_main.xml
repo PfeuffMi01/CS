@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_hue"
+        android:enabled="true"
+        android:icon="@drawable/ic_lightbulb_white_48dp"
+        android:title="Hue Beispiel"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_all"
         android:enabled="true"
         android:icon="@drawable/ic_format_list_bulleted_white_48dp"
