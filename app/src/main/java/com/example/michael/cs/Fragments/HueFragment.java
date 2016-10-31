@@ -159,6 +159,9 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
 
     @Override
     public void finished(boolean b) {
-        Toast.makeText(getContext(), "finished", Toast.LENGTH_SHORT).show();
+
+        if (isAdded()) {
+            Toast.makeText(getContext(), "finished", Toast.LENGTH_SHORT).show();
+        }
     }
 }

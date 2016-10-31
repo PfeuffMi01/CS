@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 
 import com.example.michael.cs.R;
 
@@ -53,7 +52,7 @@ public class GroupFragment extends Fragment {
 
         view =  inflater.inflate(R.layout.fragment_group, container, false);
 
-        GridLayout grid = (GridLayout) view.findViewById(R.id.grid_group_frag);
+//        GridLayout grid = (GridLayout) view.findViewById(R.id.grid_group_frag);
 
 
         // Inflate the layout for this fragment

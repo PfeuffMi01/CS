@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.MenuItem;
 
 import com.example.michael.cs.Fragments.AllFragment;
@@ -101,5 +102,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
         }
         return false;
+    }
+
+    public void callingMainFromRoomClick(int pos, CardView cv) {
+
     }
 }
