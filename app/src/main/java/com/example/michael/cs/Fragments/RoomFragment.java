@@ -9,11 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.michael.cs.Data.Rooms.BathRoom;
-import com.example.michael.cs.Data.Rooms.BedRoom;
-import com.example.michael.cs.Data.Rooms.DiningRoom;
-import com.example.michael.cs.Data.Rooms.GarageRoom;
-import com.example.michael.cs.Data.Rooms.LivingRoom;
+import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Rooms.Room;
 import com.example.michael.cs.R;
 import com.example.michael.cs.RecyclerAdapterRooms;
@@ -33,6 +29,7 @@ public class RoomFragment extends Fragment {
     private View view;
     private RecyclerAdapterRooms adapter;
     private ArrayList<Room> roomsList;
+    private MainActivity mainActivity;
 
 
     public RoomFragment() {
@@ -67,40 +64,27 @@ public class RoomFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_room, container, false);
+        mainActivity = (MainActivity) getActivity();
 
-        initExampleRooms();
-        initRecyclerView();
+
+        this.roomsList = mainActivity.getRoomsList();
+                initRecyclerView();
 
         return view;
     }
 
-    private void initExampleRooms() {
 
-        roomsList = new ArrayList<>();
-        LivingRoom lR = new LivingRoom(R.drawable.living_room, "Wohnzimmer");
-        BedRoom bR = new BedRoom(R.drawable.bed_room, "Schlafzimmer");
-        GarageRoom gR = new GarageRoom(R.drawable.garage_room, "Garage");
-        BathRoom bathR = new BathRoom(R.drawable.bath_room, "Badezimmer");
-        DiningRoom dR = new DiningRoom(R.drawable.dining_room, "Esszimmer");
-
-        roomsList.add(lR);
-        roomsList.add(bR);
-        roomsList.add(gR);
-        roomsList.add(bathR);
-        roomsList.add(dR);
-    }
-
-    private void initRecyclerView() {
+        private void initRecyclerView() {
 
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_rooms);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-      
+            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+            recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_rooms);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(true);
 
-        adapter = new RecyclerAdapterRooms(getContext(), roomsList);
-        recyclerView.setAdapter(adapter);
-    }
+
+            adapter = new RecyclerAdapterRooms(getContext(), roomsList);
+            recyclerView.setAdapter(adapter);
+        }
 
 }

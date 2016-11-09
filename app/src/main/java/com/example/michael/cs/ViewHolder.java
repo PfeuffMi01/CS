@@ -10,6 +10,6 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public void bindType(ListItemRoom item) {
+    public void bindType(ListItem item) {
     }
 }

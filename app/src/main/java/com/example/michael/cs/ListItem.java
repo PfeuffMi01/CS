@@ -5,9 +5,9 @@ package com.example.michael.cs;
  *
  * @author Patrick Engelhardt
  */
-public interface ListItemRoom {
+public interface ListItem {
 
-    static final String TAG = "ListItemRoom";
+    static final String TAG = "ListItem";
 
 
     /**

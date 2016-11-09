@@ -2,11 +2,18 @@ package com.example.michael.cs.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.michael.cs.Activities.MainActivity;
+import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.R;
+import com.example.michael.cs.RecyclerAdapterGroups;
+
+import java.util.ArrayList;
 
 
 public class GroupFragment extends Fragment {
@@ -17,7 +24,11 @@ public class GroupFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private MainActivity mainActivity;
+    private ArrayList<Group> groupList;
+    private RecyclerView recyclerView;
     private View view;
+    private RecyclerAdapterGroups adapter;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -51,13 +62,25 @@ public class GroupFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         view =  inflater.inflate(R.layout.fragment_group, container, false);
+        mainActivity = (MainActivity) getActivity();
 
-//        GridLayout grid = (GridLayout) view.findViewById(R.id.grid_group_frag);
-
+        this.groupList = mainActivity.getGroupList();
+        initRecyclerView();
 
         // Inflate the layout for this fragment
         return view;
     }
 
+    private void initRecyclerView() {
+
+
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_group);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        adapter = new RecyclerAdapterGroups(getContext(), groupList);
+        recyclerView.setAdapter(adapter);
+    }
 
 }

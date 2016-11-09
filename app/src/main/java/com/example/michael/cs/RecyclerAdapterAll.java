@@ -2,33 +2,32 @@ package com.example.michael.cs;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Devices.Device;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Patrick PC on 31.10.2016.
  */
 
-public class RecyclerAdapterRooms extends RecyclerView.Adapter<ViewHolder> {
+public class RecyclerAdapterAll extends RecyclerView.Adapter<ViewHolder> {
 
 
-    private static final String TAG = "RecyclerAdapter";
-    private List<Room> roomList;
+    private static final String TAG = "RecyclerAdapterGroups";
+    private ArrayList<Device> deviceList;
     private Context context;
 
 
-    public RecyclerAdapterRooms(Context context, ArrayList<Room> rooms) {
+    public RecyclerAdapterAll(Context context, ArrayList<Device> devices) {
 
         this.context = context;
-        this.roomList = rooms;
+        this.deviceList = devices;
     }
-
 
 
     /**
@@ -40,10 +39,12 @@ public class RecyclerAdapterRooms extends RecyclerView.Adapter<ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View view = null;
 
+        Log.i(TAG, "onCreateViewHolder: " + type);
+
         view = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.recycler_grid_item, viewGroup, false);
-        return new ViewHolderRoom(context, view);
+        return new ViewHolderGroup(context, view);
 
     }
 
@@ -51,13 +52,13 @@ public class RecyclerAdapterRooms extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, int pos) {
         int type = getItemViewType(pos);
 
-        ListItem item = roomList.get(pos);
-        viewHolder.bindType(item);
+       /* ListItem item = deviceList.get(pos);
+        viewHolder.bindType(item);*/
     }
 
     @Override
     public int getItemCount() {
-        return roomList.size();
+        return deviceList.size();
     }
 }
 

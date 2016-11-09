@@ -5,4 +5,5 @@
     <color name="colorAccent">#4B565E</color>
     <color name="white">#FFFF</color>
     <color name="fragment_background">#dedede</color>
+    <color name="text_gray">#4b565e</color>
 </resources>

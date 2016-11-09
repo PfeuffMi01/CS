@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="group">Gruppe</string>
+    <string name="room">Raum</string>
+    <string name="celcius">°C</string>
+    <string name="percent">%</string>
 </resources>

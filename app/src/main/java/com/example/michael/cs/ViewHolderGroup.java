@@ -15,32 +15,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Group;
 
 /**
  * ViewHolder for ReminderData CardViews
  * Created by Patrick PC on 20.09.2015.
  */
-public class ViewHolderRoom extends ViewHolder {
+public class ViewHolderGroup extends ViewHolder {
 
     private static final String TAG = "ViewHolderRoom";
     private final Context context;
 
     private View itemView;
     private CardView cardView;
-    private TextView tVRoomTitle;
-    private ImageView ivRoom;
+    private TextView tVGroupTitle;
+    private ImageView ivGroup;
 
 
-    public ViewHolderRoom(Context context, View iV) {
+    public ViewHolderGroup(Context context, View iV) {
         super(iV);
 
         this.itemView = iV;
         this.context = context;
 
         cardView = (CardView) itemView.findViewById(R.id.card_view);
-        tVRoomTitle = (TextView) itemView.findViewById(R.id.text);
-        ivRoom = (ImageView) itemView.findViewById(R.id.image);
+        tVGroupTitle = (TextView) itemView.findViewById(R.id.text);
+        ivGroup = (ImageView) itemView.findViewById(R.id.image);
     }
 
     /**
@@ -50,13 +50,13 @@ public class ViewHolderRoom extends ViewHolder {
      */
     public void bindType(ListItem item) {
 
-        String name = ((Room) item).getName();
-        int image = ((Room) item).getImage();
+        String name = ((Group) item).getName();
+        int image = ((Group) item).getImage();
 
         Log.i(TAG, "bindType: " + name + " " + image);
 
-        tVRoomTitle.setText(name);
-        ivRoom.setImageResource(image);
+        tVGroupTitle.setText(name);
+        ivGroup.setImageResource(image);
 
     }
 
@@ -67,7 +67,7 @@ public class ViewHolderRoom extends ViewHolder {
      * @param cv
      */
     public void callHome(int pos, CardView cv) {
-        ((MainActivity) context).callingMainFromRoomClick(pos, cv);
+        ((MainActivity) context).callingMainFromGroupClick(pos, cv);
     }
 
 }

@@ -1,12 +1,12 @@
 package com.example.michael.cs.Data.Rooms;
 
-import com.example.michael.cs.ListItemRoom;
+import com.example.michael.cs.ListItem;
 
 /**
  * Created by Patrick PC on 31.10.2016.
  */
 
-public class Room implements ListItemRoom {
+public class Room implements ListItem {
 
     public int image;
     String name;

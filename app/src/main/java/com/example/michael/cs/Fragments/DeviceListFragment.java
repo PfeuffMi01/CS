@@ -16,8 +16,10 @@ import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
-
-public class AllFragment extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class DeviceListFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -25,14 +27,14 @@ public class AllFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private View view;
-    private MainActivity mainActivity;
     private RecyclerView recyclerView;
-    private ArrayList<Device> allDevicesList;
+    private View view;
     private CustomAdapter adapter;
+    private ArrayList<Device> deviceList;
+    private MainActivity mainActivity;
 
 
-    public AllFragment() {
+    public DeviceListFragment() {
         // Required empty public constructor
     }
 
@@ -41,8 +43,8 @@ public class AllFragment extends Fragment {
      * this fragment using the provided parameters.
      */
     // TODO: Rename and change types and number of parameters
-    public static AllFragment newInstance(String param1, String param2) {
-        AllFragment fragment = new AllFragment();
+    public static DeviceListFragment newInstance(String param1, String param2) {
+        DeviceListFragment fragment = new DeviceListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,27 +61,29 @@ public class AllFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_all, container, false);
+
+        view = inflater.inflate(R.layout.fragment_device_list, container, false);
         mainActivity = (MainActivity) getActivity();
 
-        allDevicesList = mainActivity.getDeviceList();
+        this.deviceList = mainActivity.getDeviceList();
         initRecyclerView();
 
-        // Inflate the layout for this fragment
         return view;
     }
 
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_all);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_devices);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new CustomAdapter(getContext(), allDevicesList);
+
+        adapter = new CustomAdapter(getContext(), deviceList);
         recyclerView.setAdapter(adapter);
     }
 
