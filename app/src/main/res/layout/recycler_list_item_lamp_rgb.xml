@@ -19,7 +19,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/lamp" />
+                android:src="@drawable/lamp_rgb" />
 
             <TextView
                 android:id="@+id/lamp_name"

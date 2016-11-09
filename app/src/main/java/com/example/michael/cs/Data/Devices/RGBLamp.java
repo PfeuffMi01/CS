@@ -10,7 +10,7 @@ import com.example.michael.cs.R;
 
 public class RGBLamp extends Lamp {
 
-    public static final int imgRgbLamp = R.drawable.lamp;
+    public static final int imgRgbLamp = R.drawable.lamp_rgb;
     public String colorHex;
 
     public RGBLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String colorHex) {

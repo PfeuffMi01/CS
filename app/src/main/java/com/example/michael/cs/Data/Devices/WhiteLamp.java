@@ -9,7 +9,7 @@ import com.example.michael.cs.R;
  */
 
 public class WhiteLamp extends Lamp {
-    public static final int imgRgbLamp = R.drawable.lamp;
+    public static final int imgRgbLamp = R.drawable.lamp_rgb;
 
     public WhiteLamp(String _id, boolean isOn, String name, Room room, Group group, int dim) {
         super(_id, isOn, name, room, group, dim);
