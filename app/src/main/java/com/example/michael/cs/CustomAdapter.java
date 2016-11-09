@@ -1,12 +1,14 @@
 package com.example.michael.cs;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.michael.cs.Data.Devices.Circuit;
@@ -15,6 +17,7 @@ import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
+import com.example.michael.cs.Data.Rooms.Room;
 
 import java.util.ArrayList;
 
@@ -23,6 +26,12 @@ import static com.example.michael.cs.Constants.LIST_ITEM_LAMP;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
+import static com.example.michael.cs.Constants.ROOM_BATH;
+import static com.example.michael.cs.Constants.ROOM_BED;
+import static com.example.michael.cs.Constants.ROOM_DINING;
+import static com.example.michael.cs.Constants.ROOM_GARAGE;
+import static com.example.michael.cs.Constants.ROOM_GARDEN;
+import static com.example.michael.cs.Constants.ROOM_LIVING;
 
 /**
  * Created by Patrick PC on 09.11.2016.
@@ -49,6 +58,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView dim;
         TextView room;
         TextView group;
+        ImageView roomImg;
         SwitchCompat switchRGBLamp;
 
         public RGBLampViewHolder(View v) {
@@ -59,6 +69,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.dim = (TextView) v.findViewById(R.id.lamp_dim);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchRGBLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
         }
     }
@@ -68,6 +79,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView dim;
         TextView room;
         TextView group;
+        ImageView roomImg;
         SwitchCompat switchLamp;
 
         public LampViewHolder(View v) {
@@ -76,6 +88,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.dim = (TextView) v.findViewById(R.id.lamp_dim);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
         }
     }
@@ -85,6 +98,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView temp;
         TextView room;
         TextView group;
+        ImageView roomImg;
         SwitchCompat switchTemp;
 
         public TempViewHolder(View v) {
@@ -93,6 +107,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.temp = (TextView) v.findViewById(R.id.temp_value);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchTemp = (SwitchCompat) v.findViewById(R.id.switch_temp);
         }
     }
@@ -101,6 +116,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView name;
         TextView room;
         TextView group;
+        ImageView roomImg;
         SwitchCompat switchPlug;
 
         public PlugViewHolder(View v) {
@@ -108,6 +124,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.name = (TextView) v.findViewById(R.id.plug_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchPlug = (SwitchCompat) v.findViewById(R.id.switch_plug);
         }
     }
@@ -116,6 +133,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView name;
         TextView room;
         TextView group;
+        ImageView roomImg;
         SwitchCompat switchCircuit;
 
         public CircuitViewHolder(View v) {
@@ -123,6 +141,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.name = (TextView) v.findViewById(R.id.circuit_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchCircuit = (SwitchCompat) v.findViewById(R.id.switch_circuit);
         }
     }
@@ -201,7 +220,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             PlugViewHolder holder = (PlugViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchPlug.setChecked(device.isOn());
         }
         if (itemType == LIST_ITEM_TEMP) {
@@ -212,8 +232,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             TempViewHolder holder = (TempViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
+            holder.room.setText(device.getRoom().getName());
             holder.temp.setText(device.getTemp() + " " + context.getString(R.string.celcius));
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchTemp.setChecked(device.isOn());
         }
         if (itemType == LIST_ITEM_CIRCUIT) {
@@ -224,7 +245,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             CircuitViewHolder holder = (CircuitViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchCircuit.setChecked(device.isOn());
         }
         if (itemType == LIST_ITEM_LAMP) {
@@ -235,8 +257,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             LampViewHolder holder = (LampViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
+            holder.room.setText(device.getRoom().getName());
             holder.dim.setText(device.getDim() + " " + context.getString(R.string.percent));
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchLamp.setChecked(device.isOn());
         }
 
@@ -248,11 +271,53 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             RGBLampViewHolder holder = (RGBLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
+            holder.room.setText(device.getRoom().getName());
             holder.dim.setText(device.getDim() + " " + context.getString(R.string.percent));
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.color.setText(device.getColorHex());
             holder.switchRGBLamp.setChecked(device.isOn());
         }
+    }
+
+    private Drawable getCorrectRoomImg(Room room) {
+
+        Drawable img;
+
+        switch (room.getName()) {
+
+            case ROOM_BATH:
+                img = context.getResources().getDrawable(R.drawable.bath_room);
+                break;
+
+            case ROOM_BED:
+                img = context.getResources().getDrawable(R.drawable.bed_room);
+                break;
+
+
+            case ROOM_DINING:
+                img = context.getResources().getDrawable(R.drawable.dining_room);
+                break;
+
+
+            case ROOM_GARAGE:
+                img = context.getResources().getDrawable(R.drawable.garage_room);
+                break;
+
+
+            case ROOM_GARDEN:
+                img = context.getResources().getDrawable(R.drawable.garden_room_);
+                break;
+
+            case ROOM_LIVING:
+                img = context.getResources().getDrawable(R.drawable.living_room);
+                break;
+
+            default:
+                img = context.getResources().getDrawable(R.drawable.home);
+                break;
+        }
+
+        return img;
     }
 
     @Override

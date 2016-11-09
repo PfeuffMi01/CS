@@ -10,63 +10,72 @@
         android:orientation="vertical"
         android:padding="5dp">
 
-        <LinearLayout
+        <RelativeLayout
+
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/lamp_rgb" />
-
-            <TextView
-                android:id="@+id/lamp_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="10dp"
-                android:text="Lamp 1"
-                android:textColor="@color/text_gray"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/ll_infos"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/lamp_rgb" />
 
                 <TextView
-                    android:id="@+id/lamp_color"
+                    android:id="@+id/lamp_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Farbe: #ABCDE"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:text="Lamp 1"
                     android:textColor="@color/text_gray"
-                    android:textSize="15sp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/lamp_dim"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dim: 50%"
-                    android:textColor="@color/text_gray"
-                    android:textSize="15sp" />
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/lamp_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Farbe: #ABCDE"
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/lamp_dim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dim: 50%"
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
-
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/switch_lamp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:layout_margin="10dp" />
-
-
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="10dp"
+                android:layout_toRightOf="@id/ll_infos"
+                android:paddingRight="11dp" />
+        </RelativeLayout>
 
         <include layout="@layout/list_item_room_group_footer" />
     </LinearLayout>
