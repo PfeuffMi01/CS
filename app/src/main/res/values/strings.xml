@@ -7,4 +7,11 @@
     <string name="room">Raum</string>
     <string name="celcius">°C</string>
     <string name="percent">%</string>
+
+
+    <string name="group_lamps">Lichter</string>
+    <string name="group_temp">Temperatur</string>
+    <string name="group_circuit">Schalter</string>
+    <string name="group_plug">Steckdosen</string>
+
 </resources>

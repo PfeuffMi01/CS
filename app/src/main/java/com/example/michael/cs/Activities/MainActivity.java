@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.michael.cs.Data.Devices.Device;
@@ -30,6 +31,7 @@ import com.example.michael.cs.R;
 import java.util.ArrayList;
 
 import static com.example.michael.cs.R.id.fragment_container;
+import static com.example.michael.cs.R.string.group_lamps;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public static final int ALL_FRAGMENT = 1;
     public static final int ROOM_FRAGMENT = 2;
     public static final int GROUP_FRAGMENT = 3;
+
+    public String GROUP_LAMPS, GROUP_TEMP, GROUP_CIRCUITS, GROUP_PLUGS;
 
     public int STARTPAGE_FRAGMENT = HUE_FRAGMENT;
     public int CURRENT_FRAGMENT;
@@ -57,11 +61,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initStrings();
         initBottomNavigation();
 
         initExampleData();
 
         showStartFragment();
+
+    }
+
+    private void initStrings() {
+
+        GROUP_CIRCUITS = getString(R.string.group_circuit);
+        GROUP_LAMPS = getString(group_lamps);
+        GROUP_PLUGS = getString(R.string.group_plug);
+        GROUP_TEMP = getString(R.string.group_temp);
 
     }
 
@@ -81,10 +96,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         roomsList.add(diningRoom);
 
         groupList = new ArrayList<>();
-        Group lamps = new Group("Lichter", R.drawable.lamps_group);
-        Group temp = new Group("Temperatur", R.drawable.temp);
-        Group circuit = new Group("Schalter", R.drawable.circuit_group);
-        Group plugs = new Group("Steckdosen", R.drawable.plug_group);
+        Group lamps = new Group(GROUP_LAMPS, R.drawable.lamps_group);
+        Group temp = new Group(GROUP_TEMP, R.drawable.temp);
+        Group circuit = new Group(GROUP_CIRCUITS, R.drawable.circuit_group);
+        Group plugs = new Group(GROUP_PLUGS, R.drawable.plug_group);
 
         groupList.add(lamps);
         groupList.add(temp);
@@ -95,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         deviceList.add(new RGBLamp("rgblamp1", false, "Lampe 1", livingRoom, lamps, 0, "#f5500c"));
 
-           deviceList.add(new WhiteLamp("whitelamp1", false, "Lampe 2", bedRoom, lamps, 0));
+        deviceList.add(new WhiteLamp("whitelamp1", false, "Lampe 2", bedRoom, lamps, 0));
         deviceList.add(new WhiteLamp("whitelamp2", true, "Lampe 3", garageRoom, lamps, 0));
 
         deviceList.add(new Temp("temp1", true, "Temp 1", diningRoom, temp, 24.2));
@@ -174,7 +189,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
-    public void callingMainFromGroupClick(int pos, CardView cv) {
+    public void callingMainFromGroupClick(String name) {
+
+        if (!name.equals("") && name != null) {
+            Log.i(TAG, "callingMainFromGroupClick: " + name);
+
+           /* switch (name) {
+
+                case :
+
+                    break;
+
+
+
+            }*/
+        }
+
+
     }
 
     public ArrayList<Device> getDeviceList() {

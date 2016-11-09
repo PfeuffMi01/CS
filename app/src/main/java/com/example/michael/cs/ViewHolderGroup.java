@@ -21,10 +21,13 @@ import com.example.michael.cs.Data.Group;
  * ViewHolder for ReminderData CardViews
  * Created by Patrick PC on 20.09.2015.
  */
-public class ViewHolderGroup extends ViewHolder {
+public class ViewHolderGroup extends ViewHolder implements View.OnClickListener {
 
     private static final String TAG = "ViewHolderRoom";
     private final Context context;
+
+    private String name;
+
 
     private View itemView;
     private CardView cardView;
@@ -41,6 +44,8 @@ public class ViewHolderGroup extends ViewHolder {
         cardView = (CardView) itemView.findViewById(R.id.card_view);
         tVGroupTitle = (TextView) itemView.findViewById(R.id.text);
         ivGroup = (ImageView) itemView.findViewById(R.id.image);
+
+        cardView.setOnClickListener(this);
     }
 
     /**
@@ -50,7 +55,7 @@ public class ViewHolderGroup extends ViewHolder {
      */
     public void bindType(ListItem item) {
 
-        String name = ((Group) item).getName();
+        name = ((Group) item).getName();
         int image = ((Group) item).getImage();
 
         Log.i(TAG, "bindType: " + name + " " + image);
@@ -60,14 +65,9 @@ public class ViewHolderGroup extends ViewHolder {
 
     }
 
-    /**
-     * Calling MainActivity from onClick
-     *
-     * @param pos
-     * @param cv
-     */
-    public void callHome(int pos, CardView cv) {
-        ((MainActivity) context).callingMainFromGroupClick(pos, cv);
-    }
 
+    @Override
+    public void onClick(View view) {
+        ((MainActivity) context).callingMainFromGroupClick(name);
+    }
 }
