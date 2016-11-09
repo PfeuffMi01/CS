@@ -21,10 +21,12 @@ import com.example.michael.cs.Data.Rooms.Room;
  * ViewHolder for ReminderData CardViews
  * Created by Patrick PC on 20.09.2015.
  */
-public class ViewHolderRoom extends ViewHolder {
+public class ViewHolderRoom extends ViewHolder implements View.OnClickListener {
 
     private static final String TAG = "ViewHolderRoom";
     private final Context context;
+
+    String name;
 
     private View itemView;
     private CardView cardView;
@@ -41,6 +43,8 @@ public class ViewHolderRoom extends ViewHolder {
         cardView = (CardView) itemView.findViewById(R.id.card_view);
         tVRoomTitle = (TextView) itemView.findViewById(R.id.text);
         ivRoom = (ImageView) itemView.findViewById(R.id.image);
+
+        cardView.setOnClickListener(this);
     }
 
     /**
@@ -50,7 +54,7 @@ public class ViewHolderRoom extends ViewHolder {
      */
     public void bindType(ListItem item) {
 
-        String name = ((Room) item).getName();
+        name = ((Room) item).getName();
         int image = ((Room) item).getImage();
 
         Log.i(TAG, "bindType: " + name + " " + image);
@@ -60,14 +64,9 @@ public class ViewHolderRoom extends ViewHolder {
 
     }
 
-    /**
-     * Calling MainActivity from onClick
-     *
-     * @param pos
-     * @param cv
-     */
-    public void callHome(int pos, CardView cv) {
-        ((MainActivity) context).callingMainFromRoomClick(pos, cv);
-    }
 
+    @Override
+    public void onClick(View view) {
+        ((MainActivity) context).callingMainFromGridClick(name);
+    }
 }

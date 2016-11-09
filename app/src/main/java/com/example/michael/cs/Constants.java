@@ -16,7 +16,14 @@ public class Constants {
 
     public static final String GROUP_CIRCUITS = "Schalter";
     public static final String GROUP_LAMPS = "Lichter";
-    public static final String GROUP_PLUGS = "sdf";
-    public static final String GROUP_TEMP = "sdfsd";
+    public static final String GROUP_PLUGS = "Steckdosen";
+    public static final String GROUP_TEMP = "Temperatur";
+
+    public static final String ROOM_LIVING = "Wohnzimmer";
+    public static final String ROOM_BATH = "Badezimmer";
+    public static final String ROOM_GARAGE = "Garage";
+    public static final String ROOM_BED = "Schlafzimmer";
+    public static final String ROOM_DINING = "Esszimmer";
+    public static final String ROOM_GARDEN = "Garten";
 
 }

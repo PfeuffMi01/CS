@@ -68,6 +68,6 @@ public class ViewHolderGroup extends ViewHolder implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
-        ((MainActivity) context).callingMainFromGroupClick(name);
+        ((MainActivity) context).callingMainFromGridClick(name);
     }
 }

@@ -6,10 +6,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.RGBLamp;
@@ -23,6 +23,7 @@ import com.example.michael.cs.Data.Rooms.GarageRoom;
 import com.example.michael.cs.Data.Rooms.LivingRoom;
 import com.example.michael.cs.Data.Rooms.Room;
 import com.example.michael.cs.Fragments.AllFragment;
+import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.HueFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
@@ -30,8 +31,17 @@ import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
+import static com.example.michael.cs.Constants.GROUP_CIRCUITS;
+import static com.example.michael.cs.Constants.GROUP_LAMPS;
+import static com.example.michael.cs.Constants.GROUP_PLUGS;
+import static com.example.michael.cs.Constants.GROUP_TEMP;
+import static com.example.michael.cs.Constants.ROOM_BATH;
+import static com.example.michael.cs.Constants.ROOM_BED;
+import static com.example.michael.cs.Constants.ROOM_DINING;
+import static com.example.michael.cs.Constants.ROOM_GARAGE;
+import static com.example.michael.cs.Constants.ROOM_GARDEN;
+import static com.example.michael.cs.Constants.ROOM_LIVING;
 import static com.example.michael.cs.R.id.fragment_container;
-import static com.example.michael.cs.R.string.group_lamps;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
@@ -39,11 +49,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public static final int ALL_FRAGMENT = 1;
     public static final int ROOM_FRAGMENT = 2;
     public static final int GROUP_FRAGMENT = 3;
-
-    public String GROUP_LAMPS, GROUP_TEMP, GROUP_CIRCUITS, GROUP_PLUGS;
+    public static final int DEVICE_SINGLE_SORT_LIST_FRAGMENT = 4;
 
     public int STARTPAGE_FRAGMENT = HUE_FRAGMENT;
     public int CURRENT_FRAGMENT;
+    public int CURRENT_LIST_CATEGORY;
 
     private BottomNavigationView bottomNavigationView;
 
@@ -62,21 +72,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initStrings();
         initBottomNavigation();
-
         initExampleData();
-
         showStartFragment();
-
-    }
-
-    private void initStrings() {
-
-        GROUP_CIRCUITS = getString(R.string.group_circuit);
-        GROUP_LAMPS = getString(group_lamps);
-        GROUP_PLUGS = getString(R.string.group_plug);
-        GROUP_TEMP = getString(R.string.group_temp);
 
     }
 
@@ -109,20 +107,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         deviceList = new ArrayList<>();
 
         deviceList.add(new RGBLamp("rgblamp1", false, "Lampe 1", livingRoom, lamps, 0, "#f5500c"));
+        deviceList.add(new RGBLamp("rgblamp2", false, "Lampe 4", garageRoom, lamps, 50, "#f5500c"));
+        deviceList.add(new RGBLamp("rgblamp3", false, "Lampe 5", diningRoom, lamps, 60, "#f5500c"));
+        deviceList.add(new RGBLamp("rgblamp4", false, "Lampe 6", livingRoom, lamps, 100, "#f5500c"));
 
-        deviceList.add(new WhiteLamp("whitelamp1", false, "Lampe 2", bedRoom, lamps, 0));
-        deviceList.add(new WhiteLamp("whitelamp2", true, "Lampe 3", garageRoom, lamps, 0));
+        deviceList.add(new WhiteLamp("whitelamp1", false, "Lampe 2", bedRoom, lamps, 12));
+        deviceList.add(new WhiteLamp("whitelamp2", true, "Lampe 3", garageRoom, lamps, 27));
+        deviceList.add(new WhiteLamp("whitelamp3", false, "Lampe 7", bathRoom, lamps, 0));
+        deviceList.add(new WhiteLamp("whitelamp4", true, "Lampe 8", bathRoom, lamps, 80));
 
         deviceList.add(new Temp("temp1", true, "Temp 1", diningRoom, temp, 24.2));
-        deviceList.add(new Temp("temp2", false, "Temp 2", livingRoom, temp, 24.2));
-        deviceList.add(new Temp("temp3", true, "Temp 3", bedRoom, temp, 24.2));
+        deviceList.add(new Temp("temp2", false, "Temp 2", livingRoom, temp, 10.8));
+        deviceList.add(new Temp("temp3", true, "Temp 3", bedRoom, temp, 30.2));
 
         deviceList.add(new Plug("plug1", false, "Steckdose 1", bathRoom, plugs));
         deviceList.add(new Plug("plug2", true, "Steckdose 2", garageRoom, plugs));
         deviceList.add(new Plug("plug3", false, "Steckdose 3", livingRoom, plugs));
 
-//        deviceList.add(new Circuit("circuit", false, "Schalter 1", bathRoom, circuit));
-
+        deviceList.add(new Circuit("circuit1", false, "Schalter 1", bathRoom, circuit));
+        deviceList.add(new Circuit("circuit2", false, "Schalter 2", livingRoom, circuit));
+        deviceList.add(new Circuit("circuit3", false, "Schalter 3", garageRoom, circuit));
+        deviceList.add(new Circuit("circuit4", false, "Schalter 4", bedRoom, circuit));
+        deviceList.add(new Circuit("circuit5", false, "Schalter 5", diningRoom, circuit));
     }
 
     private void showStartFragment() {
@@ -142,10 +148,36 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Log.i(TAG, "onBackPressed: " + CURRENT_LIST_CATEGORY + " " + CURRENT_FRAGMENT);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT && CURRENT_LIST_CATEGORY == GROUP_FRAGMENT) {
+
+            groupFragment = new GroupFragment();
+            fragmentTransaction.replace(fragment_container, groupFragment, "GroupFragment");
+            fragmentTransaction.commit();
+
+            CURRENT_FRAGMENT = GROUP_FRAGMENT;
+        }
+
+        if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT && CURRENT_LIST_CATEGORY == ROOM_FRAGMENT) {
+
+            roomFragment = new RoomFragment();
+            fragmentTransaction.replace(fragment_container, roomFragment, "RoomFragment");
+            fragmentTransaction.commit();
+
+            CURRENT_FRAGMENT = ROOM_FRAGMENT;
+        }
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -185,26 +217,131 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
-    public void callingMainFromRoomClick(int pos, CardView cv) {
+    public void callingMainFromGridClick(String name) {
+
+        Log.i(TAG, "handleRoomClick: " + name);
+
+        if (CURRENT_FRAGMENT == GROUP_FRAGMENT && !name.equals("") && name != null) {
+            handleGroupClick(name);
+        }
+
+        else if(CURRENT_FRAGMENT == ROOM_FRAGMENT && !name.equals("") && name != null) {
+            handleRoomClick(name);
+        }
+    }
+
+    private void handleRoomClick(String name) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        DeviceSingleSortListFragment deviceSingleSortListFragment;
+
+        switch (name) {
+
+            case ROOM_LIVING:
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_LIVING, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_LIVING);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case ROOM_BED:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_BED, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_BED);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case ROOM_GARAGE:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_GARAGE, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_GARAGE);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+
+            case ROOM_DINING:
+
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_DINING, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_DINING);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case ROOM_GARDEN:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_GARDEN, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_GARDEN);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case ROOM_BATH:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(ROOM_BATH, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(ROOM_BATH);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+        }
 
     }
 
-    public void callingMainFromGroupClick(String name) {
+    private void handleGroupClick(String name) {
 
-        if (!name.equals("") && name != null) {
-            Log.i(TAG, "callingMainFromGroupClick: " + name);
+        Log.i(TAG, "callingMainFromGroupClick: " + name);
 
-           /* switch (name) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        DeviceSingleSortListFragment deviceSingleSortListFragment;
 
-                case :
+        switch (name) {
 
-                    break;
+            case GROUP_CIRCUITS:
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(GROUP_CIRCUITS, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(GROUP_CIRCUITS);
+                fragmentTransaction.commit();
 
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
 
+            case GROUP_LAMPS:
 
-            }*/
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(GROUP_LAMPS, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(GROUP_LAMPS);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case GROUP_PLUGS:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(GROUP_PLUGS, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(GROUP_PLUGS);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
+
+            case GROUP_TEMP:
+
+                deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(GROUP_TEMP, "");
+                fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(GROUP_TEMP);
+                fragmentTransaction.commit();
+
+                CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
+                break;
         }
-
 
     }
 
@@ -218,6 +355,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public ArrayList<Room> getRoomsList() {
         return roomsList;
+    }
+
+    public int getCURRENT_LIST_CATEGORY() {
+        return CURRENT_LIST_CATEGORY;
+    }
+
+    public void setCURRENT_LIST_CATEGORY(int CURRENT_LIST_CATEGORY) {
+        this.CURRENT_LIST_CATEGORY = CURRENT_LIST_CATEGORY;
     }
 
 

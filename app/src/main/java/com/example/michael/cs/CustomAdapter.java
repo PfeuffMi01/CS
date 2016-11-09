@@ -112,6 +112,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
+    public class CircuitViewHolder extends ViewHolder {
+        TextView name;
+        TextView room;
+        TextView group;
+        SwitchCompat switchCircuit;
+
+        public CircuitViewHolder(View v) {
+            super(v);
+            this.name = (TextView) v.findViewById(R.id.circuit_name);
+            this.room = (TextView) v.findViewById(R.id.room_footer);
+            this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.switchCircuit = (SwitchCompat) v.findViewById(R.id.switch_circuit);
+        }
+    }
 
     public CustomAdapter(Context contexts, ArrayList<Device> deviceList) {
 
@@ -148,10 +162,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             case LIST_ITEM_CIRCUIT:
 
-                // TODO: Circuit noch erstellen
                 v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.recycler_list_item_plug, viewGroup, false);
-                returnViewHolder = new PlugViewHolder(v);
+                        .inflate(R.layout.recycler_list_item_circuit, viewGroup, false);
+                returnViewHolder = new CircuitViewHolder(v);
                 break;
 
             case LIST_ITEM_LAMP:
@@ -206,14 +219,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         if (itemType == LIST_ITEM_CIRCUIT) {
 
             Log.i(TAG, "onBindViewHolder: in Circuit");
-            // TODO
-            Temp device = (Temp) deviceList.get(position);
+            Circuit device = (Circuit) deviceList.get(position);
 
-            PlugViewHolder holder = (PlugViewHolder) viewHolder;
+            CircuitViewHolder holder = (CircuitViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(context.getString(R.string.room) + ": " + device.getRoom().getName());
-            holder.switchPlug.setChecked(device.isOn());
+            holder.switchCircuit.setChecked(device.isOn());
         }
         if (itemType == LIST_ITEM_LAMP) {
 
