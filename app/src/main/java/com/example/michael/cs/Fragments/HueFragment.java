@@ -2,6 +2,7 @@ package com.example.michael.cs.Fragments;
 
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -10,13 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.michael.cs.AsyncTasks.HueExampleAsyncTask;
 import com.example.michael.cs.AsyncTasks.HueExampleAsyncTaskListener;
+import com.example.michael.cs.CSHelper;
 import com.example.michael.cs.R;
 import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
 
 public class HueFragment extends Fragment implements View.OnClickListener, HueExampleAsyncTaskListener {
 
@@ -33,6 +36,7 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
     private int hueCurrentColor;
     private boolean isHueOn;
     private View view;
+    private int hueDim;
 
     public HueFragment() {
         // Required empty public constructor
@@ -85,9 +89,12 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
         isHueOn = false;
     }
 
-    private String intToHex(int color) {
-        return "0x" + Integer.toHexString(color);
-
+    public void setHueCurrentColor(String colorHex) {
+        try {
+            this.hueCurrentColor = Color.parseColor(colorHex);
+        } catch (Exception e) {
+            Log.e(TAG, "setHueCurrentColor: color parsing error");
+        }
     }
 
     /**
@@ -98,38 +105,73 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
     private void showHueDialog() {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.light_dialog, null);
+        View dialogView = inflater.inflate(R.layout.dialog_rbg_lamp, null);
 
-        final ColorPickerView colorPickerView = (ColorPickerView) dialogView.findViewById(R.id.color_picker_view);
-        final CheckBox hueCheckboxx = (CheckBox) dialogView.findViewById(R.id.hue_check);
-        //TODO Dimm Seekbar auch noch implementieren und Wert speichern
+        final ColorPickerView colorPickerView = (ColorPickerView) dialogView.findViewById(R.id.color_picker);
+//        final SwitchCompat dialogSwitch = (SwitchCompat) dialogView.findViewById(R.id.rgb_lamp_dialog_switch);
+        final SeekBar dimSeek = (SeekBar) dialogView.findViewById(R.id.seek_dim);
+
+//        dialogSwitch.setText("Philips HUE       ");
+
+        colorPickerView.addOnColorSelectedListener
+                (new OnColorSelectedListener() {
+                     @Override
+                     public void onColorSelected(int i) {
+                         Log.i(TAG, "onColorSelected: " + i);
+                         hueCurrentColor = i;
+//                         setHueCurrentColor(CSHelper.intToHex(i));
+                         Log.i(TAG, "onColorSelected: " + i);
+                     }
+                 }
+                );
+
+
+//        dialogSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                Log.i(TAG, "onCheckedChanged: " + b);
+//                isHueOn = b;
+//            }
+//        });
+
+        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.i(TAG, "onProgressChanged: " + i + " " + b);
+                hueDim = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.i(TAG, "onStartTrackingTouch: ");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.i(TAG, "onStopTrackingTouch: ");
+            }
+        });
+
 
         try {
-            colorPickerView.setSelectedColor(hueCurrentColor);
+            colorPickerView.setColor(hueCurrentColor, false);
+            Log.i(TAG, "showHueDialog: " + hueCurrentColor);
         } catch (Exception e) {
-
+            Log.e(TAG, "showHueDialog: error setting color for hue dialog " + hueCurrentColor);
         }
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setView(dialogView);
 
-        hueCheckboxx.setChecked(isHueOn);
+        dialogBuilder.setTitle("Philips HUE");
 
-        dialogBuilder.setNegativeButton("Fertig", new DialogInterface.OnClickListener() {
+//        dialogSwitch.setChecked(isHueOn);
+        dimSeek.setProgress(hueDim);
+
+        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                //TODO Lampe direkt bei Klick auf die Elemente steuern, nicht erst wenn der Dialog geschlossen wird.
-
-                int selectedColor = colorPickerView.getSelectedColor();
-                Log.i(TAG, "onClick: " + selectedColor);
-
-                Toast.makeText(getContext(), intToHex(selectedColor), Toast.LENGTH_SHORT).show();
-
-                hueCurrentColor = selectedColor;
-                isHueOn = hueCheckboxx.isChecked();
-
-                startHueAsyncTask();
+                Log.i(TAG, "onClick: " + hueCurrentColor + "\n" + hueDim + "\n" + isHueOn);
             }
         });
 
@@ -140,7 +182,7 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
     private void startHueAsyncTask() {
 
         String urlONOFF = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 " + (isHueOn ? "on" : "off");
-        String urlRGB = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 rgb " + intToHex(hueCurrentColor);
+        String urlRGB = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 rgb " + CSHelper.intToHex(hueCurrentColor);
 
         new HueExampleAsyncTask(this, getContext()).execute(urlONOFF);
         new HueExampleAsyncTask(this, getContext()).execute(urlRGB);

@@ -1,6 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
 
+import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Rooms.Room;
 
@@ -62,5 +63,9 @@ public class Device {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public void showDialogForThisDevice(final MainActivity mainActivity) {
+
     }
 }

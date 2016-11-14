@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
@@ -63,13 +64,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private ArrayList<Group> groupList;
 
     private ArrayList<Device> deviceList;
+    private DeviceSingleSortListFragment deviceSingleSortListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        allFragment = new AllFragment();
+        roomFragment = new RoomFragment();
+        groupFragment = new GroupFragment();
 
         initBottomNavigation();
         initExampleData();
@@ -115,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         deviceList.add(new WhiteLamp("whitelamp3", false, "Lampe 7", bathRoom, lamps, 0));
         deviceList.add(new WhiteLamp("whitelamp4", true, "Lampe 8", bathRoom, lamps, 80));
 
-        deviceList.add(new Temp("temp1", true, "Temp 1", diningRoom, temp, 24.2));
-        deviceList.add(new Temp("temp2", false, "Temp 2", livingRoom, temp, 10.8));
-        deviceList.add(new Temp("temp3", true, "Temp 3", bedRoom, temp, 30.2));
+        deviceList.add(new Temp("temp1", true, "Temp 1", diningRoom, temp, 24));
+        deviceList.add(new Temp("temp2", false, "Temp 2", livingRoom, temp, 10));
+        deviceList.add(new Temp("temp3", true, "Temp 3", bedRoom, temp, 30));
 
         deviceList.add(new Plug("plug1", false, "Steckdose 1", bathRoom, plugs));
         deviceList.add(new Plug("plug2", true, "Steckdose 2", garageRoom, plugs));
@@ -196,7 +200,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
 
             case R.id.action_all:
-                allFragment = new AllFragment();
+
+                if (allFragment == null) {
+                    allFragment = new AllFragment();
+                }
                 fragmentTransaction.replace(fragment_container, allFragment, "AllFragment");
                 fragmentTransaction.commit();
 
@@ -204,6 +211,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 toolbarManager("Alle Geräte", false);
                 break;
             case R.id.action_rooms:
+
+                if (roomFragment == null) {
+                    roomFragment = new RoomFragment();
+                }
                 roomFragment = new RoomFragment();
                 fragmentTransaction.replace(fragment_container, roomFragment, "RoomFragment");
                 fragmentTransaction.commit();
@@ -212,6 +223,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 toolbarManager("Räume", false);
                 break;
             case R.id.action_groups:
+                if (groupFragment == null) {
+                    groupFragment = new GroupFragment();
+                }
                 groupFragment = new GroupFragment();
                 fragmentTransaction.replace(fragment_container, groupFragment, "GroupFragment");
                 fragmentTransaction.commit();
@@ -227,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         Log.i(TAG, "handleRoomClick: " + name);
 
-        if ((CURRENT_FRAGMENT == GROUP_FRAGMENT || CURRENT_FRAGMENT == ROOM_FRAGMENT)&& !name.equals("") && name != null) {
+        if ((CURRENT_FRAGMENT == GROUP_FRAGMENT || CURRENT_FRAGMENT == ROOM_FRAGMENT) && !name.equals("") && name != null) {
             handleClickFromRoomOrGroup(name);
         }
     }
@@ -236,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        DeviceSingleSortListFragment deviceSingleSortListFragment;
 
         deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(name, "");
         fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(name);
@@ -259,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-               onBackPressed();
+                onBackPressed();
                 return true;
 
             default:
@@ -288,4 +301,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
+    public void listItemHasBeenClicked(int adapterPosition, int listItemType, View view) {
+        Log.i(TAG, "listItemHasBeenClicked: " + adapterPosition + " " + view.getId());
+        Log.i(TAG, "listItemHasBeenClicked: " + CURRENT_FRAGMENT);
+        if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+            allFragment.initDialogForItemClickOnAllDeviceList(adapterPosition, listItemType);
+        } else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
+            deviceSingleSortListFragment.initDialogForItemClickOnSingleSortDeviceList(adapterPosition, listItemType);
+        }
+
+    }
+
+    public void switchInItemHasBeenClicked(int adapterPosition, boolean b) {
+        if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+            allFragment.changeSwitchState(adapterPosition, b);
+        } else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
+            deviceSingleSortListFragment.changeSwitchState(adapterPosition, b);
+        }
+    }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
+
+import static com.example.michael.cs.ListItem.TAG;
 
 
 public class AllFragment extends Fragment {
@@ -62,7 +65,7 @@ public class AllFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_all, container, false);
+        view = inflater.inflate(R.layout.fragment_all, container, false);
         mainActivity = (MainActivity) getActivity();
 
         allDevicesList = mainActivity.getDeviceList();
@@ -83,4 +86,17 @@ public class AllFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    public void initDialogForItemClickOnAllDeviceList(int adapterPosition, int listItemType) {
+        allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void changeSwitchState(int adapterPosition, boolean b) {
+        try {
+            allDevicesList.get(adapterPosition).setOn(b);
+            adapter.notifyItemChanged(adapterPosition);
+        } catch (Exception e) {
+            Log.e(TAG, "changeSwitchState: ");
+        }
+    }
 }

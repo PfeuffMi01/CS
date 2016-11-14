@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.Plug;
@@ -22,7 +24,7 @@ import com.example.michael.cs.Data.Rooms.Room;
 import java.util.ArrayList;
 
 import static com.example.michael.cs.Constants.LIST_ITEM_CIRCUIT;
-import static com.example.michael.cs.Constants.LIST_ITEM_LAMP;
+import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
@@ -37,11 +39,24 @@ import static com.example.michael.cs.Constants.ROOM_LIVING;
  * Created by Patrick PC on 09.11.2016.
  */
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener{
     private static final String TAG = "CustomAdapter";
 
     Context context;
     ArrayList<Device> deviceList;
+
+    private void listItemHasBeenClicked(int adapterPosition, int list_item_id, View view) {
+        ((MainActivity) context).listItemHasBeenClicked(adapterPosition, list_item_id, view);
+    }
+
+    private void switchInItemHasBeenClicked(int adapterPosition, boolean b, int list_item_id) {
+        ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -49,6 +64,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             super(v);
 
         }
+
     }
 
     public class RGBLampViewHolder extends ViewHolder {
@@ -71,8 +87,27 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchRGBLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
+
+            switchRGBLamp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_RGB);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_RGB, view);
+                }
+            });
         }
     }
+
+
 
     public class LampViewHolder extends ViewHolder {
         TextView name;
@@ -90,6 +125,23 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
+
+            switchLamp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_WHITE);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_WHITE, view);
+                }
+            });
         }
     }
 
@@ -109,6 +161,23 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchTemp = (SwitchCompat) v.findViewById(R.id.switch_temp);
+
+            switchTemp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_TEMP);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_TEMP, view);
+                }
+            });
         }
     }
 
@@ -126,6 +195,23 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchPlug = (SwitchCompat) v.findViewById(R.id.switch_plug);
+
+            switchPlug.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
+                }
+            });
         }
     }
 
@@ -143,6 +229,23 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchCircuit = (SwitchCompat) v.findViewById(R.id.switch_circuit);
+
+            switchCircuit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_CIRCUIT);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_CIRCUIT, view);
+                }
+            });
         }
     }
 
@@ -186,7 +289,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new CircuitViewHolder(v);
                 break;
 
-            case LIST_ITEM_LAMP:
+            case LIST_ITEM_LAMP_WHITE:
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.recycler_list_item_lamp_white, viewGroup, false);
                 returnViewHolder = new LampViewHolder(v);
@@ -249,7 +352,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchCircuit.setChecked(device.isOn());
         }
-        if (itemType == LIST_ITEM_LAMP) {
+        if (itemType == LIST_ITEM_LAMP_WHITE) {
 
             Log.i(TAG, "onBindViewHolder: in WhiteLamp");
             WhiteLamp device = (WhiteLamp) deviceList.get(position);
@@ -333,7 +436,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
 
         if (deviceList.get(position) instanceof WhiteLamp) {
-            return Constants.LIST_ITEM_LAMP;
+            return Constants.LIST_ITEM_LAMP_WHITE;
         }
 
         if (deviceList.get(position) instanceof RGBLamp) {

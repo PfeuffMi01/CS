@@ -140,4 +140,18 @@ public class DeviceSingleSortListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    public void initDialogForItemClickOnSingleSortDeviceList(int adapterPosition, int listItemType) {
+        onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
+        adapter.notifyItemChanged(adapterPosition);
+    }
+
+    public void changeSwitchState(int adapterPosition, boolean b) {
+
+       try {
+        onlyNeededDeviceCategory.get(adapterPosition).setOn(b);
+        adapter.notifyDataSetChanged();
+       } catch (Exception e) {
+           Log.e(TAG, "changeSwitchState: ");
+       }
+    }
 }
