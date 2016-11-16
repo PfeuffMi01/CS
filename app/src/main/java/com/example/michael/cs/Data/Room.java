@@ -1,4 +1,4 @@
-package com.example.michael.cs.Data.Rooms;
+package com.example.michael.cs.Data;
 
 import com.example.michael.cs.ListItem;
 

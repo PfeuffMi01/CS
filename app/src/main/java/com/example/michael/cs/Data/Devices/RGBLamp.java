@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.CSHelper;
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;

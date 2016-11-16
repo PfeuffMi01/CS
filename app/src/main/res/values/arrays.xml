@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="tab_icons">
+        <item>@drawable/ic_format_list_bulleted_white_48dp</item>
+        <item>@drawable/ic_home_white_48dp</item>
+        <item>@drawable/ic_view_grid_white_48dp</item>
+    </array>
+
+</resources>
+

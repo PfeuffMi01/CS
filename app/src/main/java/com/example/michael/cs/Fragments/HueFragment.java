@@ -1,27 +1,30 @@
 package com.example.michael.cs.Fragments;
 
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michael.cs.AsyncTasks.HueExampleAsyncTask;
 import com.example.michael.cs.AsyncTasks.HueExampleAsyncTaskListener;
-import com.example.michael.cs.CSHelper;
 import com.example.michael.cs.R;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 
-public class HueFragment extends Fragment implements View.OnClickListener, HueExampleAsyncTaskListener {
+import static com.example.michael.cs.Constants.FHEM_IP;
+import static com.example.michael.cs.Constants.FHEM_PORT;
+
+public class HueFragment extends Fragment implements HueExampleAsyncTaskListener {
 
     private static final String TAG = "HueFragment";
 
@@ -34,9 +37,16 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
 
     private CardView hueCard;
     private int hueCurrentColor;
-    private boolean isHueOn;
+
     private View view;
-    private int hueDim;
+    private int hueDim = 0;
+    private boolean isHueOn = true;
+
+    private ColorPickerView colorPickerView;
+    private SeekBar dimSeek;
+    private SwitchCompat switchOnOff;
+    private TextView tvDDimVal;
+    private String urlONOFF;
 
     public HueFragment() {
         // Required empty public constructor
@@ -71,24 +81,74 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_hue, container, false);
 
-
-        initHueExample();
-
+        initUI();
+//        initHueExample();
 
         return view;
+    }
+
+    private void initUI() {
+
+        colorPickerView = (ColorPickerView) view.findViewById(R.id.color_picker);
+        dimSeek = (SeekBar) view.findViewById(R.id.seek_dim);
+        switchOnOff = (SwitchCompat) view.findViewById(R.id.switch_on_off);
+        tvDDimVal = (TextView) view.findViewById(R.id.tv_dim_val);
+
+        tvDDimVal.setText(hueDim + "%");
+        dimSeek.setProgress(hueDim);
+        switchOnOff.setChecked(isHueOn);
+
+        colorPickerView.addOnColorSelectedListener(new OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int i) {
+                Log.i(TAG, "onColorSelected: " + i);
+            //TODO
+
+            }
+        });
+
+        switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isHueOn = b;
+                urlONOFF = FHEM_IP + ":" + FHEM_PORT + "/fhem?cmd=set bridge1_HUEGroup0 " + (b ? "on" : "off");
+                startHueAsyncTask(urlONOFF);
+            }
+        });
+
+        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                tvDDimVal.setText(i + "%");
+                hueDim = i;
+
+                Log.i(TAG, "onProgressChanged: " + i);
+                //TODO
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
     }
 
     /**
      * Initialisiert alles, was mit dem Hue-Beispiel zu tun hat
      */
-    private void initHueExample() {
+/*    private void initHueExample() {
         hueCard = (CardView) view.findViewById(R.id.hue_card);
         hueCard.setOnClickListener(this);
 
         hueCurrentColor = -1;
         isHueOn = false;
-    }
-
+    }*/
     public void setHueCurrentColor(String colorHex) {
         try {
             this.hueCurrentColor = Color.parseColor(colorHex);
@@ -97,19 +157,31 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
         }
     }
 
+   /* */
+
     /**
      * Zeigt den Dialog um das Hue Licht zu steuern
      * Erst wird das Dialog Layout geladen und dann der Wert "an" oder "aus" auf den swtich gesetzt
      * Bei Klick auf den Dialog Knopf: Den int Wert des ColorPickers in Hex umwandeln.
-     */
+     *//*
     private void showHueDialog() {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_rbg_lamp, null);
+        View dialogView = inflater.inflate(R.layout.dialog_hue_lamp, null);
 
         final ColorPickerView colorPickerView = (ColorPickerView) dialogView.findViewById(R.id.color_picker);
-//        final SwitchCompat dialogSwitch = (SwitchCompat) dialogView.findViewById(R.id.rgb_lamp_dialog_switch);
         final SeekBar dimSeek = (SeekBar) dialogView.findViewById(R.id.seek_dim);
+        final SwitchCompat onOff = (SwitchCompat) dialogView.findViewById(R.id.switch_on_off);
+
+        onOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                isHueOn = b;
+                urlONOFF = FHEM_IP + ":" + FHEM_PORT + "/fhem?cmd=set bridge1_HUEGroup0 " + (b ? "on" : "off");
+                startHueAsyncTask(urlONOFF);
+            }
+        });
 
 //        dialogSwitch.setText("Philips HUE       ");
 
@@ -177,18 +249,17 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+    }*/
+    private void startHueAsyncTask(String urlONOFF) {
+
+//        String urlONOFF = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 " + (isHueOn ? "on" : "off");
+//        String urlRGB = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 rgb " + CSHelper.intToHex(hueCurrentColor);
+
+        new HueExampleAsyncTask(this, getContext()).execute(this.urlONOFF);
+//        new HueExampleAsyncTask(this, getContext()).execute(urlRGB);
     }
 
-    private void startHueAsyncTask() {
-
-        String urlONOFF = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 " + (isHueOn ? "on" : "off");
-        String urlRGB = "http://10.8.6.79:8083/fhem?cmd=set bridge1_HUEGroup0 rgb " + CSHelper.intToHex(hueCurrentColor);
-
-        new HueExampleAsyncTask(this, getContext()).execute(urlONOFF);
-        new HueExampleAsyncTask(this, getContext()).execute(urlRGB);
-    }
-
-    @Override
+    /*@Override
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -197,13 +268,19 @@ public class HueFragment extends Fragment implements View.OnClickListener, HueEx
                 break;
         }
 
-    }
+    }*/
 
     @Override
     public void finished(boolean b) {
 
         if (isAdded()) {
-            Toast.makeText(getContext(), "finished", Toast.LENGTH_SHORT).show();
+            String toastMsg = "";
+            if (b) {
+                toastMsg = " Command OK: " + urlONOFF;
+            } else {
+                toastMsg = " Command ERROR: " + urlONOFF;
+            }
+            Toast.makeText(getActivity(), toastMsg, Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -15,17 +15,19 @@ import android.widget.TextView;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.Data.Devices.GenericDevice;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 
 import java.util.ArrayList;
 
 import static com.example.michael.cs.Constants.LIST_ITEM_CIRCUIT;
-import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
+import static com.example.michael.cs.Constants.LIST_ITEM_GENERIC_DEVICE;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
+import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
 import static com.example.michael.cs.Constants.ROOM_BATH;
@@ -39,7 +41,7 @@ import static com.example.michael.cs.Constants.ROOM_LIVING;
  * Created by Patrick PC on 09.11.2016.
  */
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener{
+public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener {
     private static final String TAG = "CustomAdapter";
 
     Context context;
@@ -66,6 +68,43 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
 
     }
+
+    public class GenericDeviceViewHolder extends ViewHolder {
+
+        TextView name;
+        TextView room;
+        TextView group;
+        ImageView roomImg;
+        SwitchCompat switchGnerericDevice;
+
+        public GenericDeviceViewHolder(View v) {
+            super(v);
+
+            this.name = (TextView) v.findViewById(R.id.generic_device_name);
+            this.room = (TextView) v.findViewById(R.id.room_footer);
+            this.group = (TextView) v.findViewById(R.id.group_footer);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
+            this.switchGnerericDevice = (SwitchCompat) v.findViewById(R.id.switch_generic_device);
+
+            switchGnerericDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_GENERIC_DEVICE);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_RGB, view);
+                }
+            });
+        }
+    }
+
 
     public class RGBLampViewHolder extends ViewHolder {
 
@@ -106,7 +145,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             });
         }
     }
-
 
 
     public class LampViewHolder extends ViewHolder {
@@ -302,6 +340,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new RGBLampViewHolder(v);
                 break;
 
+            case LIST_ITEM_GENERIC_DEVICE:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_generic, viewGroup, false);
+                returnViewHolder = new GenericDeviceViewHolder(v);
+                break;
+
             default:
                 break;
         }
@@ -380,6 +424,21 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.color.setText(device.getColorHex());
             holder.switchRGBLamp.setChecked(device.isOn());
         }
+
+        if (itemType == LIST_ITEM_GENERIC_DEVICE) {
+
+            Log.i(TAG, "onBindViewHolder: in Generic");
+            GenericDevice device = (GenericDevice) deviceList.get(position);
+
+
+            GenericDeviceViewHolder holder = (GenericDeviceViewHolder) viewHolder;
+
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.switchGnerericDevice.setChecked(device.isOn());
+        }
     }
 
     private Drawable getCorrectRoomImg(Room room) {
@@ -445,6 +504,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         if (deviceList.get(position) instanceof Temp) {
             return LIST_ITEM_TEMP;
+        }
+
+        if (deviceList.get(position) instanceof GenericDevice) {
+            return LIST_ITEM_GENERIC_DEVICE;
         }
 
         if (deviceList.get(position) instanceof Circuit) {

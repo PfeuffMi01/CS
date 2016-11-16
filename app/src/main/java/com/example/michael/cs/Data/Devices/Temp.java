@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
 
 import java.util.Calendar;

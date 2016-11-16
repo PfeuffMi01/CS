@@ -2,7 +2,7 @@ package com.example.michael.cs.Data.Devices;
 
 
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 
 /**
  * Created by Patrick PC on 07.11.2016.

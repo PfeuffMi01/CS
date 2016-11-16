@@ -1,45 +1,58 @@
 package com.example.michael.cs.Activities;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
+import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.Data.Devices.GenericDevice;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.Data.Rooms.BathRoom;
-import com.example.michael.cs.Data.Rooms.BedRoom;
-import com.example.michael.cs.Data.Rooms.DiningRoom;
-import com.example.michael.cs.Data.Rooms.GarageRoom;
-import com.example.michael.cs.Data.Rooms.LivingRoom;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
-import com.example.michael.cs.Fragments.HueFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static android.R.attr.mode;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.GROUP_CIRCUITS;
+import static com.example.michael.cs.Constants.GROUP_GENERIC_DEVICES;
 import static com.example.michael.cs.Constants.GROUP_LAMPS;
+import static com.example.michael.cs.Constants.GROUP_MOVEMENT_SENSORT;
 import static com.example.michael.cs.Constants.GROUP_PLUGS;
 import static com.example.michael.cs.Constants.GROUP_TEMP;
-import static com.example.michael.cs.R.id.fragment_container;
+import static com.example.michael.cs.Constants.ROOM_BATH;
+import static com.example.michael.cs.Constants.ROOM_BED;
+import static com.example.michael.cs.Constants.ROOM_DINING;
+import static com.example.michael.cs.Constants.ROOM_GARAGE;
+import static com.example.michael.cs.Constants.ROOM_GARDEN;
+import static com.example.michael.cs.Constants.ROOM_HALLWAY;
+import static com.example.michael.cs.Constants.ROOM_KITCHEN;
+import static com.example.michael.cs.Constants.ROOM_LIVING;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static final int HUE_FRAGMENT = 0;
     public static final int ALL_FRAGMENT = 1;
@@ -47,18 +60,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public static final int GROUP_FRAGMENT = 3;
     public static final int DEVICE_SINGLE_SORT_LIST_FRAGMENT = 4;
 
-    public int STARTPAGE_FRAGMENT = HUE_FRAGMENT;
     public int CURRENT_FRAGMENT;
     public int CURRENT_LIST_CATEGORY;
 
-    private BottomNavigationView bottomNavigationView;
-
-    private Toolbar toolbar;
-
-    private HueFragment hueFragment;
     private AllFragment allFragment;
     private RoomFragment roomFragment;
     private GroupFragment groupFragment;
+
+    private FrameLayout fragContainer;
 
     private ArrayList<Room> roomsList;
     private ArrayList<Group> groupList;
@@ -66,48 +75,146 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private ArrayList<Device> deviceList;
     private DeviceSingleSortListFragment deviceSingleSortListFragment;
 
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initFragment();
+        initTabs();
+        initExampleData();
+    }
+
+    private void initFragment() {
+
+        fragContainer = (FrameLayout) findViewById(R.id.fragment_container);
+        fragContainer.setVisibility(GONE);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (deviceSingleSortListFragment == null) {
+            deviceSingleSortListFragment = new DeviceSingleSortListFragment();
+        }
+        fragmentTransaction.replace(R.id.fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment");
+        fragmentTransaction.commit();
+
+
+    }
+
+    private void initTabs() {
+
         allFragment = new AllFragment();
         roomFragment = new RoomFragment();
         groupFragment = new GroupFragment();
 
-        initBottomNavigation();
-        initExampleData();
-        showStartFragment();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        setupTabIcons();
+    }
+
+    private void setupTabIcons() {
+        TypedArray imgs = getResources().obtainTypedArray(R.array.tab_icons);
+
+        for (int i = 0; i < imgs.length(); i++) {
+            tabLayout.getTabAt(i).setIcon(imgs.getResourceId(i, -1));
+        }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new AllFragment(), "Alle");
+        adapter.addFragment(new RoomFragment(), "Räume");
+        adapter.addFragment(new GroupFragment(), "Gruppen");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final FragmentManager fragmentManager;
+        private Fragment fragmentAtPos0;
+        private final List<Fragment> fragmentList = new ArrayList<>();
+        private final List<String> fragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+            fragmentManager = manager;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            fragmentList.add(fragment);
+            fragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return fragmentTitleList.get(position);
+        }
     }
 
     private void initExampleData() {
 
         roomsList = new ArrayList<>();
-        LivingRoom livingRoom = new LivingRoom(R.drawable.living_room, "Wohnzimmer");
-        BedRoom bedRoom = new BedRoom(R.drawable.bed_room, "Schlafzimmer");
-        GarageRoom garageRoom = new GarageRoom(R.drawable.garage_room, "Garage");
-        BathRoom bathRoom = new BathRoom(R.drawable.bath_room, "Badezimmer");
-        DiningRoom diningRoom = new DiningRoom(R.drawable.dining_room, "Esszimmer");
+        groupList = new ArrayList<>();
+        deviceList = new ArrayList<>();
+
+        Room livingRoom = new Room(R.drawable.living_room, ROOM_LIVING);
+        Room bedRoom = new Room(R.drawable.bed_room, ROOM_BED);
+        Room garageRoom = new Room(R.drawable.garage_room, ROOM_GARAGE);
+        Room bathRoom = new Room(R.drawable.bath_room, ROOM_BATH);
+        Room diningRoom = new Room(R.drawable.dining_room, ROOM_DINING);
+        Room hallwayRoom = new Room(R.drawable.hallway, ROOM_HALLWAY);
+        Room gardenRoom = new Room(R.drawable.garden_room_, ROOM_GARDEN);
+        Room kitchenRoom = new Room(R.drawable.kitchen_room, ROOM_KITCHEN);
 
         roomsList.add(livingRoom);
         roomsList.add(bedRoom);
         roomsList.add(garageRoom);
         roomsList.add(bathRoom);
         roomsList.add(diningRoom);
+        roomsList.add(hallwayRoom);
+        roomsList.add(gardenRoom);
+        roomsList.add(kitchenRoom);
 
-        groupList = new ArrayList<>();
         Group lamps = new Group(GROUP_LAMPS, R.drawable.lamps_group);
         Group temp = new Group(GROUP_TEMP, R.drawable.temp);
         Group circuit = new Group(GROUP_CIRCUITS, R.drawable.circuit_group);
         Group plugs = new Group(GROUP_PLUGS, R.drawable.plug_group);
+        Group movementSens = new Group(GROUP_MOVEMENT_SENSORT, R.drawable.movement_sens);
+        Group doorSens = new Group(Constants.GROUP_DOOR_SENSOR, R.drawable.door_sens);
+        Group windowSens = new Group(Constants.GROUP_WINDOW_SENSOR, R.drawable.window_sens);
+        Group weatherStat = new Group(Constants.GROUP_WEATHER_STATION, R.drawable.weather_station);
+        Group genericDevices = new Group(GROUP_GENERIC_DEVICES, R.drawable.generic_device);
 
         groupList.add(lamps);
         groupList.add(temp);
         groupList.add(circuit);
         groupList.add(plugs);
-
-        deviceList = new ArrayList<>();
+        groupList.add(movementSens);
+        groupList.add(doorSens);
+        groupList.add(windowSens);
+        groupList.add(weatherStat);
+        groupList.add(genericDevices);
 
         deviceList.add(new RGBLamp("rgblamp1", false, "Lampe 1", livingRoom, lamps, 0, "#f5500c"));
         deviceList.add(new RGBLamp("rgblamp2", false, "Lampe 4", garageRoom, lamps, 50, "#f5500c"));
@@ -132,136 +239,51 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         deviceList.add(new Circuit("circuit3", false, "Schalter 3", garageRoom, circuit));
         deviceList.add(new Circuit("circuit4", false, "Schalter 4", bedRoom, circuit));
         deviceList.add(new Circuit("circuit5", false, "Schalter 5", diningRoom, circuit));
+
+        deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), false, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, garageRoom, genericDevices));
+        deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), true, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, bathRoom, genericDevices));
+        deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), false, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, bedRoom, genericDevices));
     }
 
-    private void showStartFragment() {
-
-        onNavigationItemSelected(bottomNavigationView.getMenu().getItem(STARTPAGE_FRAGMENT));
-        CURRENT_FRAGMENT = STARTPAGE_FRAGMENT;
-        toolbarManager("Hue Beispiel", false);
-    }
-
-
-    /**
-     * Initialisiert die drei Tabs am unteren Bildschirmrand um zwischen "Alle" "Räume" und "Gruppen" zu wechseln
-     */
-    private void initBottomNavigation() {
-        bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-    }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
-        Log.i(TAG, "onBackPressed: " + CURRENT_LIST_CATEGORY + " " + CURRENT_FRAGMENT);
+        if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT && CURRENT_LIST_CATEGORY == GROUP_FRAGMENT) {
-
-            groupFragment = new GroupFragment();
-            fragmentTransaction.replace(fragment_container, groupFragment, "GroupFragment");
-            fragmentTransaction.commit();
-
-            CURRENT_FRAGMENT = GROUP_FRAGMENT;
-            toolbarManager("Gruppen", false);
-        }
-
-        if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT && CURRENT_LIST_CATEGORY == ROOM_FRAGMENT) {
-
-            roomFragment = new RoomFragment();
-            fragmentTransaction.replace(fragment_container, roomFragment, "RoomFragment");
-            fragmentTransaction.commit();
-
-            CURRENT_FRAGMENT = ROOM_FRAGMENT;
-            toolbarManager("Räume", false);
+            fragChanger(GONE, VISIBLE, false, getResources().getString(R.string.app_name), mode);
+            CURRENT_FRAGMENT = 999;
+        } else {
+            super.onBackPressed();
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        switch (item.getItemId()) {
-
-            case R.id.action_hue:
-                hueFragment = new HueFragment();
-                fragmentTransaction.replace(fragment_container, hueFragment, "HueFragment");
-                fragmentTransaction.commit();
-
-                CURRENT_FRAGMENT = HUE_FRAGMENT;
-                toolbarManager("Hue Beispiel", false);
-                break;
-
-            case R.id.action_all:
-
-                if (allFragment == null) {
-                    allFragment = new AllFragment();
-                }
-                fragmentTransaction.replace(fragment_container, allFragment, "AllFragment");
-                fragmentTransaction.commit();
-
-                CURRENT_FRAGMENT = ALL_FRAGMENT;
-                toolbarManager("Alle Geräte", false);
-                break;
-            case R.id.action_rooms:
-
-                if (roomFragment == null) {
-                    roomFragment = new RoomFragment();
-                }
-                roomFragment = new RoomFragment();
-                fragmentTransaction.replace(fragment_container, roomFragment, "RoomFragment");
-                fragmentTransaction.commit();
-
-                CURRENT_FRAGMENT = ROOM_FRAGMENT;
-                toolbarManager("Räume", false);
-                break;
-            case R.id.action_groups:
-                if (groupFragment == null) {
-                    groupFragment = new GroupFragment();
-                }
-                groupFragment = new GroupFragment();
-                fragmentTransaction.replace(fragment_container, groupFragment, "GroupFragment");
-                fragmentTransaction.commit();
-
-                CURRENT_FRAGMENT = GROUP_FRAGMENT;
-                toolbarManager("Gruppen", false);
-                break;
-        }
-        return false;
-    }
-
-    public void callingMainFromGridClick(String name) {
+    public void callingMainFromGridClick(String name, int mode) {
 
         Log.i(TAG, "handleRoomClick: " + name);
 
-        if ((CURRENT_FRAGMENT == GROUP_FRAGMENT || CURRENT_FRAGMENT == ROOM_FRAGMENT) && !name.equals("") && name != null) {
-            handleClickFromRoomOrGroup(name);
-        }
+        fragChanger(VISIBLE, GONE, true, name, mode);
     }
 
-    private void handleClickFromRoomOrGroup(String name) {
+    private void fragChanger(int visibilityFragContainer, int visibilityViewPager, boolean visibilityToolbarBackArrow, String name, int mode) {
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragContainer.setVisibility(visibilityFragContainer);
+        viewPager.setVisibility(visibilityViewPager);
+        tabLayout.setVisibility(visibilityViewPager);
+        toolbarManager(name, visibilityToolbarBackArrow);
 
-        deviceSingleSortListFragment = DeviceSingleSortListFragment.newInstance(name, "");
-        fragmentTransaction.replace(fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment").addToBackStack(name);
-        fragmentTransaction.commit();
+        if(visibilityFragContainer == VISIBLE) {
+            deviceSingleSortListFragment.setSortToShow(name);
+        }
 
         CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
 
-        toolbarManager(name, true);
+
 
     }
 
     public void toolbarManager(String title, boolean show) {
+
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(show);
         getSupportActionBar().setDisplayShowHomeEnabled(show);

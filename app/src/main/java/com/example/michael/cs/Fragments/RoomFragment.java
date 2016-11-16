@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
 import com.example.michael.cs.RecyclerAdapterRooms;
 

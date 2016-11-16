@@ -1,6 +1,9 @@
 package com.example.michael.cs.Fragments;
 
 
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.CustomAdapter;
@@ -18,6 +24,8 @@ import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.example.michael.cs.ListItem.TAG;
 
 
@@ -29,18 +37,31 @@ public class DeviceSingleSortListFragment extends Fragment {
     public String sortToShow;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    public String mParam1;
     private String mParam2;
     private View view;
     private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private ArrayList<Device> allDevicesList;
+
     private ArrayList<Device> onlyNeededDeviceCategory;
     private CustomAdapter adapter;
+    private LinearLayout emptyView;
+    private TextView emptyTextView;
+    private ImageView emptyImageView;
+    private boolean isCategoryRoom;
+    private boolean isCategoryGroup;
+    private int emptyViewDrawable;
 
 
     public DeviceSingleSortListFragment() {
         // Required empty public constructor
+    }
+
+    public void setSortToShow(String sortToShow) {
+        this.sortToShow = sortToShow;
+        initDataLists();
+        initRecyclerView();
     }
 
 
@@ -74,6 +95,9 @@ public class DeviceSingleSortListFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_device_single_sort_list, container, false);
         mainActivity = (MainActivity) getActivity();
 
+        emptyView = (LinearLayout) view.findViewById(R.id.empty_view);
+        emptyTextView = (TextView) view.findViewById(R.id.empty_view_text);
+        emptyImageView = (ImageView) view.findViewById(R.id.empty_view_icon);
         initDataLists();
         initRecyclerView();
 
@@ -90,8 +114,8 @@ public class DeviceSingleSortListFragment extends Fragment {
         onlyNeededDeviceCategory.clear();
 
         //Standardeinstellung
-        boolean isCategoryRoom = true;
-        boolean isCategoryGroup = false;
+        isCategoryRoom = true;
+        isCategoryGroup = false;
 
         //Einstellung verändern, wenn es eine Gruppe ist
         if (mainActivity.getGroupList() != null) {
@@ -132,12 +156,45 @@ public class DeviceSingleSortListFragment extends Fragment {
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_device_sinlge_sort_list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_device_single_sort_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
         adapter = new CustomAdapter(getContext(), onlyNeededDeviceCategory);
         recyclerView.setAdapter(adapter);
+
+        emptyViewHandler();
+    }
+
+    private void emptyViewHandler() {
+
+        if (adapter.getItemCount() == 0) {
+            recyclerView.setVisibility(GONE);
+
+            if (isCategoryGroup) {
+                emptyTextView.setText("Keine " + sortToShow + " vorhanden");
+            } else {
+                emptyTextView.setText("Keine Geräte in diesem Raum");
+            }
+
+            emptyImageView.setImageDrawable(convertToGrayscale(getContext().getResources().getDrawable(R.drawable.sad_face)));
+            emptyView.setVisibility(VISIBLE);
+        } else {
+            recyclerView.setVisibility(VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+    }
+
+    protected Drawable convertToGrayscale(Drawable drawable) {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+
+        drawable.setColorFilter(filter);
+
+        return drawable;
     }
 
     public void initDialogForItemClickOnSingleSortDeviceList(int adapterPosition, int listItemType) {
@@ -147,11 +204,11 @@ public class DeviceSingleSortListFragment extends Fragment {
 
     public void changeSwitchState(int adapterPosition, boolean b) {
 
-       try {
-        onlyNeededDeviceCategory.get(adapterPosition).setOn(b);
-        adapter.notifyDataSetChanged();
-       } catch (Exception e) {
-           Log.e(TAG, "changeSwitchState: ");
-       }
+        try {
+            onlyNeededDeviceCategory.get(adapterPosition).setOn(b);
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.e(TAG, "changeSwitchState: ");
+        }
     }
 }

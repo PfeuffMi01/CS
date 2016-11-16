@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Data.Rooms.Room;
+import com.example.michael.cs.Data.Room;
+
+import static com.example.michael.cs.Constants.ROOMS;
 
 /**
  * ViewHolder for ReminderData CardViews
@@ -67,6 +69,6 @@ public class ViewHolderRoom extends ViewHolder implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        ((MainActivity) context).callingMainFromGridClick(name);
+        ((MainActivity) context).callingMainFromGridClick(name, ROOMS);
     }
 }
