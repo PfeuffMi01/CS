@@ -211,4 +211,5 @@ public class DeviceSingleSortListFragment extends Fragment {
             Log.e(TAG, "changeSwitchState: ");
         }
     }
+
 }

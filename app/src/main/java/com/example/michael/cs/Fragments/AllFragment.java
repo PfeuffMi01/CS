@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ import java.util.ArrayList;
 import static com.example.michael.cs.ListItem.TAG;
 
 
-public class AllFragment extends Fragment {
+public class AllFragment extends Fragment  {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private OnDataChangedListener dataChangedListener;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -44,11 +47,10 @@ public class AllFragment extends Fragment {
      * this fragment using the provided parameters.
      */
     // TODO: Rename and change types and number of parameters
-    public static AllFragment newInstance(String param1, String param2) {
+    public static AllFragment newInstance() {
         AllFragment fragment = new AllFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,7 +70,7 @@ public class AllFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_all, container, false);
         mainActivity = (MainActivity) getActivity();
 
-        allDevicesList = mainActivity.getDeviceList();
+        refreshList();
         initRecyclerView();
 
         // Inflate the layout for this fragment
@@ -87,8 +89,26 @@ public class AllFragment extends Fragment {
     }
 
     public void initDialogForItemClickOnAllDeviceList(int adapterPosition, int listItemType) {
-        allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+
+        refreshList();
+
+        if (allDevicesList.size() > 0) {
+            allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+        }
         adapter.notifyDataSetChanged();
+    }
+
+    private void refreshList() {
+
+        if (allDevicesList == null) {
+            allDevicesList = new ArrayList<>();
+        }
+
+        if (mainActivity == null) {
+            mainActivity = ((MainActivity) getActivity());
+        }
+
+        allDevicesList = mainActivity.getDeviceList();
     }
 
     public void changeSwitchState(int adapterPosition, boolean b) {
@@ -99,4 +119,6 @@ public class AllFragment extends Fragment {
             Log.e(TAG, "changeSwitchState: ");
         }
     }
+
+
 }

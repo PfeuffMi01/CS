@@ -56,10 +56,10 @@ import static com.example.michael.cs.Constants.STATUS_OK;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    public static final int ALL_FRAGMENT = 1;
-    public static final int ROOM_FRAGMENT = 2;
-    public static final int GROUP_FRAGMENT = 3;
-    public static final int DEVICE_SINGLE_SORT_LIST_FRAGMENT = 4;
+    public static final int ALL_FRAGMENT = 0;
+    public static final int ROOM_FRAGMENT = 1;
+    public static final int GROUP_FRAGMENT = 2;
+    public static final int DEVICE_SINGLE_SORT_LIST_FRAGMENT = 3;
 
     public int CURRENT_FRAGMENT;
     public int CURRENT_LIST_CATEGORY;
@@ -86,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initExampleData();
         initFragment();
         initTabs();
-        initExampleData();
     }
 
     private void initFragment() {
@@ -123,12 +123,25 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrollStateChanged(int state) {}
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrollStateChanged(int state) {
+            }
+
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
             public void onPageSelected(int position) {
+                Log.i(TAG, "onPageSelected: " + position);
+                if (position == ALL_FRAGMENT) {
+                    CURRENT_FRAGMENT = ALL_FRAGMENT;
+                } else {
+                    CURRENT_FRAGMENT = DEVICE_SINGLE_SORT_LIST_FRAGMENT;
 
-                // Check if this is the page you want.
+                    if (position == ROOM_FRAGMENT) {
+                        CURRENT_LIST_CATEGORY = ROOM_FRAGMENT;
+                    } else if (position == GROUP_FRAGMENT) {
+                        CURRENT_LIST_CATEGORY = GROUP_FRAGMENT;
+                    }
+                }
             }
         });
 
@@ -145,9 +158,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AllFragment(), "Alle");
-        adapter.addFragment(new RoomFragment(), "Räume");
-        adapter.addFragment(new GroupFragment(), "Gruppen");
+        adapter.addFragment(allFragment, "Alle");
+        adapter.addFragment(roomFragment, "Räume");
+        adapter.addFragment(groupFragment, "Gruppen");
         viewPager.setAdapter(adapter);
     }
 
@@ -242,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         deviceList.add(new WeatherStation("weather1", true, "Wetterstation", gardenRoom, weatherStat, 75, 5));
 
         deviceList.add(new DoorSensor("door1", true, "Türsensor Küche", kitchenRoom, doorSens, STATUS_OK));
-        deviceList.add(new WindowSensor("window1", true, "Fenstersensor Schlafzimmer", bedRoom, windowSens,STATUS_OK));
+        deviceList.add(new WindowSensor("window1", true, "Fenstersensor Schlafzimmer", bedRoom, windowSens, STATUS_OK));
 
     }
 
@@ -324,21 +337,43 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void listItemHasBeenClicked(int adapterPosition, int listItemType, View view) {
-        Log.i(TAG, "listItemHasBeenClicked: " + adapterPosition + " " + view.getId());
-        Log.i(TAG, "listItemHasBeenClicked: " + CURRENT_FRAGMENT);
-        if (CURRENT_FRAGMENT != DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
+        Log.i(TAG, "listItemHasBeenClicked: Pos: " + adapterPosition + " Cur. Frag.: " + CURRENT_FRAGMENT);
+
+        if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+            Log.i(TAG, "listItemHasBeenClicked: ALL_FRAGMENT");
             allFragment.initDialogForItemClickOnAllDeviceList(adapterPosition, listItemType);
-        } else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
+        } /*else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
             deviceSingleSortListFragment.initDialogForItemClickOnSingleSortDeviceList(adapterPosition, listItemType);
-        }
+        }*/
 
     }
 
     public void switchInItemHasBeenClicked(int adapterPosition, boolean b) {
-        if (CURRENT_FRAGMENT != DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
+
+        Log.i(TAG, "switchInItemHasBeenClicked: " + adapterPosition + " " + b);
+
+        if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+            deviceList.get(adapterPosition).setOn(!deviceList.get(adapterPosition).isOn());
+        } else {
+
+            deviceSingleSortListFragment.changeSwitchState(adapterPosition, b);
+
+          /*  if (CURRENT_LIST_CATEGORY == GROUP_FRAGMENT) {
+
+            } else if (CURRENT_LIST_CATEGORY == ROOM_FRAGMENT) {
+
+            }*/
+        }
+    }
+
+     /*   if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+
+            deviceList.get(adapterPosition).setOn(!deviceList.get(adapterPosition).isOn());
+            listener.onDataHasChanged(adapterPosition);
+
             allFragment.changeSwitchState(adapterPosition, b);
         } else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
             deviceSingleSortListFragment.changeSwitchState(adapterPosition, b);
-        }
-    }
+        }*/
+
 }

@@ -71,7 +71,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
 
         TextView name;
         TextView room;
@@ -89,8 +89,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 //            this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
+            this.switchOnOff.setOnCheckedChangeListener(this);
         }
 
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            int adapterPosition = getAdapterPosition();
+            ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+        }
     }
 
 
@@ -104,13 +110,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.humidity = (TextView) v.findViewById(R.id.humidity);
             this.temperature = (TextView) v.findViewById(R.id.temperature);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WEATHER_STATION);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,13 +138,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.lastMovement = (TextView) v.findViewById(R.id.last_movement);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_MOVEMENT_SENSOR);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,14 +165,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             super(v);
 
             this.status = (TextView) v.findViewById(R.id.status);
-
+/*
             switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_DOOR_SENSOR);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -188,13 +194,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.status = (TextView) v.findViewById(R.id.status);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WINDOW_SENSOR);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -213,14 +219,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         public GenericDeviceViewHolder(View v) {
             super(v);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_GENERIC_DEVICE);
                 }
             });
-
+*/
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -247,13 +253,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.dim = (TextView) v.findViewById(R.id.dim);
             this.status = (TextView) v.findViewById(R.id.status);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_RGB);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -277,13 +283,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.dim = (TextView) v.findViewById(R.id.dim);
             this.status = (TextView) v.findViewById(R.id.status);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_WHITE);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -306,13 +312,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.temp = (TextView) v.findViewById(R.id.temperature);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_TEMP);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -334,13 +340,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.status = (TextView) v.findViewById(R.id.status);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -364,13 +370,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.status = (TextView) v.findViewById(R.id.status);
             this.consumption = (TextView) v.findViewById(R.id.consumption);
 
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
                     switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
                 }
-            });
+            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -506,8 +512,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 //            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.lastMovement.setText(device.getLastMovement());
-            holder.switchOnOff.setChecked(device.isOn());
+            holder.lastMovement.setText("Letzte Bewegung: " + device.getLastMovement());
+//            holder.switchOnOff.setChecked(device.isOn());
+            holder.switchOnOff.setVisibility(GONE);
         }
 
         if (itemType == LIST_ITEM_PLUG_CONSUMPTION) {
@@ -540,7 +547,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.room.setText(device.getRoom().getName());
             holder.temp.setText("Temp.: " + device.getTemp() + " " + context.getString(R.string.celcius));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchOnOff.setChecked(device.isOn());
+//            holder.switchOnOff.setChecked(device.isOn());
+            holder.switchOnOff.setVisibility(GONE);
         }
 
         if (itemType == LIST_ITEM_LAMP_WHITE) {
@@ -603,7 +611,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.status.setText("Status: " + device.getStatus());
-            holder.switchOnOff.setChecked(device.isOn());
+//            holder.switchOnOff.setChecked(device.isOn());
+            holder.switchOnOff.setVisibility(GONE);
         }
 
         if (itemType == LIST_ITEM_WINDOW_SENSOR) {
@@ -619,7 +628,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.status.setText("Status: " + device.getStatus());
-            holder.switchOnOff.setChecked(device.isOn());
+//            holder.switchOnOff.setChecked(device.isOn());
+            holder.switchOnOff.setVisibility(GONE);
         }
 
         if (itemType == LIST_ITEM_WEATHER_STATION) {
@@ -637,7 +647,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.humidity.setText("Feucht.: " + device.getHumidity() + "%");
             holder.temperature.setText("Temp.: " + device.getTemperature() + "°C");
-            holder.switchOnOff.setChecked(device.isOn());
+//            holder.switchOnOff.setChecked(device.isOn());
+            holder.switchOnOff.setVisibility(GONE);
         }
     }
 
