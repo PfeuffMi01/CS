@@ -5,28 +5,16 @@
 
     <include layout="@layout/list_item_divider_small" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/group_footer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="20dp"
-            android:text="Steckdose"
-            android:textColor="@color/text_gray"
-            android:textSize="@dimen/group_room_list_item_text_size"
-            android:textStyle="bold"
-            android:visibility="gone" />
+        android:paddingLeft="@dimen/spacing_left_room_footer"
+      >
 
         <ImageView
             android:id="@+id/room_footer_img"
+            android:layout_alignParentBottom="true"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginRight="15dp" />
@@ -34,12 +22,13 @@
         <TextView
             android:id="@+id/room_footer"
             android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/room_footer_img"
+            android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:text="Wohnzimmer"
             android:textColor="@color/text_gray"
             android:textSize="@dimen/group_room_list_item_text_size" />
 
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
 

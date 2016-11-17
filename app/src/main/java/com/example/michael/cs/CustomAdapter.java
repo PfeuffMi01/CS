@@ -28,6 +28,7 @@ import com.example.michael.cs.Data.Room;
 
 import java.util.ArrayList;
 
+import static android.view.View.GONE;
 import static com.example.michael.cs.Constants.LIST_ITEM_DOOR_SENSOR;
 import static com.example.michael.cs.Constants.LIST_ITEM_GENERIC_DEVICE;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
@@ -74,16 +75,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         TextView name;
         TextView room;
-        TextView group;
+        ImageView icon;
+        //        TextView group;
         ImageView roomImg;
         SwitchCompat switchOnOff;
 
         public ViewHolder(View v) {
             super(v);
 
+            this.icon = (ImageView) v.findViewById(R.id.image);
             this.name = (TextView) v.findViewById(R.id.device_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
+//            this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
         }
@@ -170,7 +173,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 public void onClick(View view) {
 
                     int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_RGB, view);
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_DOOR_SENSOR, view);
                 }
             });
         }
@@ -452,6 +455,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new MovementSensorViewHolder(v);
                 break;
 
+            case LIST_ITEM_DOOR_SENSOR:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_door_sensor, viewGroup, false);
+                returnViewHolder = new DoorSensorViewHolder(v);
+                break;
+
+            case LIST_ITEM_WINDOW_SENSOR:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_window_sensor, viewGroup, false);
+                returnViewHolder = new WindowSensorViewHolder(v);
+                break;
+
             default:
                 break;
         }
@@ -472,8 +487,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             PlugViewHolder holder = (PlugViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_group));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
+            holder.status.setText("Status: " + device.getStatus());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchOnOff.setChecked(device.isOn());
         }
@@ -485,7 +502,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             MovementSensorViewHolder holder = (MovementSensorViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.movement_sens));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.lastMovement.setText(device.getLastMovement());
@@ -499,11 +517,15 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             PlugWithConsumptionViewHolder holder = (PlugWithConsumptionViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_consumption));
+            //            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.consumption.setText("Verbrauch: " + device.getConsumption());
+            holder.consumption.setText("Σ-Verbrauch: " + device.getConsumption() + " Watt");
             holder.switchOnOff.setChecked(device.isOn());
+
+            holder.status.setVisibility(GONE);
+
         }
 
         if (itemType == LIST_ITEM_TEMP) {
@@ -513,7 +535,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             TempViewHolder holder = (TempViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.temp));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.temp.setText("Temp.: " + device.getTemp() + " " + context.getString(R.string.celcius));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -527,7 +550,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             WhiteLampViewHolder holder = (WhiteLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_white));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -542,7 +566,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             RGBLampViewHolder holder = (RGBLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_rgb));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -558,9 +583,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
 
             GenericDeviceViewHolder holder = (GenericDeviceViewHolder) viewHolder;
-
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.generic_device));
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchOnOff.setChecked(device.isOn());
@@ -573,10 +598,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             DoorSensorViewHolder holder = (DoorSensorViewHolder) viewHolder;
 
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.door_sens));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.status.setText(device.getStatus());
+            holder.status.setText("Status: " + device.getStatus());
             holder.switchOnOff.setChecked(device.isOn());
         }
 
@@ -588,10 +614,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             WindowSensorViewHolder holder = (WindowSensorViewHolder) viewHolder;
 
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.window_sens));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.status.setText(device.getStatus());
+            holder.status.setText("Status: " + device.getStatus());
             holder.switchOnOff.setChecked(device.isOn());
         }
 
@@ -604,11 +631,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             WeatherStationViewHolder holder = (WeatherStationViewHolder) viewHolder;
 
             holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.weather_station));
+//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.humidity.setText("Feucht.: " + device.getHumidity()+"%");
-            holder.temperature.setText("Temp.: " + device.getTemperature()+"°C");
+            holder.humidity.setText("Feucht.: " + device.getHumidity() + "%");
+            holder.temperature.setText("Temp.: " + device.getTemperature() + "°C");
             holder.switchOnOff.setChecked(device.isOn());
         }
     }
@@ -690,7 +718,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             return LIST_ITEM_MOVEMENT_SENSOR;
         } else if (deviceList.get(position) instanceof WeatherStation) {
             return LIST_ITEM_WEATHER_STATION;
-        }else
+        } else
 
         {
             return -1;

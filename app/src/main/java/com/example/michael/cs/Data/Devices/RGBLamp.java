@@ -37,7 +37,6 @@ public class RGBLamp extends Lamp {
 
         this.colorHex = colorHex;
         this.status = status;
-
     }
 
 

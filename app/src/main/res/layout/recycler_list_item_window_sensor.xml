@@ -7,7 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
 
         <RelativeLayout
 
@@ -20,28 +23,23 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="@dimen/icon_size_device_recycler_item"
-                    android:layout_height="@dimen/icon_size_device_recycler_item"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/window_sens" />
+                <include layout="@layout/image_list_item" />
 
-                <include layout="@layout/text_for_list_item" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/status"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/text_gray"
-                    android:textSize="15sp" />
+                    android:orientation="vertical">
+
+                    <include layout="@layout/text_for_list_item" />
+
+                    <TextView
+                        android:id="@+id/status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
             </LinearLayout>

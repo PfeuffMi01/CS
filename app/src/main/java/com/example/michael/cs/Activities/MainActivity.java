@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 
 import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.Data.Devices.DoorSensor;
 import com.example.michael.cs.Data.Devices.MovementSensor;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.PlugWithConsumption;
@@ -24,6 +25,7 @@ import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
 import com.example.michael.cs.Data.Devices.WeatherStation;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
+import com.example.michael.cs.Data.Devices.WindowSensor;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.Fragments.AllFragment;
@@ -54,7 +56,6 @@ import static com.example.michael.cs.Constants.STATUS_OK;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    public static final int HUE_FRAGMENT = 0;
     public static final int ALL_FRAGMENT = 1;
     public static final int ROOM_FRAGMENT = 2;
     public static final int GROUP_FRAGMENT = 3;
@@ -104,14 +105,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fragment_container, deviceSingleSortListFragment, "DeviceSingleSortListFragment");
         fragmentTransaction.commit();
 
-
-    }
-
-    private void initTabs() {
-
         allFragment = new AllFragment();
         roomFragment = new RoomFragment();
         groupFragment = new GroupFragment();
+    }
+
+    private void initTabs() {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,6 +121,18 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            public void onPageSelected(int position) {
+
+                // Check if this is the page you want.
+            }
+        });
+
+        CURRENT_FRAGMENT = ALL_FRAGMENT;
     }
 
     private void setupTabIcons() {
@@ -168,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
+            Log.i(TAG, "getPageTitle: " + fragmentTitleList.get(position));
             return fragmentTitleList.get(position);
         }
     }
@@ -214,33 +226,24 @@ public class MainActivity extends AppCompatActivity {
         groupList.add(weatherStat);
 //        groupList.add(genericDevices);
 
-        deviceList.add(new RGBLamp("rgblamp1", false, "Lampe 1", livingRoom, lamps, 0, "#f5500c", STATUS_OK));
-        deviceList.add(new RGBLamp("rgblamp2", false, "Lampe 4", garageRoom, lamps, 50, "#f5500c", STATUS_OK));
-      /*  deviceList.add(new RGBLamp("rgblamp3", false, "Lampe 5", diningRoom, lamps, 60, "#f5500c", STATUS_OK));
-        deviceList.add(new RGBLamp("rgblamp4", false, "Lampe 6", livingRoom, lamps, 100, "#f5500c", STATUS_OK));*/
-
-        deviceList.add(new WhiteLamp("whitelamp1", false, "Lampe 2", bedRoom, lamps, 12, STATUS_OK));
-        deviceList.add(new WhiteLamp("whitelamp2", true, "Lampe 3", garageRoom, lamps, 27, STATUS_OK));
-      /*  deviceList.add(new WhiteLamp("whitelamp3", false, "Lampe 7", bathRoom, lamps, 0, STATUS_OK));
-        deviceList.add(new WhiteLamp("whitelamp4", true, "Lampe 8", bathRoom, lamps, 80, STATUS_OK));*/
-
-        deviceList.add(new Temp("temp1", true, "Temp 1", diningRoom, temp, 24));
-       /* deviceList.add(new Temp("temp2", false, "Temp 2", livingRoom, temp, 10));
-        deviceList.add(new Temp("temp3", true, "Temp 3", bedRoom, temp, 30));*/
-
-        deviceList.add(new Plug("plug1", false, "Steckdose 1", bathRoom, plugs));
-        deviceList.add(new PlugWithConsumption("plug2", false, "Steckdose 2", kitchenRoom, plugs, "5000"));
-      /*  deviceList.add(new Plug("plug2", true, "Steckdose 2", garageRoom, plugs));
-        deviceList.add(new Plug("plug3", false, "Steckdose 3", livingRoom, plugs));*/
-
-        deviceList.add(new MovementSensor("move1", true, "Movement Sens 1", gardenRoom, movementSens, "17.11.16 12:45 Uhr"));
+        deviceList.add(new RGBLamp("rgblamp1", false, "Philips Hue", livingRoom, lamps, 0, "#f5500c", STATUS_OK));
+        deviceList.add(new RGBLamp("rgblamp2", false, "Osram LED", garageRoom, lamps, 50, "#f5500c", STATUS_OK));
 
 
+        deviceList.add(new WhiteLamp("whitelamp1", false, "Philips weiß 1", bedRoom, lamps, 12, STATUS_OK));
+        deviceList.add(new WhiteLamp("whitelamp2", true, "Philips weiß 2", garageRoom, lamps, 27, STATUS_OK));
+
+        deviceList.add(new Temp("temp1", true, "Temperatur Esszimmer", diningRoom, temp, 24));
+
+        deviceList.add(new Plug("plug1", false, "HomeMatic Steckodose", bathRoom, plugs, STATUS_OK));
+        deviceList.add(new PlugWithConsumption("plug2", false, "Elgato Steckdose", kitchenRoom, plugs, STATUS_OK, "5000"));
+
+        deviceList.add(new MovementSensor("move1", true, "Philips Bewegungsmelder", gardenRoom, movementSens, "17.11.16 12:45 Uhr"));
         deviceList.add(new WeatherStation("weather1", true, "Wetterstation", gardenRoom, weatherStat, 75, 5));
 
-//        deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), false, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, garageRoom, genericDevices));
-      /*  deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), true, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, bathRoom, genericDevices));
-        deviceList.add(new GenericDevice("genericdevice_" + deviceList.size(), false, "Unbekanntes Gerät " + ++GenericDevice.numberOfGenericevices, bedRoom, genericDevices));*/
+        deviceList.add(new DoorSensor("door1", true, "Türsensor Küche", kitchenRoom, doorSens, STATUS_OK));
+        deviceList.add(new WindowSensor("window1", true, "Fenstersensor Schlafzimmer", bedRoom, windowSens,STATUS_OK));
+
     }
 
 

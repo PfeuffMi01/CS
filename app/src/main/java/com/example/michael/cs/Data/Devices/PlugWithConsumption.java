@@ -10,11 +10,12 @@ import com.example.michael.cs.Data.Room;
 public class PlugWithConsumption extends Plug {
     private String consumption;
 
-    public PlugWithConsumption(String _id, boolean isOn, String name, Room room, Group group, String consumption) {
-        super(_id, isOn, name, room, group);
+    public PlugWithConsumption(String _id, boolean isOn, String name, Room room, Group group, String status, String consumption) {
+        super(_id, isOn, name, room, group, status);
 
         this.consumption = consumption;
     }
+
 
     public String getConsumption() {
         return consumption;

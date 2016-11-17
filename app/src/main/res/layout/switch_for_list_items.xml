@@ -4,6 +4,4 @@
     android:layout_height="match_parent"
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
-    android:layout_margin="10dp"
-    android:layout_toRightOf="@id/ll_infos"
-    android:paddingRight="11dp" />
+    android:layout_toRightOf="@id/ll_infos" />

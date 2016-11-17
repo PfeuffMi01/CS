@@ -9,7 +9,20 @@ import com.example.michael.cs.Data.Room;
  */
 
 public class Plug extends Device {
-    public Plug(String _id, boolean isOn, String name, Room room, Group group) {
+
+    private String status;
+
+    public Plug(String _id, boolean isOn, String name, Room room, Group group, String status) {
         super(_id, isOn, name, room, group);
+
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
