@@ -8,15 +8,18 @@ public class Constants {
 
     public static final int LIST_ITEM_TEMP = 0;
     public static final int LIST_ITEM_PLUG = 1;
-    public static final int LIST_ITEM_CIRCUIT = 2;
+    public static final int LIST_ITEM_PLUG_CONSUMPTION = 2;
     public static final int LIST_ITEM_LAMP_WHITE = 3;
     public static final int LIST_ITEM_LAMP_RGB = 4;
     public static final int LIST_ITEM_GENERIC_DEVICE = 5;
+    public static final int LIST_ITEM_DOOR_SENSOR = 6;
+    public static final int LIST_ITEM_WINDOW_SENSOR = 7;
+    public static final int LIST_ITEM_MOVEMENT_SENSOR = 8;
+    public static final int LIST_ITEM_WEATHER_STATION = 9;
 
     public static final int GROUPS = 1;
     public static final int ROOMS = 2;
 
-    public static final String GROUP_CIRCUITS = "Schalter";
     public static final String GROUP_LAMPS = "Lichter";
     public static final String GROUP_PLUGS = "Steckdosen";
     public static final String GROUP_TEMP = "Temperatur";
@@ -34,10 +37,11 @@ public class Constants {
     public static final String ROOM_GARDEN = "Garten";
     public static final String ROOM_HALLWAY = "Flur";
     public static final String ROOM_KITCHEN = "Küche";
+    public static final String STATUS_OK = "OK";
 
 
-    public static String FHEM_IP ="http://192.168.178.21";
-    public static String FHEM_PORT ="8083";
+    public static String FHEM_IP = "http://192.168.178.21";
+    public static String FHEM_PORT = "8083";
 
     public static final int MAX_TEMP = 30;
     public static final int MIN_TEMP = 10;

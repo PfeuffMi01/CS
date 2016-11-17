@@ -25,8 +25,20 @@ import static com.example.michael.cs.ListItem.TAG;
 
 public class WhiteLamp extends Lamp {
 
-    public WhiteLamp(String _id, boolean isOn, String name, Room room, Group group, int dim) {
+    public String status;
+
+    public WhiteLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String status) {
         super(_id, isOn, name, room, group, dim);
+
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void showDialogForThisDevice(final MainActivity mainActivity) {

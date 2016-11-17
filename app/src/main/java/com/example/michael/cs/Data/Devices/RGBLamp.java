@@ -28,15 +28,18 @@ import static com.example.michael.cs.ListItem.TAG;
 
 public class RGBLamp extends Lamp {
 
-    public static final int imgRgbLamp = R.drawable.lamp_rgb;
     public String colorHex;
+    public String status;
 
-    public RGBLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String colorHex) {
+
+    public RGBLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String colorHex, String status) {
         super(_id, isOn, name, room, group, dim);
 
         this.colorHex = colorHex;
+        this.status = status;
 
     }
+
 
     public String getColorHex() {
         return colorHex;
@@ -44,6 +47,15 @@ public class RGBLamp extends Lamp {
 
     public void setColorHex(String colorHex) {
         this.colorHex = colorHex;
+    }
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void showDialogForThisDevice(final MainActivity mainActivity) {

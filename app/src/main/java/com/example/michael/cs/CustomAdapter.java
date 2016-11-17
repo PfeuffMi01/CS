@@ -13,28 +13,38 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Data.Devices.Circuit;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.Data.Devices.DoorSensor;
 import com.example.michael.cs.Data.Devices.GenericDevice;
+import com.example.michael.cs.Data.Devices.MovementSensor;
 import com.example.michael.cs.Data.Devices.Plug;
+import com.example.michael.cs.Data.Devices.PlugWithConsumption;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
+import com.example.michael.cs.Data.Devices.WeatherStation;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
+import com.example.michael.cs.Data.Devices.WindowSensor;
 import com.example.michael.cs.Data.Room;
 
 import java.util.ArrayList;
 
-import static com.example.michael.cs.Constants.LIST_ITEM_CIRCUIT;
+import static com.example.michael.cs.Constants.LIST_ITEM_DOOR_SENSOR;
 import static com.example.michael.cs.Constants.LIST_ITEM_GENERIC_DEVICE;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
+import static com.example.michael.cs.Constants.LIST_ITEM_MOVEMENT_SENSOR;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
+import static com.example.michael.cs.Constants.LIST_ITEM_PLUG_CONSUMPTION;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
+import static com.example.michael.cs.Constants.LIST_ITEM_WEATHER_STATION;
+import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
 import static com.example.michael.cs.Constants.ROOM_BATH;
 import static com.example.michael.cs.Constants.ROOM_BED;
 import static com.example.michael.cs.Constants.ROOM_DINING;
 import static com.example.michael.cs.Constants.ROOM_GARAGE;
 import static com.example.michael.cs.Constants.ROOM_GARDEN;
+import static com.example.michael.cs.Constants.ROOM_HALLWAY;
+import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
 
 /**
@@ -62,35 +72,96 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(View v) {
-            super(v);
-
-        }
-
-    }
-
-    public class GenericDeviceViewHolder extends ViewHolder {
-
         TextView name;
         TextView room;
         TextView group;
         ImageView roomImg;
-        SwitchCompat switchGnerericDevice;
+        SwitchCompat switchOnOff;
 
-        public GenericDeviceViewHolder(View v) {
+        public ViewHolder(View v) {
             super(v);
 
-            this.name = (TextView) v.findViewById(R.id.generic_device_name);
+            this.name = (TextView) v.findViewById(R.id.device_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
             this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchGnerericDevice = (SwitchCompat) v.findViewById(R.id.switch_generic_device);
+            this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
+        }
 
-            switchGnerericDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    }
+
+
+    public class WeatherStationViewHolder extends ViewHolder {
+
+        TextView humidity, temperature;
+
+        public WeatherStationViewHolder(View v) {
+            super(v);
+
+            this.humidity = (TextView) v.findViewById(R.id.humidity);
+            this.temperature = (TextView) v.findViewById(R.id.temperature);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_GENERIC_DEVICE);
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WEATHER_STATION);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WEATHER_STATION, view);
+                }
+            });
+        }
+    }
+
+    public class MovementSensorViewHolder extends ViewHolder {
+
+        TextView lastMovement;
+
+        public MovementSensorViewHolder(View v) {
+            super(v);
+
+            this.lastMovement = (TextView) v.findViewById(R.id.last_movement);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_MOVEMENT_SENSOR);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_MOVEMENT_SENSOR, view);
+                }
+            });
+        }
+    }
+
+    public class DoorSensorViewHolder extends ViewHolder {
+
+        TextView status;
+
+        public DoorSensorViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_DOOR_SENSOR);
                 }
             });
 
@@ -105,29 +176,75 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
+    public class WindowSensorViewHolder extends ViewHolder {
+
+        TextView status;
+
+        public WindowSensorViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WINDOW_SENSOR);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WINDOW_SENSOR, view);
+                }
+            });
+        }
+    }
+
+    public class GenericDeviceViewHolder extends ViewHolder {
+
+
+        public GenericDeviceViewHolder(View v) {
+            super(v);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    int adapterPosition = getAdapterPosition();
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_GENERIC_DEVICE);
+                }
+            });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_GENERIC_DEVICE, view);
+                }
+            });
+        }
+    }
+
 
     public class RGBLampViewHolder extends ViewHolder {
 
-        TextView name;
         TextView color;
         TextView dim;
-        TextView room;
-        TextView group;
-        ImageView roomImg;
-        SwitchCompat switchRGBLamp;
+        TextView status;
+
 
         public RGBLampViewHolder(View v) {
             super(v);
 
-            this.name = (TextView) v.findViewById(R.id.lamp_name);
-            this.color = (TextView) v.findViewById(R.id.lamp_color);
-            this.dim = (TextView) v.findViewById(R.id.lamp_dim);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchRGBLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
+            this.color = (TextView) v.findViewById(R.id.color);
+            this.dim = (TextView) v.findViewById(R.id.dim);
+            this.status = (TextView) v.findViewById(R.id.status);
 
-            switchRGBLamp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
@@ -147,24 +264,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
 
-    public class LampViewHolder extends ViewHolder {
-        TextView name;
+    public class WhiteLampViewHolder extends ViewHolder {
         TextView dim;
-        TextView room;
-        TextView group;
-        ImageView roomImg;
-        SwitchCompat switchLamp;
+        TextView status;
 
-        public LampViewHolder(View v) {
+        public WhiteLampViewHolder(View v) {
             super(v);
-            this.name = (TextView) v.findViewById(R.id.lamp_name);
-            this.dim = (TextView) v.findViewById(R.id.lamp_dim);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchLamp = (SwitchCompat) v.findViewById(R.id.switch_lamp);
 
-            switchLamp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            this.dim = (TextView) v.findViewById(R.id.dim);
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
@@ -184,23 +294,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
     public class TempViewHolder extends ViewHolder {
-        TextView name;
+
         TextView temp;
-        TextView room;
-        TextView group;
-        ImageView roomImg;
-        SwitchCompat switchTemp;
+
 
         public TempViewHolder(View v) {
             super(v);
-            this.name = (TextView) v.findViewById(R.id.temp_name);
-            this.temp = (TextView) v.findViewById(R.id.temp_value);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchTemp = (SwitchCompat) v.findViewById(R.id.switch_temp);
 
-            switchTemp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            this.temp = (TextView) v.findViewById(R.id.temperature);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
@@ -220,21 +323,15 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
     public class PlugViewHolder extends ViewHolder {
-        TextView name;
-        TextView room;
-        TextView group;
-        ImageView roomImg;
-        SwitchCompat switchPlug;
+
+        TextView status;
 
         public PlugViewHolder(View v) {
             super(v);
-            this.name = (TextView) v.findViewById(R.id.plug_name);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchPlug = (SwitchCompat) v.findViewById(R.id.switch_plug);
 
-            switchPlug.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
@@ -253,26 +350,22 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
-    public class CircuitViewHolder extends ViewHolder {
-        TextView name;
-        TextView room;
-        TextView group;
-        ImageView roomImg;
-        SwitchCompat switchCircuit;
+    public class PlugWithConsumptionViewHolder extends ViewHolder {
 
-        public CircuitViewHolder(View v) {
+        TextView status;
+        TextView consumption;
+
+        public PlugWithConsumptionViewHolder(View v) {
             super(v);
-            this.name = (TextView) v.findViewById(R.id.circuit_name);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.group = (TextView) v.findViewById(R.id.group_footer);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchCircuit = (SwitchCompat) v.findViewById(R.id.switch_circuit);
 
-            switchCircuit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            this.status = (TextView) v.findViewById(R.id.status);
+            this.consumption = (TextView) v.findViewById(R.id.consumption);
+
+            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_CIRCUIT);
+                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
                 }
             });
 
@@ -281,11 +374,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 public void onClick(View view) {
 
                     int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_CIRCUIT, view);
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
                 }
             });
         }
     }
+
 
     public CustomAdapter(Context contexts, ArrayList<Device> deviceList) {
 
@@ -314,23 +408,29 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new TempViewHolder(v);
                 break;
 
+            case LIST_ITEM_WEATHER_STATION:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_weather_stat, viewGroup, false);
+                returnViewHolder = new WeatherStationViewHolder(v);
+                break;
+
             case LIST_ITEM_PLUG:
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.recycler_list_item_plug, viewGroup, false);
                 returnViewHolder = new PlugViewHolder(v);
                 break;
 
-            case LIST_ITEM_CIRCUIT:
-
+            case LIST_ITEM_PLUG_CONSUMPTION:
                 v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.recycler_list_item_circuit, viewGroup, false);
-                returnViewHolder = new CircuitViewHolder(v);
+                        .inflate(R.layout.recycler_list_item_plug_consumption, viewGroup, false);
+                returnViewHolder = new PlugWithConsumptionViewHolder(v);
                 break;
+
 
             case LIST_ITEM_LAMP_WHITE:
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.recycler_list_item_lamp_white, viewGroup, false);
-                returnViewHolder = new LampViewHolder(v);
+                returnViewHolder = new WhiteLampViewHolder(v);
                 break;
 
 
@@ -344,6 +444,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.recycler_list_item_generic, viewGroup, false);
                 returnViewHolder = new GenericDeviceViewHolder(v);
+                break;
+
+            case LIST_ITEM_MOVEMENT_SENSOR:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_movement_sensor, viewGroup, false);
+                returnViewHolder = new MovementSensorViewHolder(v);
                 break;
 
             default:
@@ -369,8 +475,37 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchPlug.setChecked(device.isOn());
+            holder.switchOnOff.setChecked(device.isOn());
         }
+
+        if (itemType == LIST_ITEM_MOVEMENT_SENSOR) {
+
+            Log.i(TAG, "onBindViewHolder: in Movement Sensor");
+            MovementSensor device = (MovementSensor) deviceList.get(position);
+
+            MovementSensorViewHolder holder = (MovementSensorViewHolder) viewHolder;
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.lastMovement.setText(device.getLastMovement());
+            holder.switchOnOff.setChecked(device.isOn());
+        }
+
+        if (itemType == LIST_ITEM_PLUG_CONSUMPTION) {
+
+            Log.i(TAG, "onBindViewHolder: in Plug Consumption");
+            PlugWithConsumption device = (PlugWithConsumption) deviceList.get(position);
+
+            PlugWithConsumptionViewHolder holder = (PlugWithConsumptionViewHolder) viewHolder;
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.consumption.setText("Verbrauch: " + device.getConsumption());
+            holder.switchOnOff.setChecked(device.isOn());
+        }
+
         if (itemType == LIST_ITEM_TEMP) {
 
             Log.i(TAG, "onBindViewHolder: in Temp");
@@ -380,34 +515,24 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
-            holder.temp.setText(device.getTemp() + " " + context.getString(R.string.celcius));
+            holder.temp.setText("Temp.: " + device.getTemp() + " " + context.getString(R.string.celcius));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchTemp.setChecked(device.isOn());
+            holder.switchOnOff.setChecked(device.isOn());
         }
-        if (itemType == LIST_ITEM_CIRCUIT) {
 
-            Log.i(TAG, "onBindViewHolder: in Circuit");
-            Circuit device = (Circuit) deviceList.get(position);
-
-            CircuitViewHolder holder = (CircuitViewHolder) viewHolder;
-            holder.name.setText(device.getName());
-            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(device.getRoom().getName());
-            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchCircuit.setChecked(device.isOn());
-        }
         if (itemType == LIST_ITEM_LAMP_WHITE) {
 
             Log.i(TAG, "onBindViewHolder: in WhiteLamp");
             WhiteLamp device = (WhiteLamp) deviceList.get(position);
 
-            LampViewHolder holder = (LampViewHolder) viewHolder;
+            WhiteLampViewHolder holder = (WhiteLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
-            holder.dim.setText(device.getDim() + " " + context.getString(R.string.percent));
+            holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchLamp.setChecked(device.isOn());
+            holder.switchOnOff.setChecked(device.isOn());
+            holder.status.setText("Status: " + device.getStatus());
         }
 
         if (itemType == LIST_ITEM_LAMP_RGB) {
@@ -419,10 +544,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.name.setText(device.getName());
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
-            holder.dim.setText(device.getDim() + " " + context.getString(R.string.percent));
+            holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.color.setText(device.getColorHex());
-            holder.switchRGBLamp.setChecked(device.isOn());
+            holder.color.setText("Farbe: " + device.getColorHex());
+            holder.switchOnOff.setChecked(device.isOn());
+            holder.status.setText("Status: " + device.getStatus());
         }
 
         if (itemType == LIST_ITEM_GENERIC_DEVICE) {
@@ -437,7 +563,53 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchGnerericDevice.setChecked(device.isOn());
+            holder.switchOnOff.setChecked(device.isOn());
+        }
+
+        if (itemType == LIST_ITEM_DOOR_SENSOR) {
+
+            Log.i(TAG, "onBindViewHolder: in Door Sens");
+            DoorSensor device = (DoorSensor) deviceList.get(position);
+            DoorSensorViewHolder holder = (DoorSensorViewHolder) viewHolder;
+
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.status.setText(device.getStatus());
+            holder.switchOnOff.setChecked(device.isOn());
+        }
+
+        if (itemType == LIST_ITEM_WINDOW_SENSOR) {
+
+            Log.i(TAG, "onBindViewHolder: in Window Sens");
+            WindowSensor device = (WindowSensor) deviceList.get(position);
+
+            WindowSensorViewHolder holder = (WindowSensorViewHolder) viewHolder;
+
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.status.setText(device.getStatus());
+            holder.switchOnOff.setChecked(device.isOn());
+        }
+
+        if (itemType == LIST_ITEM_WEATHER_STATION) {
+
+            Log.i(TAG, "onBindViewHolder: in Weather Stat");
+            WeatherStation device = (WeatherStation) deviceList.get(position);
+
+
+            WeatherStationViewHolder holder = (WeatherStationViewHolder) viewHolder;
+
+            holder.name.setText(device.getName());
+            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
+            holder.room.setText(device.getRoom().getName());
+            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
+            holder.humidity.setText("Feucht.: " + device.getHumidity()+"%");
+            holder.temperature.setText("Temp.: " + device.getTemperature()+"°C");
+            holder.switchOnOff.setChecked(device.isOn());
         }
     }
 
@@ -474,6 +646,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 img = context.getResources().getDrawable(R.drawable.living_room);
                 break;
 
+            case ROOM_HALLWAY:
+                img = context.getResources().getDrawable(R.drawable.hallway);
+                break;
+
+            case ROOM_KITCHEN:
+                img = context.getResources().getDrawable(R.drawable.kitchen_room);
+                break;
+
             default:
                 img = context.getResources().getDrawable(R.drawable.home);
                 break;
@@ -490,29 +670,29 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public int getItemViewType(int position) {
 
-        if (deviceList.get(position) instanceof Plug) {
+        if (deviceList.get(position) instanceof PlugWithConsumption) {
+            return Constants.LIST_ITEM_PLUG_CONSUMPTION;
+        } else if (deviceList.get(position) instanceof Plug) {
             return Constants.LIST_ITEM_PLUG;
-        }
-
-        if (deviceList.get(position) instanceof WhiteLamp) {
+        } else if (deviceList.get(position) instanceof WhiteLamp) {
             return Constants.LIST_ITEM_LAMP_WHITE;
-        }
-
-        if (deviceList.get(position) instanceof RGBLamp) {
+        } else if (deviceList.get(position) instanceof RGBLamp) {
             return Constants.LIST_ITEM_LAMP_RGB;
-        }
-
-        if (deviceList.get(position) instanceof Temp) {
+        } else if (deviceList.get(position) instanceof Temp) {
             return LIST_ITEM_TEMP;
-        }
-
-        if (deviceList.get(position) instanceof GenericDevice) {
+        } else if (deviceList.get(position) instanceof GenericDevice) {
             return LIST_ITEM_GENERIC_DEVICE;
-        }
+        } else if (deviceList.get(position) instanceof WindowSensor) {
+            return LIST_ITEM_WINDOW_SENSOR;
+        } else if (deviceList.get(position) instanceof DoorSensor) {
+            return LIST_ITEM_DOOR_SENSOR;
+        } else if (deviceList.get(position) instanceof MovementSensor) {
+            return LIST_ITEM_MOVEMENT_SENSOR;
+        } else if (deviceList.get(position) instanceof WeatherStation) {
+            return LIST_ITEM_WEATHER_STATION;
+        }else
 
-        if (deviceList.get(position) instanceof Circuit) {
-            return Constants.LIST_ITEM_CIRCUIT;
-        } else {
+        {
             return -1;
         }
     }

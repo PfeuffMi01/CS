@@ -21,45 +21,32 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="@dimen/icon_size_device_recycler_item"
+                    android:layout_height="@dimen/icon_size_device_recycler_item"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/temp" />
 
-                <TextView
-                    android:id="@+id/temp_name"
+                <include layout="@layout/text_for_list_item" />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:text="Thermostat 1"
-                    android:textColor="@color/text_gray"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/temp_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:text="12°C"
-                    android:textColor="@color/text_gray"
-                    android:textSize="20sp" />
-
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
+                </LinearLayout>
 
             </LinearLayout>
 
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/switch_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="10dp"
-                android:layout_toRightOf="@id/ll_infos"
-                android:paddingRight="11dp" />
+            <include layout="@layout/switch_for_list_items" />
         </RelativeLayout>
 
 
