@@ -1,9 +1,11 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.example.michael.cs.Services.MQTTService;
 
 
 /**

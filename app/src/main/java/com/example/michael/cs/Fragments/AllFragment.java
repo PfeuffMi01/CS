@@ -11,14 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.CustomAdapter;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
-import static com.example.michael.cs.ListItem.TAG;
+import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
 public class AllFragment extends Fragment {

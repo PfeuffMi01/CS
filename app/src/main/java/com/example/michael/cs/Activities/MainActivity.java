@@ -33,7 +33,7 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
-import com.example.michael.cs.MQTTService;
+import com.example.michael.cs.Services.MQTTService;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;

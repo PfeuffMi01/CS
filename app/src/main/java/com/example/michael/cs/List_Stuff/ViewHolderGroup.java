@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.List_Stuff;
 
 /**
  * ViewHolder for Section Headlines
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
+import com.example.michael.cs.R;
 
 import static com.example.michael.cs.Constants.GROUPS;
 

@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.List_Stuff;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

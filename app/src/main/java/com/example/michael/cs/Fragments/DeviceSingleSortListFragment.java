@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.CustomAdapter;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.R;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.example.michael.cs.ListItem.TAG;
+import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
 public class DeviceSingleSortListFragment extends Fragment {

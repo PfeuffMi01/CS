@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.List_Stuff;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 

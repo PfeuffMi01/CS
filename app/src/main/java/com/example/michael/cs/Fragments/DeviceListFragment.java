@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.CustomAdapter;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.R;
 

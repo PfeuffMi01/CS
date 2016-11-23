@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.List_Stuff;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.michael.cs.Activities.MainActivity;
+import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
 import com.example.michael.cs.Data.Devices.GenericDevice;
@@ -25,6 +26,7 @@ import com.example.michael.cs.Data.Devices.WeatherStation;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
 import com.example.michael.cs.Data.Devices.WindowSensor;
 import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 

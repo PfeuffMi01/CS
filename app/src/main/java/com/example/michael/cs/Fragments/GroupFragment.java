@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.R;
-import com.example.michael.cs.RecyclerAdapterGroups;
+import com.example.michael.cs.List_Stuff.RecyclerAdapterGroups;
 
 import java.util.ArrayList;
 

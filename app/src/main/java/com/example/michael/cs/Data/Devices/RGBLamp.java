@@ -20,7 +20,7 @@ import com.flask.colorpicker.OnColorSelectedListener;
 import java.util.Calendar;
 
 import static com.example.michael.cs.Constants.DIALOG_LISTENER_DELAY;
-import static com.example.michael.cs.ListItem.TAG;
+import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
  * Created by Patrick PC on 31.10.2016.

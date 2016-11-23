@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Services;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.example.michael.cs.R;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -29,6 +31,7 @@ public class MQTTService extends Service {
     public static final String MQTT_IP = "tcp://192.168.178.21:1883";
 
     public static final String MQTT_TOPIC_JOHANN = "CS/#";
+    public static final String MQTT_TOPIC_2_JOHANN = "CS/#/+/status";
     public static final String MQTT_IP_JOHANN = "tcp://schlegel2.ddns.net:1883";
     NotificationCompat.Builder mBuilder;
 
@@ -72,7 +75,7 @@ public class MQTTService extends Service {
 
                 mBuilder.setSmallIcon(R.drawable.ic_format_list_bulleted_black_18dp);
                 mBuilder.setContentTitle("MQTT-Nachricht");
-                mBuilder.setContentText(message.toString());
+                mBuilder.setContentText(topic + " " + message.toString());
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.notify(99999, mBuilder.build());
 
@@ -93,19 +96,19 @@ public class MQTTService extends Service {
                         mqttAndroidClient.subscribe(MQTT_TOPIC_JOHANN, 0);
 
 //                        mqttAndroidClient.publish(TOPIC, new MqttMessage("TEST!".getBytes()), this, new IMqttActionListener() {
-//                        mqttAndroidClient.publish(MQTT_TOPIC_JOHANN, new MqttMessage("TEST!".getBytes()), this, new IMqttActionListener() {
-//
-//                            @Override
-//                            public void onSuccess(IMqttToken asyncActionToken) {
-//                                Log.i(TAG, "onSuccess: publish success");
-//                            }
-//
-//                            @Override
-//                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-//                                Log.i(TAG, "onFailure: publish failure");
-//
-//                            }
-//                        });
+                        mqttAndroidClient.publish("CS/livingroom", new MqttMessage("jgjhdhkjhghfjksdf".getBytes()), this, new IMqttActionListener() {
+
+                            @Override
+                            public void onSuccess(IMqttToken asyncActionToken) {
+                                Log.i(TAG, "onSuccess: publish success");
+                            }
+
+                            @Override
+                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                                Log.i(TAG, "onFailure: publish failure");
+
+                            }
+                        });
 
                     } catch (MqttException ex) {
                         Log.e(TAG, "onSuccess: ohh :-(");

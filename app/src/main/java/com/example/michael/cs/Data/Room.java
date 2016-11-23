@@ -1,6 +1,6 @@
 package com.example.michael.cs.Data;
 
-import com.example.michael.cs.ListItem;
+import com.example.michael.cs.List_Stuff.ListItem;
 
 /**
  * Created by Patrick PC on 31.10.2016.
