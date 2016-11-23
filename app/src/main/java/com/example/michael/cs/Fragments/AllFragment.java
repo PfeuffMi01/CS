@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import static com.example.michael.cs.ListItem.TAG;
 
 
-public class AllFragment extends Fragment  {
+public class AllFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";

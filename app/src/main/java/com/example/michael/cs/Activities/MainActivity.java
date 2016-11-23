@@ -1,5 +1,6 @@
 package com.example.michael.cs.Activities;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -32,6 +33,7 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
+import com.example.michael.cs.MQTTService;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -80,11 +82,15 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    MQTTService mqttService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startService(new Intent(this, MQTTService.class));
 
         initExampleData();
         initFragment();
