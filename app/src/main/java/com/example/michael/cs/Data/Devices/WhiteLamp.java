@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
@@ -57,61 +58,66 @@ public class WhiteLamp extends Lamp {
         dimSeek.setDrawingCacheBackgroundColor(Color.RED);
 
         dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Calendar cal = Calendar.getInstance();
-                if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
+                                               @Override
+                                               public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                                                   Calendar cal = Calendar.getInstance();
+                                                   if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
 
-                setDim(i);
-                tvDimVal.setText(getDim() + "%");
-                deviceActivator();
-            }
-        }
+                                                       setDim(i);
+                                                       tvDimVal.setText(getDim() + "%");
+                                                       deviceActivator();
+                                                   }
+                                               }
 
-        @Override
-        public void onStartTrackingTouch (SeekBar seekBar){
-            Log.i(TAG, "onStartTrackingTouch: ");
-        }
+                                               @Override
+                                               public void onStartTrackingTouch(SeekBar seekBar) {
+                                                   Log.i(TAG, "onStartTrackingTouch: ");
+                                               }
 
-        @Override
-        public void onStopTrackingTouch (SeekBar seekBar){
-            Log.i(TAG, "onStopTrackingTouch: ");
-        }
+                                               @Override
+                                               public void onStopTrackingTouch(SeekBar seekBar) {
+                                                    toaster(mainActivity, topic + "/dim/" + seekBar.getProgress());
+                                                   Log.i(TAG, "onStopTrackingTouch: ");
+                                               }
+                                           }
+
+        );
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
+        dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setTitle(
+
+                getName()
+
+                        + "     ID: " +
+
+                        get_id()
+
+        );
+        dimSeek.setProgress(this.
+
+                getDim()
+
+        );
+
+        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
+
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                }
+
+        );
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
-    );
-
-    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
-    dialogBuilder.setView(dialogView);
-
-    dialogBuilder.setTitle(
-
-    getName()
-
-    +"     ID: "+
-
-    get_id()
-
-    );
-    dimSeek.setProgress(this.
-
-    getDim()
-
-    );
-
-    dialogBuilder.setPositiveButton("Fertig",new DialogInterface.OnClickListener()
-
-    {
-        @Override
-        public void onClick (DialogInterface dialogInterface,int i){
+    public void toaster (MainActivity m, String s) {
+        Toast.makeText(m, s, Toast.LENGTH_LONG).show();
     }
-    }
-
-    );
-
-    AlertDialog alertDialog = dialogBuilder.create();
-    alertDialog.show();
-}
 
     private void deviceActivator() {
         if (!isOn()) {

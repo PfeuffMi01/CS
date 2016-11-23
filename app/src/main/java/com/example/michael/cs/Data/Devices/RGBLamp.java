@@ -2,20 +2,21 @@ package com.example.michael.cs.Data.Devices;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.CSHelper;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
-import com.flask.colorpicker.ColorPickerView;
-import com.flask.colorpicker.OnColorSelectedListener;
+import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.util.Calendar;
 
@@ -65,80 +66,108 @@ public class RGBLamp extends Lamp {
         LayoutInflater inflater = mainActivity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rbg_lamp, null);
 
-        final ColorPickerView colorPickerView = (ColorPickerView) dialogView.findViewById(R.id.color_picker);
+        SpectrumPalette spectrumPalette = (SpectrumPalette) dialogView.findViewById(R.id.spectrum_palette);
         final SeekBar dimSeek = (SeekBar) dialogView.findViewById(R.id.seek_dim);
         final TextView tvDimVal = (TextView) dialogView.findViewById(R.id.tv_dim_val);
 
         tvDimVal.setText(getDim() + "%");
 
-        colorPickerView.addOnColorSelectedListener
-                (new OnColorSelectedListener() {
-                     @Override
-                     public void onColorSelected(int i) {
+        spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
+                                                       @Override
+                                                       public void onColorSelected(@ColorInt int color) {
+                                                           Calendar cal = Calendar.getInstance();
+                                                           if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
 
-                         Calendar cal = Calendar.getInstance();
-                         if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
+                                                               setColorHex(CSHelper.intToHex(color));
+                                                               deviceActivator();
+                                                           }
 
-                             setColorHex(CSHelper.intToHex(i));
-                             deviceActivator();
-                         }
-                     }
-                 }
-                );
-
-
-        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-                Calendar cal = Calendar.getInstance();
-                if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
-
-                    setDim(i);
-                    tvDimVal.setText(getDim() + "%");
-                    deviceActivator();
-                }
-            }
+                                                           toaster(mainActivity, topic + "/color/" + colorHex);
+                                                       }
+                                                   }
 
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Log.i(TAG, "onStartTrackingTouch: ");
-            }
+        );
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.i(TAG, "onStopTrackingTouch: ");
-            }
-        });
+        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+
+                                           {
+                                               @Override
+                                               public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                                                   Calendar cal = Calendar.getInstance();
+                                                   if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
+
+                                                       setDim(i);
+                                                       tvDimVal.setText(getDim() + "%");
+                                                       deviceActivator();
+                                                   }
+                                               }
+
+
+                                               @Override
+                                               public void onStartTrackingTouch(SeekBar seekBar) {
+                                                   Log.i(TAG, "onStartTrackingTouch: ");
+                                               }
+
+                                               @Override
+                                               public void onStopTrackingTouch(SeekBar seekBar) {
+                                                   toaster(mainActivity, topic + "/dim/" + seekBar.getProgress());
+                                                   Log.i(TAG, "onStopTrackingTouch: ");
+                                               }
+                                           }
+
+        );
         //TODO Dimm Seekbar auch noch implementieren und Wert speichern
 
-        try {
-            colorPickerView.setColor(Color.parseColor(this.getColorHex()), false);
+        try
+
+        {
+            spectrumPalette.setSelectedColor(Color.parseColor(this.getColorHex()));
             Log.i(TAG, "showDialogForThisDevice: " + getColorHex() + " " + Color.parseColor(getColorHex()));
-        } catch (Exception e) {
+        } catch (
+                Exception e
+                )
+
+        {
 
         }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
 
-        dialogBuilder.setTitle(getName() + "     ID: " + get_id());
+        dialogBuilder.setTitle(
 
-        try {
-            colorPickerView.setColor(Color.parseColor(this.getColorHex()), false);
-        } catch (Exception e) {
-        }
-        dimSeek.setProgress(this.getDim());
+                getName()
 
-        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
+                        + "     ID: " +
+
+                        get_id()
+
+        );
+
+        dimSeek.setProgress(this.
+
+                getDim()
+
+        );
+
+        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
+
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                }
+
+        );
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void toaster(MainActivity m, String s) {
+        Toast.makeText(m, s, Toast.LENGTH_SHORT).show();
     }
 
     private void deviceActivator() {

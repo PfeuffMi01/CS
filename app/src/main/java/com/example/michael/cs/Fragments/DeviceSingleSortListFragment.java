@@ -15,11 +15,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.OnListItemClick;
 import com.example.michael.cs.R;
 
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
@@ -211,7 +213,16 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     @Override
     public void openDialog(int adapterPosition, int listItemType) {
-        initDataLists();
-        onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
+
+        try {
+            initDataLists();
+            onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
+        } catch (Exception e) {
+            if (isDebugEnabled) {
+                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
+            }
+        }
+
+
     }
 }

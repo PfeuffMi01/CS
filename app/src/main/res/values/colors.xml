@@ -6,4 +6,12 @@
     <color name="white">#FFFF</color>
     <color name="fragment_background">#dedede</color>
     <color name="text_gray">#4b565e</color>
+
+
+
+    <color name="red">#ff0008</color>
+    <color name="yellow">#ffea00</color>
+    <color name="blue">#006aff</color>
+    <color name="green">#33ff00</color>
+
 </resources>

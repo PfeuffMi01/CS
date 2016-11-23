@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
@@ -19,6 +20,7 @@ import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
+import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
@@ -113,8 +115,15 @@ public class AllFragment extends Fragment implements OnListItemClick {
 
     @Override
     public void openDialog(int adapterPosition, int listItemType) {
-        refreshList();
-        allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+
+        try {
+            refreshList();
+            allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+        } catch (Exception e) {
+           if(isDebugEnabled) {
+               Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
+           }
+        }
 
     }
 }

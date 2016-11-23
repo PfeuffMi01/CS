@@ -40,6 +40,7 @@ public class Constants {
     public static final String ROOM_OFFICE = "Büro";
     public static final String STATUS_OK = "OK";
 
+    public static final boolean isDebugEnabled = true;
 
     public static String FHEM_IP = "http://192.168.178.21";
     public static String FHEM_PORT = "8083";
@@ -70,4 +71,5 @@ public class Constants {
     public static final String MQTT_TOPIC_WINDOW = "/window";
     public static final String MQTT_TOPIC_TEMPERATURE = "/temperatur";
     public static final String MQTT_TOPIC_HUMIDITY = "/humidity";
+
 }
