@@ -11,8 +11,8 @@ public class MovementSensor extends Device {
 
     private String lastMovement;
 
-    public MovementSensor(String _id, boolean isOn, String name, Room room, Group group, String lastMovement) {
-        super(_id, isOn, name, room, group);
+    public MovementSensor(String _id, boolean isOn, String name, Room room, Group group, String lastMovement, String topic) {
+        super(_id, isOn, name, room, group, topic);
 
         this.lastMovement = lastMovement;
 

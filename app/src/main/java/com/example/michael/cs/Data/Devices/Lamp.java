@@ -11,8 +11,8 @@ public class Lamp extends Device {
 
     public int dim;
 
-    public Lamp(String _id, boolean isOn, String name, Room room, Group group, int dim) {
-        super(_id, isOn, name, room, group);
+    public Lamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String topic) {
+        super(_id, isOn, name, room, group, topic);
 
         this.dim = dim;
     }

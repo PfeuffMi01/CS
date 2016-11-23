@@ -11,14 +11,6 @@ import android.util.Log;
 
 import com.example.michael.cs.R;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 /**
  * Created by Patrick PC on 23.11.2016.
  */
@@ -59,7 +51,7 @@ public class MQTTService extends Service {
         mNotificationManager.notify(99999, mBuilder.build());
 
 //        final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(), MQTT_IP, "androidClient");
-        final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(), MQTT_IP_JOHANN, "androidClient");
+  /*      final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(), MQTT_IP_JOHANN, "androidClient");
 
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
@@ -124,7 +116,7 @@ public class MQTTService extends Service {
             });
         } catch (MqttException ex) {
 
-        }
+        }*/
 
 
         return super.onStartCommand(intent, flags, startId);

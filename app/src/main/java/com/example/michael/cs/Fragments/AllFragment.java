@@ -11,9 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.OnDataChangedListener;
+import com.example.michael.cs.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
-public class AllFragment extends Fragment {
+public class AllFragment extends Fragment implements OnListItemClick {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -88,27 +89,17 @@ public class AllFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    public void initDialogForItemClickOnAllDeviceList(int adapterPosition, int listItemType) {
-
-        refreshList();
-
-        if (allDevicesList.size() > 0) {
-            allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
-        }
-        adapter.notifyDataSetChanged();
-    }
-
     private void refreshList() {
 
         if (allDevicesList == null) {
             allDevicesList = new ArrayList<>();
         }
-
+/*
         if (mainActivity == null) {
             mainActivity = ((MainActivity) getActivity());
-        }
+        }*/
 
-        allDevicesList = mainActivity.getDeviceList();
+        allDevicesList = ((MainActivity) getActivity()).getDeviceList();
     }
 
     public void changeSwitchState(int adapterPosition, boolean b) {
@@ -120,5 +111,10 @@ public class AllFragment extends Fragment {
         }
     }
 
+    @Override
+    public void openDialog(int adapterPosition, int listItemType) {
+        refreshList();
+        allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
 
+    }
 }

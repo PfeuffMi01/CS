@@ -11,7 +11,7 @@ public class GenericDevice extends Device {
     public static int numberOfGenericevices;
 
 
-    public GenericDevice(String _id, boolean isOn, String name, Room room, Group group) {
-        super(_id, isOn, name, room, group);
+    public GenericDevice(String _id, boolean isOn, String name, Room room, Group group, String topic) {
+        super(_id, isOn, name, room, group, topic);
     }
 }

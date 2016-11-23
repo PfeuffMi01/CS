@@ -20,6 +20,7 @@ import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
+import com.example.michael.cs.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import static android.view.View.VISIBLE;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
-public class DeviceSingleSortListFragment extends Fragment {
+public class DeviceSingleSortListFragment extends Fragment implements OnListItemClick {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -197,11 +198,6 @@ public class DeviceSingleSortListFragment extends Fragment {
         return drawable;
     }
 
-    public void initDialogForItemClickOnSingleSortDeviceList(int adapterPosition, int listItemType) {
-        onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
-        adapter.notifyItemChanged(adapterPosition);
-    }
-
     public void changeSwitchState(int adapterPosition, boolean b) {
 
         try {
@@ -212,4 +208,10 @@ public class DeviceSingleSortListFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void openDialog(int adapterPosition, int listItemType) {
+        initDataLists();
+        onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
+    }
 }

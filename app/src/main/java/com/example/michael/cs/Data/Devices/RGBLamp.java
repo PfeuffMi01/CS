@@ -32,8 +32,8 @@ public class RGBLamp extends Lamp {
     public String status;
 
 
-    public RGBLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String colorHex, String status) {
-        super(_id, isOn, name, room, group, dim);
+    public RGBLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String colorHex, String status, String topic) {
+        super(_id, isOn, name, room, group, dim, topic);
 
         this.colorHex = colorHex;
         this.status = status;

@@ -16,13 +16,23 @@ public class Device {
     public String name;
     public Room room;
     public Group group;
+    public String topic;
 
-    public Device(String _id, boolean isOn, String name, Room room, Group group) {
+    public Device(String _id, boolean isOn, String name, Room room, Group group, String topic) {
         this._id = _id;
         this.isOn = isOn;
         this.name = name;
         this.room = room;
         this.group = group;
+        this.topic = this.room.getTopic() + topic;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     public String get_id() {

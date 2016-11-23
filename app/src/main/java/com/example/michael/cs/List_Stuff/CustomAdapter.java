@@ -17,12 +17,12 @@ import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
 import com.example.michael.cs.Data.Devices.GenericDevice;
+import com.example.michael.cs.Data.Devices.HumiditySensor;
 import com.example.michael.cs.Data.Devices.MovementSensor;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.PlugWithConsumption;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
-import com.example.michael.cs.Data.Devices.WeatherStation;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
 import com.example.michael.cs.Data.Devices.WindowSensor;
 import com.example.michael.cs.Data.Room;
@@ -33,17 +33,15 @@ import java.util.ArrayList;
 import static android.view.View.GONE;
 import static com.example.michael.cs.Constants.LIST_ITEM_DOOR_SENSOR;
 import static com.example.michael.cs.Constants.LIST_ITEM_GENERIC_DEVICE;
+import static com.example.michael.cs.Constants.LIST_ITEM_HUMIDITY;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
 import static com.example.michael.cs.Constants.LIST_ITEM_MOVEMENT_SENSOR;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG_CONSUMPTION;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
-import static com.example.michael.cs.Constants.LIST_ITEM_WEATHER_STATION;
 import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
-import static com.example.michael.cs.Constants.ROOM_BATH;
 import static com.example.michael.cs.Constants.ROOM_BED;
-import static com.example.michael.cs.Constants.ROOM_DINING;
 import static com.example.michael.cs.Constants.ROOM_GARAGE;
 import static com.example.michael.cs.Constants.ROOM_GARDEN;
 import static com.example.michael.cs.Constants.ROOM_HALLWAY;
@@ -102,15 +100,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
 
-    public class WeatherStationViewHolder extends ViewHolder {
+    public class HumidityViewHolder extends ViewHolder {
 
         TextView humidity, temperature;
 
-        public WeatherStationViewHolder(View v) {
+        public HumidityViewHolder(View v) {
             super(v);
 
             this.humidity = (TextView) v.findViewById(R.id.humidity);
-            this.temperature = (TextView) v.findViewById(R.id.temperature);
 
            /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -125,7 +122,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 public void onClick(View view) {
 
                     int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WEATHER_STATION, view);
+                    listItemHasBeenClicked(adapterPosition, LIST_ITEM_HUMIDITY, view);
                 }
             });
         }
@@ -419,10 +416,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new TempViewHolder(v);
                 break;
 
-            case LIST_ITEM_WEATHER_STATION:
+            case LIST_ITEM_HUMIDITY:
                 v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.recycler_list_item_weather_stat, viewGroup, false);
-                returnViewHolder = new WeatherStationViewHolder(v);
+                        .inflate(R.layout.recycler_list_item_humidity, viewGroup, false);
+                returnViewHolder = new HumidityViewHolder(v);
                 break;
 
             case LIST_ITEM_PLUG:
@@ -634,21 +631,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.switchOnOff.setVisibility(GONE);
         }
 
-        if (itemType == LIST_ITEM_WEATHER_STATION) {
+        if (itemType == LIST_ITEM_HUMIDITY) {
 
             Log.i(TAG, "onBindViewHolder: in Weather Stat");
-            WeatherStation device = (WeatherStation) deviceList.get(position);
+            HumiditySensor device = (HumiditySensor) deviceList.get(position);
 
 
-            WeatherStationViewHolder holder = (WeatherStationViewHolder) viewHolder;
+            HumidityViewHolder holder = (HumidityViewHolder) viewHolder;
 
             holder.name.setText(device.getName());
-            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.weather_station));
+            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.humidity));
 //            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.humidity.setText("Feucht.: " + device.getHumidity() + "%");
-            holder.temperature.setText("Temp.: " + device.getTemperature() + "°C");
 //            holder.switchOnOff.setChecked(device.isOn());
             holder.switchOnOff.setVisibility(GONE);
         }
@@ -660,17 +656,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         switch (room.getName()) {
 
-            case ROOM_BATH:
-                img = context.getResources().getDrawable(R.drawable.bath_room);
-                break;
 
             case ROOM_BED:
                 img = context.getResources().getDrawable(R.drawable.bed_room);
-                break;
-
-
-            case ROOM_DINING:
-                img = context.getResources().getDrawable(R.drawable.dining_room);
                 break;
 
 
@@ -729,8 +717,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             return LIST_ITEM_DOOR_SENSOR;
         } else if (deviceList.get(position) instanceof MovementSensor) {
             return LIST_ITEM_MOVEMENT_SENSOR;
-        } else if (deviceList.get(position) instanceof WeatherStation) {
-            return LIST_ITEM_WEATHER_STATION;
+        } else if (deviceList.get(position) instanceof HumiditySensor) {
+            return LIST_ITEM_HUMIDITY;
         } else
 
         {

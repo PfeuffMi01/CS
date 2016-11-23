@@ -1,24 +1,8 @@
 package com.example.michael.cs.Data.Devices;
 
-import android.content.DialogInterface;
-import android.os.Build;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
-
-import java.util.Calendar;
-
-import static com.example.michael.cs.Constants.DIALOG_LISTENER_DELAY;
-import static com.example.michael.cs.Constants.MAX_TEMP;
-import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
  * Created by Patrick PC on 31.10.2016.
@@ -29,8 +13,8 @@ public class Temp extends Device {
     public static final int imgRgbLamp = R.drawable.temp;
     public int temp;
 
-    public Temp(String _id, boolean isOn, String name, Room room, Group group, int temp) {
-        super(_id, isOn, name, room, group);
+    public Temp(String _id, boolean isOn, String name, Room room, Group group, int temp, String topic) {
+        super(_id, isOn, name, room, group, topic);
 
         this.temp = temp;
     }
@@ -43,7 +27,7 @@ public class Temp extends Device {
         this.temp = temp;
     }
 
-    public void showDialogForThisDevice(final MainActivity mainActivity) {
+ /*   public void showDialogForThisDevice(final MainActivity mainActivity) {
 
         Calendar cal = Calendar.getInstance();
         final long systemTimeDialogStart = cal.getTimeInMillis();
@@ -101,7 +85,7 @@ public class Temp extends Device {
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-    }
+    }*/
 
     private void deviceActivator() {
         if (!isOn()) {

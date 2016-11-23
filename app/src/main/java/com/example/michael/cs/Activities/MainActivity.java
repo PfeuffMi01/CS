@@ -16,15 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
+import com.example.michael.cs.Data.Devices.HumiditySensor;
 import com.example.michael.cs.Data.Devices.MovementSensor;
 import com.example.michael.cs.Data.Devices.Plug;
 import com.example.michael.cs.Data.Devices.PlugWithConsumption;
 import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
-import com.example.michael.cs.Data.Devices.WeatherStation;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
 import com.example.michael.cs.Data.Devices.WindowSensor;
 import com.example.michael.cs.Data.Group;
@@ -33,27 +32,44 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
-import com.example.michael.cs.Services.MQTTService;
 import com.example.michael.cs.R;
+import com.example.michael.cs.Services.MQTTService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.R.attr.mode;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.example.michael.cs.Constants.GROUP_DOOR_SENSOR;
+import static com.example.michael.cs.Constants.GROUP_HUMIDITY;
 import static com.example.michael.cs.Constants.GROUP_LAMPS;
-import static com.example.michael.cs.Constants.GROUP_MOVEMENT_SENSORT;
+import static com.example.michael.cs.Constants.GROUP_MOVEMENT_SENSOR;
 import static com.example.michael.cs.Constants.GROUP_PLUGS;
 import static com.example.michael.cs.Constants.GROUP_TEMP;
-import static com.example.michael.cs.Constants.ROOM_BATH;
+import static com.example.michael.cs.Constants.GROUP_WINDOW_SENSOR;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_BEDROOM;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_DOOR;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_FLOOR;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_GARAGE;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_GARDEN;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_HUMIDITY;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_KITCHEN;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_LIGHT;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_LIVINGROOM;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_MOTION;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_OFFICE;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_SOCKET;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_TEMPERATURE;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_WINDOW;
 import static com.example.michael.cs.Constants.ROOM_BED;
-import static com.example.michael.cs.Constants.ROOM_DINING;
 import static com.example.michael.cs.Constants.ROOM_GARAGE;
 import static com.example.michael.cs.Constants.ROOM_GARDEN;
 import static com.example.michael.cs.Constants.ROOM_HALLWAY;
 import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
+import static com.example.michael.cs.Constants.ROOM_OFFICE;
 import static com.example.michael.cs.Constants.STATUS_OK;
 
 public class MainActivity extends AppCompatActivity {
@@ -209,60 +225,64 @@ public class MainActivity extends AppCompatActivity {
         groupList = new ArrayList<>();
         deviceList = new ArrayList<>();
 
-        Room livingRoom = new Room(R.drawable.living_room, ROOM_LIVING);
-        Room bedRoom = new Room(R.drawable.bed_room, ROOM_BED);
-        Room garageRoom = new Room(R.drawable.garage_room, ROOM_GARAGE);
-        Room bathRoom = new Room(R.drawable.bath_room, ROOM_BATH);
-        Room diningRoom = new Room(R.drawable.dining_room, ROOM_DINING);
-        Room hallwayRoom = new Room(R.drawable.hallway, ROOM_HALLWAY);
-        Room gardenRoom = new Room(R.drawable.garden_room_, ROOM_GARDEN);
-        Room kitchenRoom = new Room(R.drawable.kitchen_room, ROOM_KITCHEN);
+        Room livingRoom = new Room(R.drawable.living_room, ROOM_LIVING, MQTT_TOPIC_LIVINGROOM);
+        Room bedRoom = new Room(R.drawable.bed_room, ROOM_BED, MQTT_TOPIC_BEDROOM);
+        Room garageRoom = new Room(R.drawable.garage_room, ROOM_GARAGE, MQTT_TOPIC_GARAGE);
+        Room hallwayRoom = new Room(R.drawable.hallway, ROOM_HALLWAY, MQTT_TOPIC_FLOOR);
+        Room gardenRoom = new Room(R.drawable.garden_room_, ROOM_GARDEN, MQTT_TOPIC_GARDEN);
+        Room kitchenRoom = new Room(R.drawable.kitchen_room, ROOM_KITCHEN, MQTT_TOPIC_KITCHEN);
+        Room officeRoom = new Room(R.drawable.office_roomm, ROOM_OFFICE, MQTT_TOPIC_OFFICE);
+
 
         roomsList.add(livingRoom);
         roomsList.add(bedRoom);
         roomsList.add(garageRoom);
-        roomsList.add(bathRoom);
-        roomsList.add(diningRoom);
         roomsList.add(hallwayRoom);
         roomsList.add(gardenRoom);
         roomsList.add(kitchenRoom);
+        roomsList.add(officeRoom);
+        Collections.sort(roomsList);
 
         Group lamps = new Group(GROUP_LAMPS, R.drawable.lamps_group);
-        Group temp = new Group(GROUP_TEMP, R.drawable.temp);
         Group plugs = new Group(GROUP_PLUGS, R.drawable.plug_group);
-        Group movementSens = new Group(GROUP_MOVEMENT_SENSORT, R.drawable.movement_sens);
-        Group doorSens = new Group(Constants.GROUP_DOOR_SENSOR, R.drawable.door_sens);
-        Group windowSens = new Group(Constants.GROUP_WINDOW_SENSOR, R.drawable.window_sens);
-        Group weatherStat = new Group(Constants.GROUP_WEATHER_STATION, R.drawable.weather_station);
-//        Group genericDevices = new Group(GROUP_GENERIC_DEVICES, R.drawable.generic_device);
+        Group movementSens = new Group(GROUP_MOVEMENT_SENSOR, R.drawable.movement_sens);
+        Group doorSens = new Group(GROUP_DOOR_SENSOR, R.drawable.door_sens);
+        Group windowSens = new Group(GROUP_WINDOW_SENSOR, R.drawable.window_sens);
+        Group humidity = new Group(GROUP_HUMIDITY, R.drawable.humidity);
+        Group temperature = new Group(GROUP_TEMP, R.drawable.temp);
 
         groupList.add(lamps);
-        groupList.add(temp);
         groupList.add(plugs);
         groupList.add(movementSens);
         groupList.add(doorSens);
         groupList.add(windowSens);
-        groupList.add(weatherStat);
-//        groupList.add(genericDevices);
+        groupList.add(humidity);
+        groupList.add(temperature);
+        Collections.sort(groupList);
 
-        deviceList.add(new RGBLamp("rgblamp1", false, "Philips Hue", livingRoom, lamps, 0, "#f5500c", STATUS_OK));
-        deviceList.add(new RGBLamp("rgblamp2", false, "Osram LED", garageRoom, lamps, 50, "#f5500c", STATUS_OK));
+        deviceList.add(new RGBLamp("rgblamp1", false, "Philips LED RGB Lampe", livingRoom, lamps, 0, "#f5500c", STATUS_OK, MQTT_TOPIC_LIGHT));
+        deviceList.add(new WhiteLamp("whitelamp1", false, "Philips LED weiss ", officeRoom, lamps, 12, STATUS_OK, MQTT_TOPIC_LIGHT));
+        deviceList.add(new RGBLamp("rgblamp2", false, "Osram LED RGB Lampe ", kitchenRoom, lamps, 50, "#f5500c", STATUS_OK, MQTT_TOPIC_LIGHT));
 
+        deviceList.add(new Plug("plug", false, "Homematic Steckdose", bedRoom, plugs, STATUS_OK, MQTT_TOPIC_SOCKET));
 
-        deviceList.add(new WhiteLamp("whitelamp1", false, "Philips weiß 1", bedRoom, lamps, 12, STATUS_OK));
-        deviceList.add(new WhiteLamp("whitelamp2", true, "Philips weiß 2", garageRoom, lamps, 27, STATUS_OK));
+        deviceList.add(new MovementSensor("move1", true, "Philips Bewegungssensor", hallwayRoom, movementSens, "17.11.16 12:45 Uhr", MQTT_TOPIC_MOTION));
 
-        deviceList.add(new Temp("temp1", true, "Temperatur Esszimmer", diningRoom, temp, 24));
+        deviceList.add(new DoorSensor("door1", true, "Türsensor ", hallwayRoom, doorSens, STATUS_OK, MQTT_TOPIC_DOOR));
+        deviceList.add(new WindowSensor("window1", true, "Fenstersensor ", livingRoom, windowSens, STATUS_OK, MQTT_TOPIC_WINDOW));
 
-        deviceList.add(new Plug("plug1", false, "HomeMatic Steckodose", bathRoom, plugs, STATUS_OK));
-        deviceList.add(new PlugWithConsumption("plug2", false, "Elgato Steckdose", kitchenRoom, plugs, STATUS_OK, "5000"));
+        deviceList.add(new MovementSensor("move2", true, "Homematic Bewegungssensor", garageRoom, movementSens, "16.11.16 13:32 Uhr", MQTT_TOPIC_MOTION));
 
-        deviceList.add(new MovementSensor("move1", true, "Philips Bewegungsmelder", gardenRoom, movementSens, "17.11.16 12:45 Uhr"));
-        deviceList.add(new WeatherStation("weather1", true, "Wetterstation", gardenRoom, weatherStat, 75, 5));
+        deviceList.add(new Temp("temp", true, "Homematic Wetterstation", gardenRoom, temperature, 5, MQTT_TOPIC_TEMPERATURE));
+        deviceList.add(new HumiditySensor("humidity", true, "Homematic Wetterstation", gardenRoom, humidity, 75, MQTT_TOPIC_HUMIDITY));
 
-        deviceList.add(new DoorSensor("door1", true, "Türsensor Küche", kitchenRoom, doorSens, STATUS_OK));
-        deviceList.add(new WindowSensor("window1", true, "Fenstersensor Schlafzimmer", bedRoom, windowSens, STATUS_OK));
+        deviceList.add(new PlugWithConsumption("plug2", false, "Elgato Steckdose", bedRoom, plugs, STATUS_OK, "5000", MQTT_TOPIC_SOCKET));
 
+        deviceList.add(new RGBLamp("ledBand", false, "LED-Band RGB", bedRoom, lamps, 12, "#f5500c", STATUS_OK, MQTT_TOPIC_LIGHT));
+
+        for (Device device : deviceList) {
+            Log.i(TAG, "initExampleData: " + device.getName() + " " + device.getTopic());
+        }
     }
 
 
@@ -347,11 +367,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
             Log.i(TAG, "listItemHasBeenClicked: ALL_FRAGMENT");
-            allFragment.initDialogForItemClickOnAllDeviceList(adapterPosition, listItemType);
-        } /*else if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
-            deviceSingleSortListFragment.initDialogForItemClickOnSingleSortDeviceList(adapterPosition, listItemType);
-        }*/
-
+            allFragment.openDialog(adapterPosition, listItemType);
+        } else {
+            deviceSingleSortListFragment.openDialog(adapterPosition, listItemType);
+        }
     }
 
     public void switchInItemHasBeenClicked(int adapterPosition, boolean b) {
@@ -361,14 +380,7 @@ public class MainActivity extends AppCompatActivity {
         if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
             deviceList.get(adapterPosition).setOn(!deviceList.get(adapterPosition).isOn());
         } else {
-
             deviceSingleSortListFragment.changeSwitchState(adapterPosition, b);
-
-          /*  if (CURRENT_LIST_CATEGORY == GROUP_FRAGMENT) {
-
-            } else if (CURRENT_LIST_CATEGORY == ROOM_FRAGMENT) {
-
-            }*/
         }
     }
 

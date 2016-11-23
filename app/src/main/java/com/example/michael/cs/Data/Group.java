@@ -6,7 +6,7 @@ import com.example.michael.cs.List_Stuff.ListItem;
  * Created by Patrick PC on 31.10.2016.
  */
 
-public class Group implements ListItem {
+public class Group implements ListItem, Comparable<Group> {
 
     public String name;
     public int image;
@@ -32,5 +32,10 @@ public class Group implements ListItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int compareTo(Group group) {
+        return this.getName().compareTo(group.getName());
     }
 }

@@ -2,21 +2,26 @@ package com.example.michael.cs.Data;
 
 import com.example.michael.cs.List_Stuff.ListItem;
 
+import static com.example.michael.cs.Constants.MQTT_TOPIC_MAIN;
+
 /**
  * Created by Patrick PC on 31.10.2016.
  */
 
-public class Room implements ListItem {
+public class Room   implements ListItem,Comparable<Room> {
 
     public int image;
-    String name;
+    public String name;
+    public String topic;
 
-    public Room(int image, String name) {
+
+
+    public Room(int image, String name, String topic) {
+        this.topic = MQTT_TOPIC_MAIN + topic;
         this.image = image;
         this.name = name;
+        this.topic = MQTT_TOPIC_MAIN + topic;
     }
-
-
 
     @Override
     public String getName() {
@@ -36,5 +41,18 @@ public class Room implements ListItem {
     @Override
     public void setImage(int i) {
         this.image = i;
+    }
+
+    @Override
+    public int compareTo(Room room) {
+        return this.getName().compareTo(room.getName());
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }
