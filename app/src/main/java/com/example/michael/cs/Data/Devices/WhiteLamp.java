@@ -1,5 +1,6 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
@@ -28,8 +29,8 @@ public class WhiteLamp extends Lamp {
 
     public String status;
 
-    public WhiteLamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String status, String topic) {
-        super(_id, isOn, name, room, group, dim, topic);
+    public WhiteLamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String status, String topic) {
+        super(context,_id, isOn, name, room, group, dim, topic);
 
         this.status = status;
     }

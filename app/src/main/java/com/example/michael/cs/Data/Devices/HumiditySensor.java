@@ -1,5 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
+
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 
@@ -11,8 +13,8 @@ public class HumiditySensor extends Device {
 
     private int humidity;
 
-    public HumiditySensor(String _id, boolean isOn, String name, Room room, Group group, int humidity, String topic) {
-        super(_id, isOn, name, room, group, topic);
+    public HumiditySensor(Context context, String _id, boolean isOn, String name, Room room, Group group, int humidity, String topic) {
+        super(context,_id, isOn, name, room, group, topic);
 
         this.humidity = humidity;
     }

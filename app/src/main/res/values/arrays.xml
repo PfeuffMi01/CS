@@ -22,5 +22,29 @@
         <item>@color/green</item>
         <item>@color/white</item>
     </array>
+
+    <array name="colorIntVals">
+        <item>-65528</item>
+        <item>-5632</item>
+        <item>-16749825</item>
+        <item>-13369600</item>
+        <item>-1</item>
+    </array>
+
+    <array name="colorIntNames">
+        <item>red</item>
+        <item>yellow</item>
+        <item>blue</item>
+        <item>green</item>
+        <item>white</item>
+    </array>
+
+    <array name="colorIntNamesGerman">
+        <item>Rot</item>
+        <item>Gelb</item>
+        <item>Blau</item>
+        <item>Grün</item>
+        <item>Weiß</item>
+    </array>
 </resources>
 

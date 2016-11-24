@@ -1,5 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
+
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 
@@ -10,8 +12,8 @@ import com.example.michael.cs.Data.Room;
 public class PlugWithConsumption extends Plug {
     private String consumption;
 
-    public PlugWithConsumption(String _id, boolean isOn, String name, Room room, Group group, String status, String consumption, String topic) {
-        super(_id, isOn, name, room, group, status, topic);
+    public PlugWithConsumption(Context context, String _id, boolean isOn, String name, Room room, Group group, String status, String consumption, String topic) {
+        super(context,_id, isOn, name, room, group, status, topic);
 
         this.consumption = consumption;
     }

@@ -1,5 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
+
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.R;
@@ -13,8 +15,8 @@ public class Temp extends Device {
     public static final int imgRgbLamp = R.drawable.temp;
     public int temp;
 
-    public Temp(String _id, boolean isOn, String name, Room room, Group group, int temp, String topic) {
-        super(_id, isOn, name, room, group, topic);
+    public Temp(Context context, String _id, boolean isOn, String name, Room room, Group group, int temp, String topic) {
+        super(context,_id, isOn, name, room, group, topic);
 
         this.temp = temp;
     }

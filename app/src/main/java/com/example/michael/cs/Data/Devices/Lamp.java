@@ -1,5 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
+
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 
@@ -11,8 +13,8 @@ public class Lamp extends Device {
 
     public int dim;
 
-    public Lamp(String _id, boolean isOn, String name, Room room, Group group, int dim, String topic) {
-        super(_id, isOn, name, room, group, topic);
+    public Lamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String topic) {
+        super(context,_id, isOn, name, room, group, topic);
 
         this.dim = dim;
     }

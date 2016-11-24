@@ -578,7 +578,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.color.setText("Farbe: " + device.getColorHex());
+
+            // Den deutschen Namen der Farbe herausfinden
+            String colorName = device.getSelectedColorName();
+            String colorNameGerman = "";
+            String[] colorNames = context.getResources().getStringArray(R.array.colorIntNames);
+            String[] colorNamesGerman = context.getResources().getStringArray(R.array.colorIntNamesGerman);
+
+            for(int i = 0; i < colorNames.length; i++) {
+
+                if(colorName.equals(colorNames[i])) {
+                    colorNameGerman = colorNamesGerman[i];
+                }
+            }
+            holder.color.setText("Farbe: " + colorNameGerman);
             holder.switchOnOff.setChecked(device.isOn());
             holder.status.setText("Status: " + device.getStatus());
         }

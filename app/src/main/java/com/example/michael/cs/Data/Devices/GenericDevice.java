@@ -1,5 +1,7 @@
 package com.example.michael.cs.Data.Devices;
 
+import android.content.Context;
+
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 
@@ -11,7 +13,7 @@ public class GenericDevice extends Device {
     public static int numberOfGenericevices;
 
 
-    public GenericDevice(String _id, boolean isOn, String name, Room room, Group group, String topic) {
-        super(_id, isOn, name, room, group, topic);
+    public GenericDevice(Context context, String _id, boolean isOn, String name, Room room, Group group, String topic) {
+        super(context,_id, isOn, name, room, group, topic);
     }
 }
