@@ -24,7 +24,7 @@ import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
-public class AllFragment extends Fragment implements OnListItemClick {
+public class AllFragment extends Fragment implements OnListItemClick, OnDataChangedListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -118,12 +118,22 @@ public class AllFragment extends Fragment implements OnListItemClick {
 
         try {
             refreshList();
-            allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity);
+            allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity, this, adapterPosition);
         } catch (Exception e) {
-           if(isDebugEnabled) {
-               Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
-           }
+            if (isDebugEnabled) {
+                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
+            }
         }
 
+    }
+
+    @Override
+    public void onDataHasChanged() {
+
+    }
+
+    @Override
+    public void onDataHasChanged(int position) {
+        adapter.notifyItemChanged(position);
     }
 }

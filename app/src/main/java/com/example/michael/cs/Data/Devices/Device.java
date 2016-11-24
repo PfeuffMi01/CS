@@ -6,6 +6,7 @@ import android.content.Context;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.OnDataChangedListener;
 
 /**
  * Created by Patrick PC on 31.10.2016.
@@ -79,7 +80,7 @@ public class Device {
         this.group = group;
     }
 
-    public void showDialogForThisDevice(final MainActivity mainActivity) {
+    public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, int adapterPosition) {
 
     }
 }

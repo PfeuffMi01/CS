@@ -21,6 +21,7 @@ import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
+import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.OnListItemClick;
 import com.example.michael.cs.R;
 
@@ -32,7 +33,7 @@ import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 
-public class DeviceSingleSortListFragment extends Fragment implements OnListItemClick {
+public class DeviceSingleSortListFragment extends Fragment implements OnListItemClick, OnDataChangedListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -216,7 +217,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
         try {
             initDataLists();
-            onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity);
+            onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity, this, adapterPosition);
         } catch (Exception e) {
             if (isDebugEnabled) {
                 Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
@@ -224,5 +225,15 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         }
 
 
+    }
+
+    @Override
+    public void onDataHasChanged() {
+
+    }
+
+    @Override
+    public void onDataHasChanged(int position) {
+        adapter.notifyItemChanged(position);
     }
 }

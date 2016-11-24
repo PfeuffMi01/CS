@@ -14,11 +14,11 @@ import android.widget.Toast;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.R;
 
 import java.util.Calendar;
 
-import static com.example.michael.cs.Constants.DIALOG_LISTENER_DELAY;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -30,7 +30,7 @@ public class WhiteLamp extends Lamp {
     public String status;
 
     public WhiteLamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String status, String topic) {
-        super(context,_id, isOn, name, room, group, dim, topic);
+        super(context, _id, isOn, name, room, group, dim, topic);
 
         this.status = status;
     }
@@ -43,10 +43,9 @@ public class WhiteLamp extends Lamp {
         this.status = status;
     }
 
-    public void showDialogForThisDevice(final MainActivity mainActivity) {
+    public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, final int adapterPosition) {
 
-        Calendar cal = Calendar.getInstance();
-        final long systemTimeDialogStart = cal.getTimeInMillis();
+        final OnDataChangedListener listener = dataChangedListener;
 
         LayoutInflater inflater = mainActivity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_white_lamp, null);
@@ -62,12 +61,10 @@ public class WhiteLamp extends Lamp {
                                                @Override
                                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                                                    Calendar cal = Calendar.getInstance();
-                                                   if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
 
-                                                       setDim(i);
-                                                       tvDimVal.setText(getDim() + "%");
-                                                       deviceActivator();
-                                                   }
+                                                   setDim(i);
+                                                   tvDimVal.setText(getDim() + "%");
+                                                   deviceActivator();
                                                }
 
                                                @Override
@@ -77,7 +74,7 @@ public class WhiteLamp extends Lamp {
 
                                                @Override
                                                public void onStopTrackingTouch(SeekBar seekBar) {
-                                                    toaster(mainActivity, topic + "/dim/" + seekBar.getProgress());
+                                                   toaster(mainActivity, topic + "/dim/" + seekBar.getProgress());
                                                    Log.i(TAG, "onStopTrackingTouch: ");
                                                }
                                            }
@@ -89,18 +86,19 @@ public class WhiteLamp extends Lamp {
 
         dialogBuilder.setTitle(
 
-                getName()
-
-                        + "     ID: " +
-
-                        get_id()
+                getName() + "     ID: " + get_id()
 
         );
-        dimSeek.setProgress(this.
-
-                getDim()
-
+        dimSeek.setProgress(this.getDim()
         );
+
+        dialogBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                Log.i(TAG, "onDismiss: ");
+                listener.onDataHasChanged(adapterPosition);
+            }
+        });
 
         dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
 
@@ -116,7 +114,7 @@ public class WhiteLamp extends Lamp {
         alertDialog.show();
     }
 
-    public void toaster (MainActivity m, String s) {
+    public void toaster(MainActivity m, String s) {
         Toast.makeText(m, s, Toast.LENGTH_LONG).show();
     }
 

@@ -14,12 +14,10 @@ import android.widget.Toast;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.R;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
-import java.util.Calendar;
-
-import static com.example.michael.cs.Constants.DIALOG_LISTENER_DELAY;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -81,10 +79,9 @@ public class RGBLamp extends Lamp {
         this.status = status;
     }
 
-    public void showDialogForThisDevice(final MainActivity mainActivity) {
+    public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, final int adapterPosition) {
 
-        Calendar cal = Calendar.getInstance();
-        final long systemTimeDialogStart = cal.getTimeInMillis();
+        final OnDataChangedListener listener = dataChangedListener;
 
         final LayoutInflater inflater = mainActivity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rbg_lamp, null);
@@ -94,12 +91,12 @@ public class RGBLamp extends Lamp {
         final TextView tvDimVal = (TextView) dialogView.findViewById(R.id.tv_dim_val);
 
         spectrumPalette.setSelectedColor(getSelectedColor());
+        dimSeek.setProgress(this.getDim());
         tvDimVal.setText(getDim() + "%");
 
         spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
                                                        @Override
                                                        public void onColorSelected(@ColorInt int color) {
-
                                                            deviceActivator();
 
                                                            for (int i = 0; i < colorIntVals.length; i++) {
@@ -119,14 +116,10 @@ public class RGBLamp extends Lamp {
                                            {
                                                @Override
                                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-                                                   Calendar cal = Calendar.getInstance();
-                                                   if (cal.getTimeInMillis() - systemTimeDialogStart >= DIALOG_LISTENER_DELAY) {
-
                                                        setDim(i);
                                                        tvDimVal.setText(getDim() + "%");
                                                        deviceActivator();
-                                                   }
+
                                                }
 
 
@@ -146,20 +139,25 @@ public class RGBLamp extends Lamp {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
-
         dialogBuilder.setTitle(getName() + "     ID: " + get_id());
-
-        dimSeek.setProgress(this.getDim());
-
         dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
 
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+//                        listener.onDataHasChanged(adapterPosition);
                     }
                 }
 
         );
+
+        dialogBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                Log.i(TAG, "onDismiss: ");
+                listener.onDataHasChanged(adapterPosition);
+            }
+        });
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
