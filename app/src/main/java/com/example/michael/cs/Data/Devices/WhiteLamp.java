@@ -72,6 +72,7 @@ public class WhiteLamp extends Lamp {
                                                    setDim(seekBar.getProgress());
                                                    deviceActivator();
                                                    mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
+                                                   listener.onDataHasChanged(adapterPosition);
                                                }
                                            }
 
@@ -80,21 +81,8 @@ public class WhiteLamp extends Lamp {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
 
-        dialogBuilder.setTitle(
-
-                getName() + "     ID: " + get_id()
-
-        );
-        dimSeek.setProgress(this.getDim()
-        );
-
-        dialogBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                Log.i(TAG, "onDismiss: ");
-                listener.onDataHasChanged(adapterPosition);
-            }
-        });
+        dialogBuilder.setTitle(getName() + "     ID: " + get_id());
+        dimSeek.setProgress(this.getDim());
 
         dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
 

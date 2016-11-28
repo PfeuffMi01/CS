@@ -104,21 +104,21 @@ public class RGBLamp extends Lamp {
         final TextView tvDimVal = (TextView) dialogView.findViewById(R.id.tv_dim_val);
 
         spectrumPalette.setSelectedColor(getSelectedColor());
-        dimSeek.setProgress(this.getDim());
         tvDimVal.setText(getDim() + "%");
 
         spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
-                       @Override
-                       public void onColorSelected(@ColorInt int color) {
-                           deviceActivator();
+                                                       @Override
+                                                       public void onColorSelected(@ColorInt int color) {
+                                                           deviceActivator();
 
-                           for (int i = 0; i < colorIntVals.length; i++) {
-                               if (color == colorIntVals[i]) {
-                                   setSelectedColor(mainActivity, colorIntVals[i]);
-                               }
-                           }
-                       }
-                   }
+                                                           for (int i = 0; i < colorIntVals.length; i++) {
+                                                               if (color == colorIntVals[i]) {
+                                                                   setSelectedColor(mainActivity, colorIntVals[i]);
+                                                               }
+                                                           }
+                                                           listener.onDataHasChanged(adapterPosition);
+                                                       }
+                                                   }
         );
 
         dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -138,6 +138,7 @@ public class RGBLamp extends Lamp {
                                                    setDim(seekBar.getProgress());
                                                    deviceActivator();
                                                    mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
+                                                   listener.onDataHasChanged(adapterPosition);
                                                }
                                            }
 
@@ -146,26 +147,17 @@ public class RGBLamp extends Lamp {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(getName() + "     ID: " + get_id());
+        dimSeek.setProgress(this.getDim());
         dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
 
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        listener.onDataHasChanged(adapterPosition);
 
                     }
                 }
 
         );
-
-        dialogBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                Log.i(TAG, "onDismiss: ");
-                listener.onDataHasChanged(adapterPosition);
-
-            }
-        });
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
