@@ -1,6 +1,7 @@
 package com.example.michael.cs.Activities;
 
-import android.content.Intent;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,12 +10,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
@@ -32,8 +40,8 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
+import com.example.michael.cs.MQTTHandler;
 import com.example.michael.cs.R;
-import com.example.michael.cs.Services.MQTTService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,19 +106,72 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    MQTTService mqttService;
+    private MQTTHandler mqttHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        startService(new Intent(this, MQTTService.class));
 
-        startService(new Intent(this, MQTTService.class));
-
+        initMQTT();
         initExampleData();
         initFragment();
         initTabs();
+    }
+
+    private void initMQTT() {
+        mqttHandler = new MQTTHandler(this);
+    }
+
+    public MQTTHandler getMqttHandler() {
+        return mqttHandler;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void showMQTTLogDialog() {
+        final LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_mqtt_log, null);
+
+        ListView listView = (ListView) dialogView.findViewById(R.id.mqtt_log_list);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String log = sharedPreferences.getString("pref_mqtt_log", "");
+        String[] listMqttLog = log.split("\\|", -1);
+
+        if (listMqttLog.length == 1 && listMqttLog[0].equals("")) {
+            listMqttLog[0] = "Bisher keine Log-Einträge";
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                R.layout.list_item, R.id.text_mqtt_log, listMqttLog);
+        listView.setAdapter(adapter);
+
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle("MQTT Log");
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // nix machen
+                    }
+                }
+
+        );
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     private void initFragment() {
@@ -336,9 +397,15 @@ public class MainActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
 
+            case R.id.action_log:
+                showMQTTLogDialog();
+                break;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        return true;
     }
 
     public ArrayList<Device> getDeviceList() {
@@ -378,9 +445,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "switchInItemHasBeenClicked: " + adapterPosition + " " + b);
 
         if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
-            deviceList.get(adapterPosition).setOn(!deviceList.get(adapterPosition).isOn());
+            allFragment.switchTheSwitch(adapterPosition, b);
         } else {
-            deviceSingleSortListFragment.changeSwitchState(adapterPosition, b);
+            deviceSingleSortListFragment.switchTheSwitch(adapterPosition, b);
         }
     }
 

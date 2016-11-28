@@ -201,7 +201,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         return drawable;
     }
 
-    public void changeSwitchState(int adapterPosition, boolean b) {
+    public void switchTheSwitch(int adapterPosition, boolean b) {
 
         try {
             onlyNeededDeviceCategory.get(adapterPosition).setOn(b);
@@ -209,8 +209,8 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }
-    }
 
+    }
 
     @Override
     public void openDialog(int adapterPosition, int listItemType) {

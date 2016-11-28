@@ -16,7 +16,6 @@ import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
-import com.example.michael.cs.Data.Devices.GenericDevice;
 import com.example.michael.cs.Data.Devices.HumiditySensor;
 import com.example.michael.cs.Data.Devices.MovementSensor;
 import com.example.michael.cs.Data.Devices.Plug;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static com.example.michael.cs.Constants.LIST_ITEM_DOOR_SENSOR;
-import static com.example.michael.cs.Constants.LIST_ITEM_GENERIC_DEVICE;
 import static com.example.michael.cs.Constants.LIST_ITEM_HUMIDITY;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
 import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
@@ -57,13 +55,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     Context context;
     ArrayList<Device> deviceList;
+    private boolean onBind;
 
     private void listItemHasBeenClicked(int adapterPosition, int list_item_id, View view) {
         ((MainActivity) context).listItemHasBeenClicked(adapterPosition, list_item_id, view);
-    }
-
-    private void switchInItemHasBeenClicked(int adapterPosition, boolean b, int list_item_id) {
-        ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
     }
 
     @Override
@@ -76,7 +71,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         TextView name;
         TextView room;
         ImageView icon;
-        //        TextView group;
         ImageView roomImg;
         SwitchCompat switchOnOff;
 
@@ -86,7 +80,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.icon = (ImageView) v.findViewById(R.id.image);
             this.name = (TextView) v.findViewById(R.id.device_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
-//            this.group = (TextView) v.findViewById(R.id.group_footer);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
             this.switchOnOff.setOnCheckedChangeListener(this);
@@ -94,28 +87,23 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            int adapterPosition = getAdapterPosition();
-            ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+
+            if (!onBind) {
+                int adapterPosition = getAdapterPosition();
+                ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+            }
         }
     }
 
 
     public class HumidityViewHolder extends ViewHolder {
 
-        TextView humidity, temperature;
+        TextView humidity;
 
         public HumidityViewHolder(View v) {
             super(v);
 
             this.humidity = (TextView) v.findViewById(R.id.humidity);
-
-           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WEATHER_STATION);
-                }
-            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -137,14 +125,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.lastMovement = (TextView) v.findViewById(R.id.last_movement);
 
-           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_MOVEMENT_SENSOR);
-                }
-            });*/
-
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -164,14 +144,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             super(v);
 
             this.status = (TextView) v.findViewById(R.id.status);
-/*
-            switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_DOOR_SENSOR);
-                }
-            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -193,45 +165,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.status = (TextView) v.findViewById(R.id.status);
 
-          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_WINDOW_SENSOR);
-                }
-            });*/
-
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     int adapterPosition = getAdapterPosition();
                     listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WINDOW_SENSOR, view);
-                }
-            });
-        }
-    }
-
-    public class GenericDeviceViewHolder extends ViewHolder {
-
-
-        public GenericDeviceViewHolder(View v) {
-            super(v);
-
-           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_GENERIC_DEVICE);
-                }
-            });
-*/
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_GENERIC_DEVICE, view);
                 }
             });
         }
@@ -251,14 +190,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.color = (TextView) v.findViewById(R.id.color);
             this.dim = (TextView) v.findViewById(R.id.dim);
             this.status = (TextView) v.findViewById(R.id.status);
-
-          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_RGB);
-                }
-            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -282,14 +213,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.dim = (TextView) v.findViewById(R.id.dim);
             this.status = (TextView) v.findViewById(R.id.status);
 
-          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_LAMP_WHITE);
-                }
-            });*/
-
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -311,14 +234,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.temp = (TextView) v.findViewById(R.id.temperature);
 
-          /*  switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_TEMP);
-                }
-            });*/
-
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -338,14 +253,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             super(v);
 
             this.status = (TextView) v.findViewById(R.id.status);
-
-           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
-                }
-            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -368,14 +275,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             this.status = (TextView) v.findViewById(R.id.status);
             this.consumption = (TextView) v.findViewById(R.id.consumption);
-
-           /* switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int adapterPosition = getAdapterPosition();
-                    switchInItemHasBeenClicked(adapterPosition, b, Constants.LIST_ITEM_PLUG);
-                }
-            });*/
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -448,12 +347,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 returnViewHolder = new RGBLampViewHolder(v);
                 break;
 
-            case LIST_ITEM_GENERIC_DEVICE:
-                v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.recycler_list_item_generic, viewGroup, false);
-                returnViewHolder = new GenericDeviceViewHolder(v);
-                break;
-
             case LIST_ITEM_MOVEMENT_SENSOR:
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.recycler_list_item_movement_sensor, viewGroup, false);
@@ -482,6 +375,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
+        onBind = true;
+
         int itemType = viewHolder.getItemViewType();
         Log.i(TAG, "onBindViewHolder: received " + itemType);
 
@@ -489,11 +384,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             Log.i(TAG, "onBindViewHolder: in Plug");
             Plug device = (Plug) deviceList.get(position);
-
             PlugViewHolder holder = (PlugViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_group));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.status.setText("Status: " + device.getStatus());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -504,15 +397,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             Log.i(TAG, "onBindViewHolder: in Movement Sensor");
             MovementSensor device = (MovementSensor) deviceList.get(position);
-
             MovementSensorViewHolder holder = (MovementSensorViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.movement_sens));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.lastMovement.setText("Letzte Bewegung: " + device.getLastMovement());
-//            holder.switchOnOff.setChecked(device.isOn());
             holder.switchOnOff.setVisibility(GONE);
         }
 
@@ -520,16 +410,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             Log.i(TAG, "onBindViewHolder: in Plug Consumption");
             PlugWithConsumption device = (PlugWithConsumption) deviceList.get(position);
-
             PlugWithConsumptionViewHolder holder = (PlugWithConsumptionViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_consumption));
-            //            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.consumption.setText("Σ-Verbrauch: " + device.getConsumption() + " Watt");
             holder.switchOnOff.setChecked(device.isOn());
-
             holder.status.setVisibility(GONE);
 
         }
@@ -542,11 +429,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             TempViewHolder holder = (TempViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.temp));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.temp.setText("Temp.: " + device.getTemp() + " " + context.getString(R.string.celcius));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-//            holder.switchOnOff.setChecked(device.isOn());
             holder.switchOnOff.setVisibility(GONE);
         }
 
@@ -558,9 +443,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             WhiteLampViewHolder holder = (WhiteLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_white));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
-            holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
+            holder.dim.setText("Dim: " + device.getDim() + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.switchOnOff.setChecked(device.isOn());
             holder.status.setText("Status: " + device.getStatus());
@@ -574,7 +458,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             RGBLampViewHolder holder = (RGBLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_rgb));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -585,45 +468,28 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             String[] colorNames = context.getResources().getStringArray(R.array.colorIntNames);
             String[] colorNamesGerman = context.getResources().getStringArray(R.array.colorIntNamesGerman);
 
-            for(int i = 0; i < colorNames.length; i++) {
-
-                if(colorName.equals(colorNames[i])) {
+            for (int i = 0; i < colorNames.length; i++) {
+                if (colorName.equals(colorNames[i])) {
                     colorNameGerman = colorNamesGerman[i];
                 }
             }
+
             holder.color.setText("Farbe: " + colorNameGerman);
             holder.switchOnOff.setChecked(device.isOn());
             holder.status.setText("Status: " + device.getStatus());
         }
 
-        if (itemType == LIST_ITEM_GENERIC_DEVICE) {
-
-            Log.i(TAG, "onBindViewHolder: in Generic");
-            GenericDevice device = (GenericDevice) deviceList.get(position);
-
-
-            GenericDeviceViewHolder holder = (GenericDeviceViewHolder) viewHolder;
-            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.generic_device));
-            holder.name.setText(device.getName());
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
-            holder.room.setText(device.getRoom().getName());
-            holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.switchOnOff.setChecked(device.isOn());
-        }
 
         if (itemType == LIST_ITEM_DOOR_SENSOR) {
 
             Log.i(TAG, "onBindViewHolder: in Door Sens");
             DoorSensor device = (DoorSensor) deviceList.get(position);
             DoorSensorViewHolder holder = (DoorSensorViewHolder) viewHolder;
-
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.door_sens));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.status.setText("Status: " + device.getStatus());
-//            holder.switchOnOff.setChecked(device.isOn());
             holder.switchOnOff.setVisibility(GONE);
         }
 
@@ -631,16 +497,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             Log.i(TAG, "onBindViewHolder: in Window Sens");
             WindowSensor device = (WindowSensor) deviceList.get(position);
-
             WindowSensorViewHolder holder = (WindowSensorViewHolder) viewHolder;
-
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.window_sens));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
             holder.status.setText("Status: " + device.getStatus());
-//            holder.switchOnOff.setChecked(device.isOn());
             holder.switchOnOff.setVisibility(GONE);
         }
 
@@ -648,19 +510,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             Log.i(TAG, "onBindViewHolder: in Weather Stat");
             HumiditySensor device = (HumiditySensor) deviceList.get(position);
-
-
             HumidityViewHolder holder = (HumidityViewHolder) viewHolder;
-
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.humidity));
-//            holder.group.setText(context.getString(R.string.group) + ": " + device.getGroup().getName());
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
-            holder.humidity.setText("Feucht.: " + device.getHumidity() + "%");
-//            holder.switchOnOff.setChecked(device.isOn());
+            holder.humidity.setText("Feucht.: " + device.getHumidity() + context.getString(R.string.percent));
             holder.switchOnOff.setVisibility(GONE);
         }
+
+        onBind = false;
     }
 
     private Drawable getCorrectRoomImg(Room room) {
@@ -668,7 +527,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         Drawable img;
 
         switch (room.getName()) {
-
 
             case ROOM_BED:
                 img = context.getResources().getDrawable(R.drawable.bed_room);
@@ -722,8 +580,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             return Constants.LIST_ITEM_LAMP_RGB;
         } else if (deviceList.get(position) instanceof Temp) {
             return LIST_ITEM_TEMP;
-        } else if (deviceList.get(position) instanceof GenericDevice) {
-            return LIST_ITEM_GENERIC_DEVICE;
         } else if (deviceList.get(position) instanceof WindowSensor) {
             return LIST_ITEM_WINDOW_SENSOR;
         } else if (deviceList.get(position) instanceof DoorSensor) {

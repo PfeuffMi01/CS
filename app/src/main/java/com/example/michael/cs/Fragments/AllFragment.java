@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
@@ -28,8 +27,6 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private OnDataChangedListener dataChangedListener;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -96,22 +93,10 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         if (allDevicesList == null) {
             allDevicesList = new ArrayList<>();
         }
-/*
-        if (mainActivity == null) {
-            mainActivity = ((MainActivity) getActivity());
-        }*/
 
         allDevicesList = ((MainActivity) getActivity()).getDeviceList();
     }
 
-    public void changeSwitchState(int adapterPosition, boolean b) {
-        try {
-            allDevicesList.get(adapterPosition).setOn(b);
-            adapter.notifyItemChanged(adapterPosition);
-        } catch (Exception e) {
-            Log.e(TAG, "changeSwitchState: ");
-        }
-    }
 
     @Override
     public void openDialog(int adapterPosition, int listItemType) {
@@ -121,7 +106,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
             allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity, this, adapterPosition);
         } catch (Exception e) {
             if (isDebugEnabled) {
-                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -129,11 +114,20 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
     @Override
     public void onDataHasChanged() {
-
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onDataHasChanged(int position) {
         adapter.notifyItemChanged(position);
+    }
+
+    public void switchTheSwitch(int adapterPosition, boolean b) {
+        try {
+            allDevicesList.get(adapterPosition).setOn(b);
+            adapter.notifyItemChanged(adapterPosition);
+        } catch (Exception e) {
+            Log.e(TAG, "changeSwitchState: ");
+        }
     }
 }

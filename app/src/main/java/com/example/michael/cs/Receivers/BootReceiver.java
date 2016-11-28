@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.michael.cs.Services.MQTTService;
-
 
 /**
  * Created by Patrick PC on 23.11.2016.
@@ -18,6 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "onReceive: ");
-        context.startService(new Intent(context, MQTTService.class));
+        //TODO
+//        context.startService(new Intent(context, MQTTService.class));
     }
 }

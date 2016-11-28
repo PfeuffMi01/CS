@@ -17,8 +17,6 @@ import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.OnDataChangedListener;
 import com.example.michael.cs.R;
 
-import java.util.Calendar;
-
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -60,11 +58,7 @@ public class WhiteLamp extends Lamp {
         dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                @Override
                                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                   Calendar cal = Calendar.getInstance();
-
-                                                   setDim(i);
-                                                   tvDimVal.setText(getDim() + "%");
-                                                   deviceActivator();
+                                                   tvDimVal.setText(i + "%");
                                                }
 
                                                @Override
@@ -74,8 +68,10 @@ public class WhiteLamp extends Lamp {
 
                                                @Override
                                                public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   toaster(mainActivity, topic + "/dim/" + seekBar.getProgress());
                                                    Log.i(TAG, "onStopTrackingTouch: ");
+                                                   setDim(seekBar.getProgress());
+                                                   deviceActivator();
+                                                   mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
                                                }
                                            }
 
@@ -122,5 +118,9 @@ public class WhiteLamp extends Lamp {
         if (!isOn()) {
             setOn(true);
         }
+    }
+
+    public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
+        mainActivity.getMqttHandler().mqttPublish(getTopic(), message);
     }
 }

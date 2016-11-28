@@ -11,7 +11,6 @@ public class Constants {
     public static final int LIST_ITEM_PLUG_CONSUMPTION = 2;
     public static final int LIST_ITEM_LAMP_WHITE = 3;
     public static final int LIST_ITEM_LAMP_RGB = 4;
-    public static final int LIST_ITEM_GENERIC_DEVICE = 5;
     public static final int LIST_ITEM_DOOR_SENSOR = 6;
     public static final int LIST_ITEM_WINDOW_SENSOR = 7;
     public static final int LIST_ITEM_MOVEMENT_SENSOR = 8;
@@ -24,7 +23,6 @@ public class Constants {
     public static final String GROUP_LAMPS = "Lichter";
     public static final String GROUP_PLUGS = "Steckdosen";
     public static final String GROUP_TEMP = "Temperatur";
-    public static final String GROUP_GENERIC_DEVICES = "Unbekannt";
     public static final String GROUP_MOVEMENT_SENSOR = "Bewegungsm...";
     public static final String GROUP_DOOR_SENSOR = "Türsensoren";
     public static final String GROUP_WINDOW_SENSOR = "Fenstersensoren";
@@ -71,5 +69,9 @@ public class Constants {
     public static final String MQTT_TOPIC_WINDOW = "/window";
     public static final String MQTT_TOPIC_TEMPERATURE = "/temperatur";
     public static final String MQTT_TOPIC_HUMIDITY = "/humidity";
+
+    public static final String MQTT_SERVICE_INTENT_TOPIC = "mqtt_topic";
+    public static final String MQTT_SERVICE_INTENT_MESSAGE = "mqtt_message";
+    public static final String MQTT_LOG_DIVIDER = "|";
 
 }

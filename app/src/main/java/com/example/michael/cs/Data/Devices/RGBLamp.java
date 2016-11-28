@@ -39,7 +39,6 @@ public class RGBLamp extends Lamp {
 
         colorNames = context.getResources().getStringArray(R.array.colorIntNames);
         colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
-
         setSelectedColor(selectedColor);
         this.status = status;
     }
@@ -71,6 +70,20 @@ public class RGBLamp extends Lamp {
         Log.i(TAG, "setSelectedColor: " + selectedColor + " called " + selectedColorName);
     }
 
+    public void setSelectedColor(MainActivity mainActivity, int selectedColor) {
+
+        this.selectedColor = selectedColor;
+
+        for (int i = 0; i < colorIntVals.length; i++) {
+            if (selectedColor == colorIntVals[i]) {
+                selectedColorName = colorNames[i];
+                mqttBrokerNotifier(mainActivity, selectedColorName);
+            }
+        }
+
+        Log.i(TAG, "setSelectedColor: " + selectedColor + " called " + selectedColorName);
+    }
+
     public String getStatus() {
         return status;
     }
@@ -80,7 +93,7 @@ public class RGBLamp extends Lamp {
     }
 
     public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, final int adapterPosition) {
-
+//        mainActivity.startService(new Intent(context, MQTTService.class));
         final OnDataChangedListener listener = dataChangedListener;
 
         final LayoutInflater inflater = mainActivity.getLayoutInflater();
@@ -95,33 +108,24 @@ public class RGBLamp extends Lamp {
         tvDimVal.setText(getDim() + "%");
 
         spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
-                                                       @Override
-                                                       public void onColorSelected(@ColorInt int color) {
-                                                           deviceActivator();
+                       @Override
+                       public void onColorSelected(@ColorInt int color) {
+                           deviceActivator();
 
-                                                           for (int i = 0; i < colorIntVals.length; i++) {
-                                                               if (color == colorIntVals[i]) {
-                                                                   setSelectedColor(colorIntVals[i]);
-                                                               }
-                                                           }
-
-                                                           toaster(mainActivity, topic + "/" + getSelectedColorName());
-                                                       }
-                                                   }
+                           for (int i = 0; i < colorIntVals.length; i++) {
+                               if (color == colorIntVals[i]) {
+                                   setSelectedColor(mainActivity, colorIntVals[i]);
+                               }
+                           }
+                       }
+                   }
         );
 
-
-        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-
-                                           {
+        dimSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                @Override
                                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                       setDim(i);
-                                                       tvDimVal.setText(getDim() + "%");
-                                                       deviceActivator();
-
+                                                   tvDimVal.setText(i + "%");
                                                }
-
 
                                                @Override
                                                public void onStartTrackingTouch(SeekBar seekBar) {
@@ -130,8 +134,10 @@ public class RGBLamp extends Lamp {
 
                                                @Override
                                                public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   toaster(mainActivity, topic + "/dim" + seekBar.getProgress());
                                                    Log.i(TAG, "onStopTrackingTouch: ");
+                                                   setDim(seekBar.getProgress());
+                                                   deviceActivator();
+                                                   mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
                                                }
                                            }
 
@@ -146,6 +152,7 @@ public class RGBLamp extends Lamp {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 //                        listener.onDataHasChanged(adapterPosition);
+
                     }
                 }
 
@@ -156,6 +163,7 @@ public class RGBLamp extends Lamp {
             public void onDismiss(DialogInterface dialogInterface) {
                 Log.i(TAG, "onDismiss: ");
                 listener.onDataHasChanged(adapterPosition);
+
             }
         });
 
@@ -172,6 +180,16 @@ public class RGBLamp extends Lamp {
         if (!isOn()) {
             setOn(true);
         }
+    }
+
+    public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
+
+        mainActivity.getMqttHandler().mqttPublish(getTopic(), message);
+
+  /*      Intent intent = new Intent(mainActivity, MQTTService.class);
+        intent.putExtra(MQTT_SERVICE_INTENT_TOPIC, getTopic());
+        intent.putExtra(MQTT_SERVICE_INTENT_MESSAGE, message);
+        mainActivity.startService(intent);*/
     }
 
 }
