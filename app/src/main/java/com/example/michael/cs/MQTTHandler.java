@@ -1,7 +1,9 @@
 package com.example.michael.cs;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
 import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
 
 /**
@@ -25,8 +28,7 @@ import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
 public class MQTTHandler {
 
     private static final String TAG = "MQTTHandler";
-    private static final String MQTT_TOPIC = "CS/#";
-    private static final String MQTT_TOPIC_2 = "CS/#/+/status";
+    private static final String MQTT_TOPIC = "CS/+/+/status";
     private static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
 
     private Context context;
@@ -65,7 +67,19 @@ public class MQTTHandler {
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.i(TAG, "onFailure: Connection Failure! " + exception.toString());
                     mqttConnectionSucceded = false;
-                    Toast.makeText(context, "Verbindung vom MQTT-Server fehlgeschlagen", Toast.LENGTH_LONG).show();
+
+                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                            .setContentTitle("MQTT-Fehler").setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentText("Fehler beim Verbinden zum MQTT-Server");
+
+                    NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+                    bigText.bigText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
+                    bigText.setBigContentTitle("MQTT-Fehler");
+                    bigText.setSummaryText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
+                    notificationBuilder.setStyle(bigText);
+                    notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
+                    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(MQTT_CONNECTION_ERROR_NOTI_ID, notificationBuilder.build());
                 }
             });
         } catch (MqttException ex) {

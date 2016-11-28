@@ -122,10 +122,11 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         adapter.notifyItemChanged(position);
     }
 
-    public void switchTheSwitch(int adapterPosition, boolean b) {
+    public void switchTheSwitch(int adapterPosition, boolean isOn) {
         try {
-            allDevicesList.get(adapterPosition).setOn(b);
+            allDevicesList.get(adapterPosition).setOn(isOn);
             adapter.notifyItemChanged(adapterPosition);
+            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), isOn ? "/on" : "/off");
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

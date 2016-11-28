@@ -7,8 +7,8 @@ android {
         applicationId "com.example.michael.cs"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 2
-        versionName "0.1.2-16_11_16"
+        versionCode 3
+        versionName "0.1.3-28_11_16"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

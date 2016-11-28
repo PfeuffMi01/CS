@@ -201,11 +201,12 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         return drawable;
     }
 
-    public void switchTheSwitch(int adapterPosition, boolean b) {
+    public void switchTheSwitch(int adapterPosition, boolean isOn) {
 
         try {
-            onlyNeededDeviceCategory.get(adapterPosition).setOn(b);
+            onlyNeededDeviceCategory.get(adapterPosition).setOn(isOn);
             adapter.notifyDataSetChanged();
+            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), isOn ? "/on" : "/off");
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

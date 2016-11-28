@@ -74,4 +74,6 @@ public class Constants {
     public static final String MQTT_SERVICE_INTENT_MESSAGE = "mqtt_message";
     public static final String MQTT_LOG_DIVIDER = "|";
 
+    public static final int MQTT_CONNECTION_ERROR_NOTI_ID = 666;
+
 }
