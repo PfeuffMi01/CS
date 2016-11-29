@@ -70,7 +70,7 @@ public class WhiteLamp extends Lamp {
                                                public void onStopTrackingTouch(SeekBar seekBar) {
                                                    Log.i(TAG, "onStopTrackingTouch: ");
                                                    setDim(seekBar.getProgress());
-                                                   deviceActivator();
+                                                   deviceActivator(mainActivity);
                                                    mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
                                                    listener.onDataHasChanged(adapterPosition);
                                                }
@@ -102,8 +102,9 @@ public class WhiteLamp extends Lamp {
         Toast.makeText(m, s, Toast.LENGTH_LONG).show();
     }
 
-    private void deviceActivator() {
+    private void deviceActivator(MainActivity mainActivity) {
         if (!isOn()) {
+            mqttBrokerNotifier(mainActivity, "on");
             setOn(true);
         }
     }

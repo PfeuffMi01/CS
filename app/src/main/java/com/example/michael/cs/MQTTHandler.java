@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class MQTTHandler {
 
     public MQTTHandler(Context c) {
         this.context = c;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         connectMQTT();
     }
 
@@ -156,7 +158,7 @@ public class MQTTHandler {
     public String getDateTime() {
 
         Date now = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh.mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm");
         String dateTime = formatter.format(now);
 
         return dateTime;

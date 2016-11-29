@@ -109,7 +109,7 @@ public class RGBLamp extends Lamp {
         spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
                                                        @Override
                                                        public void onColorSelected(@ColorInt int color) {
-                                                           deviceActivator();
+                                                           deviceActivator(mainActivity);
 
                                                            for (int i = 0; i < colorIntVals.length; i++) {
                                                                if (color == colorIntVals[i]) {
@@ -136,7 +136,7 @@ public class RGBLamp extends Lamp {
                                                public void onStopTrackingTouch(SeekBar seekBar) {
                                                    Log.i(TAG, "onStopTrackingTouch: ");
                                                    setDim(seekBar.getProgress());
-                                                   deviceActivator();
+                                                   deviceActivator(mainActivity);
                                                    mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
                                                    listener.onDataHasChanged(adapterPosition);
                                                }
@@ -168,9 +168,10 @@ public class RGBLamp extends Lamp {
         Toast.makeText(m, s, Toast.LENGTH_SHORT).show();
     }
 
-    private void deviceActivator() {
+    private void deviceActivator(MainActivity mainActivity) {
         if (!isOn()) {
             setOn(true);
+            mqttBrokerNotifier(mainActivity, "on");
         }
     }
 
