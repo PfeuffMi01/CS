@@ -177,7 +177,7 @@ public class RGBLamp extends Lamp {
     private void deviceActivator(MainActivity mainActivity) {
         if (!isOn()) {
             setOn(true);
-            mqttBrokerNotifier(mainActivity, "/on");
+//            mqttBrokerNotifier(mainActivity, "/on");
         }
     }
 

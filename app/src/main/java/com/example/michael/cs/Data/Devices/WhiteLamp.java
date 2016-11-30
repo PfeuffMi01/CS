@@ -110,7 +110,7 @@ public class WhiteLamp extends Lamp {
 
     private void deviceActivator(MainActivity mainActivity) {
         if (!isOn()) {
-            mqttBrokerNotifier(mainActivity, "/on");
+//            mqttBrokerNotifier(mainActivity, "/on");
             setOn(true);
         }
     }
