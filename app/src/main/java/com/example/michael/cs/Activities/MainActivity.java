@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initMQTT() {
-        mqttHandler = new MQTTHandler(this);
+        mqttHandler = MQTTHandler.getInstance(this);
     }
 
     public MQTTHandler getMqttHandler() {

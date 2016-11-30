@@ -29,18 +29,32 @@ import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
 public class MQTTHandler {
 
     private static final String TAG = "MQTTHandler";
-    private static final String MQTT_TOPIC = "CS/+/+/status";
+    private static final String MQTT_TOPIC = "CS/+/+/state";
     private static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
+
+    public static int instanceCounter = 0;
 
     private Context context;
     private MqttAndroidClient mqttAndroidClient;
     private SharedPreferences sharedPreferences;
     private boolean mqttConnectionSucceded;
+    private static MQTTHandler thisInstance;
+
+    public static MQTTHandler getInstance(Context c) {
+
+        if(thisInstance == null) {
+            thisInstance = new MQTTHandler(c);
+        }
+
+        return thisInstance;
+    }
 
     public MQTTHandler(Context c) {
         this.context = c;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         connectMQTT();
+
+        Log.i(TAG, "MQTTHandler: " + ++instanceCounter);
     }
 
     /*
