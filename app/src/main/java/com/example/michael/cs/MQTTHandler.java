@@ -150,7 +150,7 @@ public class MQTTHandler {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String currentLog = sharedPreferences.getString("pref_mqtt_log", "");
-        currentLog += getDateTime() + " " + sentOrReceived + ": " + topic + "/" + message + MQTT_LOG_DIVIDER;
+        currentLog += getDateTime() + " " + sentOrReceived + ": " + topic + message + MQTT_LOG_DIVIDER;
         editor.putString("pref_mqtt_log", currentLog);
         editor.apply();
     }

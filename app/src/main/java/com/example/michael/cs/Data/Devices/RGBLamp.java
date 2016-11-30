@@ -77,7 +77,7 @@ public class RGBLamp extends Lamp {
         for (int i = 0; i < colorIntVals.length; i++) {
             if (selectedColor == colorIntVals[i]) {
                 selectedColorName = colorNames[i];
-                mqttBrokerNotifier(mainActivity, selectedColorName);
+                mqttBrokerNotifier(mainActivity, "/" + selectedColorName);
             }
         }
 
@@ -137,7 +137,13 @@ public class RGBLamp extends Lamp {
                                                    Log.i(TAG, "onStopTrackingTouch: ");
                                                    setDim(seekBar.getProgress());
                                                    deviceActivator(mainActivity);
-                                                   mqttBrokerNotifier(mainActivity, "dim" + seekBar.getProgress());
+
+                                                   String dim = "" + seekBar.getProgress();
+                                                   if (seekBar.getProgress() < 10) {
+                                                       dim = "0" + dim;
+                                                   }
+                                                   mqttBrokerNotifier(mainActivity, "/" + dim);
+
                                                    listener.onDataHasChanged(adapterPosition);
                                                }
                                            }
@@ -171,7 +177,7 @@ public class RGBLamp extends Lamp {
     private void deviceActivator(MainActivity mainActivity) {
         if (!isOn()) {
             setOn(true);
-            mqttBrokerNotifier(mainActivity, "on");
+            mqttBrokerNotifier(mainActivity, "/on");
         }
     }
 

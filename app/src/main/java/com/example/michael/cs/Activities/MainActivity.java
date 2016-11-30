@@ -170,6 +170,16 @@ public class MainActivity extends AppCompatActivity {
 
         );
 
+        dialogBuilder.setNeutralButton("Log löschen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+               SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("pref_mqtt_log") ;
+                editor.apply();
+            }
+        });
+
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
