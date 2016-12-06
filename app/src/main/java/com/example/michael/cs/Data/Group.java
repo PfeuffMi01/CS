@@ -3,7 +3,7 @@ package com.example.michael.cs.Data;
 import com.example.michael.cs.List_Stuff.ListItem;
 
 /**
- * Created by Patrick PC on 31.10.2016.
+ * Repräsentiert eine Gruppe, wie z.B. Lampe oder Bewegungsmelder
  */
 
 public class Group implements ListItem, Comparable<Group> {

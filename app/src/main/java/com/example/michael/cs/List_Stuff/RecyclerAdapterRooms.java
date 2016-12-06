@@ -12,9 +12,6 @@ import com.example.michael.cs.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Patrick PC on 31.10.2016.
- */
 
 public class RecyclerAdapterRooms extends RecyclerView.Adapter<ViewHolder> {
 
@@ -30,13 +27,6 @@ public class RecyclerAdapterRooms extends RecyclerView.Adapter<ViewHolder> {
         this.roomList = rooms;
     }
 
-
-
-    /**
-     * Creates a new ViewHolder depending on its ListItem type
-     *
-     * @return Retruns the created ViewHolder
-     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View view = null;

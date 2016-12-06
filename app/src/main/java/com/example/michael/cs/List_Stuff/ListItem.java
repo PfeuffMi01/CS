@@ -1,9 +1,8 @@
 package com.example.michael.cs.List_Stuff;
 
 /**
- * Interface for ListItems
- *
- * @author Patrick Engelhardt
+ * Interface für ListItems
+ * wird in der onBindViewHolder aufgerufen
  */
 public interface ListItem {
 

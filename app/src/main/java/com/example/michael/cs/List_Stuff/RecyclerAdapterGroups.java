@@ -30,13 +30,6 @@ public class RecyclerAdapterGroups extends RecyclerView.Adapter<ViewHolder> {
         this.groupList = groups;
     }
 
-
-
-    /**
-     * Creates a new ViewHolder depending on its ListItem type
-     *
-     * @return Retruns the created ViewHolder
-     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View view = null;

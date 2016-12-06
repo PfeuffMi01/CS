@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
-import com.example.michael.cs.OnDataChangedListener;
-import com.example.michael.cs.OnListItemClick;
+import com.example.michael.cs.Listener.OnDataChangedListener;
+import com.example.michael.cs.Listener.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
+/**
+ * Zeigt in einer RecyclerView alle Geräte an
+ */
 
 public class AllFragment extends Fragment implements OnListItemClick, OnDataChangedListener {
 
@@ -40,19 +43,6 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
     public AllFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AllFragment newInstance() {
-        AllFragment fragment = new AllFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -77,6 +67,21 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         return view;
     }
 
+    /**
+     * Von der MainActivity eine aktuelle Liste der Geräte holen
+     */
+    private void refreshList() {
+
+        if (allDevicesList == null) {
+            allDevicesList = new ArrayList<>();
+        }
+
+        allDevicesList = ((MainActivity) getActivity()).getDeviceList();
+    }
+
+    /**
+     * Die RecyclerView mit der zuvor erstellten Geräteliste initialisieren
+     */
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -88,16 +93,12 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         recyclerView.setAdapter(adapter);
     }
 
-    private void refreshList() {
-
-        if (allDevicesList == null) {
-            allDevicesList = new ArrayList<>();
-        }
-
-        allDevicesList = ((MainActivity) getActivity()).getDeviceList();
-    }
-
-
+    /**
+     * Wird von der MainActivity aufgerufen, nachdem der User auf einen ViewHolder geklickt hat
+     * Aufruf der showDialogForThisDevice Methode in dem betroffenen Gerät
+     * @param adapterPosition Geräteposition in der Liste
+     * @param listItemType
+     */
     @Override
     public void openDialog(int adapterPosition, int listItemType) {
 
@@ -112,16 +113,12 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
     }
 
-    @Override
-    public void onDataHasChanged() {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDataHasChanged(int position) {
-        adapter.notifyItemChanged(position);
-    }
-
+    /**
+     * Wird von der MainActivity aufgerufen, nachdem der User auf einen Switch auf dem ViewHolder geklickt hat
+     * Änderung des "isOn" Status des betroffenen Geräts
+     * @param adapterPosition Geräteposition in der Liste
+     * @param isOn neuer Zustand
+     */
     public void switchTheSwitch(int adapterPosition, boolean isOn) {
         try {
             allDevicesList.get(adapterPosition).setOn(isOn);
@@ -130,5 +127,19 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }
+    }
+
+    /*
+    ######################### LISTENER #############################################
+     */
+
+    @Override
+    public void onDataHasChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDataHasChanged(int position) {
+        adapter.notifyItemChanged(position);
     }
 }

@@ -1,12 +1,5 @@
 package com.example.michael.cs.List_Stuff;
 
-/**
- * ViewHolder for Section Headlines
- * Gets called by the MyAdapter class
- *
- * @author Patrick Engelhardt
- */
-
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -20,10 +13,7 @@ import com.example.michael.cs.R;
 
 import static com.example.michael.cs.Constants.ROOMS;
 
-/**
- * ViewHolder for ReminderData CardViews
- * Created by Patrick PC on 20.09.2015.
- */
+
 public class ViewHolderRoom extends ViewHolder implements View.OnClickListener {
 
     private static final String TAG = "ViewHolderRoom";

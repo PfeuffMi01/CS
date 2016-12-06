@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Room;
-import com.example.michael.cs.R;
 import com.example.michael.cs.List_Stuff.RecyclerAdapterRooms;
+import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
@@ -36,20 +36,6 @@ public class RoomFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RoomFragment newInstance(String param1, String param2) {
-        RoomFragment fragment = new RoomFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,23 +54,27 @@ public class RoomFragment extends Fragment {
 
 
         this.roomsList = mainActivity.getRoomsList();
-                initRecyclerView();
+        initRecyclerView();
 
         return view;
     }
 
 
-        private void initRecyclerView() {
+    /**
+     * Erstellen der RecyclerView für die Raumelemente mit {@link GridLayoutManager}
+     * Die Daten werden vorher aus der {@link MainActivity geholt}
+     */
+    private void initRecyclerView() {
 
 
-            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-            recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_rooms);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setHasFixedSize(true);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_rooms);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
 
-            adapter = new RecyclerAdapterRooms(getContext(), roomsList);
-            recyclerView.setAdapter(adapter);
-        }
+        adapter = new RecyclerAdapterRooms(getContext(), roomsList);
+        recyclerView.setAdapter(adapter);
+    }
 
 }

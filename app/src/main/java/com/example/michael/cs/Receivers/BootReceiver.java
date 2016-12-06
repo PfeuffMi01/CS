@@ -7,7 +7,7 @@ import android.util.Log;
 
 
 /**
- * Created by Patrick PC on 23.11.2016.
+ * Wird aufgerufen, wenn das Gerät vollständig hochgefahren wurde
  */
 
 public class BootReceiver extends BroadcastReceiver {

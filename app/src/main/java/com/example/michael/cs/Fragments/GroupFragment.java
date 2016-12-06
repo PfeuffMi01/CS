@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.R;
 import com.example.michael.cs.List_Stuff.RecyclerAdapterGroups;
+import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
@@ -34,20 +34,6 @@ public class GroupFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GroupFragment newInstance(String param1, String param2) {
-        GroupFragment fragment = new GroupFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +47,7 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view =  inflater.inflate(R.layout.fragment_group, container, false);
+        view = inflater.inflate(R.layout.fragment_group, container, false);
         mainActivity = (MainActivity) getActivity();
 
         this.groupList = mainActivity.getGroupList();
@@ -71,6 +57,10 @@ public class GroupFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Erstellen der RecyclerView für die Gruppenelemente mit {@link GridLayoutManager}
+     * Die Daten werden vorher aus der {@link MainActivity geholt}
+     */
     private void initRecyclerView() {
 
 

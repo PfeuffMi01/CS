@@ -47,7 +47,7 @@ import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
 
 /**
- * Created by Patrick PC on 09.11.2016.
+ * Erzeugt die ViewHolder für die Geräte
  */
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener {

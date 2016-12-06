@@ -6,11 +6,12 @@ import android.content.Context;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
-import com.example.michael.cs.OnDataChangedListener;
+import com.example.michael.cs.Listener.OnDataChangedListener;
 
 /**
- * Created by Patrick PC on 31.10.2016.
+ * Vaterklasse eines jeden Geräts, wie z.B. "Lampe RGB"
  */
+
 
 public class Device {
 

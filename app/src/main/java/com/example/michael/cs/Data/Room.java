@@ -5,8 +5,9 @@ import com.example.michael.cs.List_Stuff.ListItem;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_MAIN;
 
 /**
- * Created by Patrick PC on 31.10.2016.
+ * Repräsentiert einen Raum, wie z.B. Wohnzimmer oder Küche
  */
+
 
 public class Room   implements ListItem,Comparable<Room> {
 

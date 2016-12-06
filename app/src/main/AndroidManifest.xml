@@ -27,11 +27,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Services.MQTTService">
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-        </service>
-        <service android:name="org.eclipse.paho.android.service.MqttService" />
-
         <receiver android:name=".Receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

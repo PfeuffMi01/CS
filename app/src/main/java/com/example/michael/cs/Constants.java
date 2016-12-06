@@ -1,7 +1,8 @@
 package com.example.michael.cs;
 
 /**
- * Created by Patrick PC on 09.11.2016.
+ * Konstante Strings oder Werte
+ * Dient quasi als Konfigurationsdatei für die App
  */
 
 public class Constants {

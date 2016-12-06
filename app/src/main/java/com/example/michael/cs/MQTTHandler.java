@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
+import com.example.michael.cs.Listener.OnConnectionListener;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -26,7 +27,8 @@ import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
 import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
 
 /**
- * Created by Patrick PC on 28.11.2016.
+ * Kümmert sich um alles, was mit MQTT zu tun hat
+ * Ist eine Singleton Klasse
  */
 public class MQTTHandler {
 
@@ -43,9 +45,15 @@ public class MQTTHandler {
     private boolean mqttConnectionSucceded = false;
     private static MQTTHandler thisInstance;
 
+    /**
+     * Singleton Initialisierung
+     *
+     * @param c
+     * @return
+     */
     public static MQTTHandler getInstance(Context c) {
 
-        if(thisInstance == null) {
+        if (thisInstance == null) {
             thisInstance = new MQTTHandler(c);
         }
 
@@ -59,8 +67,17 @@ public class MQTTHandler {
         Log.i(TAG, "MQTTHandler: " + ++instanceCounter);
     }
 
-    /*
-    Erst connecten. Wenn erfolgreich: Callbacks setzen und subscriben
+    /**
+     * Erst connecten
+     *
+     * Wenn erfolgreich:
+     * - Callbacks setzen und subscriben
+     *
+     * Wenn fehlerhaft:
+     * - Benachrichtigung posten
+     *
+     * Immer:
+     * - Listener informieren
      */
     public void connect() {
 
@@ -106,6 +123,9 @@ public class MQTTHandler {
         }
     }
 
+    /**
+     * Um auf MQTT Ereignisse reagieren zu können
+     */
     private void setMQTTCallbacks() {
 
         mqttAndroidClient.setCallback(new MqttCallback() {
@@ -115,6 +135,9 @@ public class MQTTHandler {
 
             }
 
+            /*
+            Bei einer Empfangenen Nachrichti die SharedPReferences für den Log ergänzen
+             */
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 System.out.println("Message Arrived!: " + topic + ": " + new String(message.getPayload()));
@@ -130,6 +153,11 @@ public class MQTTHandler {
         });
     }
 
+    /**
+     * Eine Nachricht publishen
+     * @param topic
+     * @param message
+     */
     public void mqttPublish(final String topic, final String message) {
 
         if (mqttAndroidClient.isConnected() && mqttConnectionSucceded) {
@@ -160,7 +188,7 @@ public class MQTTHandler {
         }
     }
 
-    /*
+    /**
     * Erstellt einen Logeintrag in den SharedPreferences, der dann im Menü unter "MQTT Log" angezeigt wird.
     * Mit Datum und ob es Empfangen oder gesendet wurde
     */
@@ -173,6 +201,10 @@ public class MQTTHandler {
         editor.apply();
     }
 
+    /**
+     * Erzeugen eines Strings mit Datum und Zeit für den Logeintrag
+     * @return
+     */
     public String getDateTime() {
 
         Date now = Calendar.getInstance().getTime();

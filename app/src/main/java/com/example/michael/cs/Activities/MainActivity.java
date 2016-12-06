@@ -52,7 +52,7 @@ import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
 import com.example.michael.cs.MQTTHandler;
-import com.example.michael.cs.OnConnectionListener;
+import com.example.michael.cs.Listener.OnConnectionListener;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;

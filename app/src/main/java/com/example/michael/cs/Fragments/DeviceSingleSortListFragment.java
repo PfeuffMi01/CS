@@ -21,8 +21,8 @@ import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
-import com.example.michael.cs.OnDataChangedListener;
-import com.example.michael.cs.OnListItemClick;
+import com.example.michael.cs.Listener.OnDataChangedListener;
+import com.example.michael.cs.Listener.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -32,6 +32,9 @@ import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
+/**
+ * Zeigt in einer RecyclerView alle Geräte einer bestimmten Kategorie (Raum, Gruppe) an
+ */
 
 public class DeviceSingleSortListFragment extends Fragment implements OnListItemClick, OnDataChangedListener {
 
@@ -62,27 +65,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         // Required empty public constructor
     }
 
-    public void setSortToShow(String sortToShow) {
-        this.sortToShow = sortToShow;
-        initDataLists();
-        initRecyclerView();
-    }
 
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DeviceSingleSortListFragment newInstance(String param1, String param2) {
-        DeviceSingleSortListFragment fragment = new DeviceSingleSortListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,6 +92,22 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         return view;
     }
 
+    /**
+     * Festlegen der Kategorie, die gezeigt werden soll mit anschließedener Listenerstellung
+     * @param sortToShow
+     */
+    public void setSortToShow(String sortToShow) {
+        this.sortToShow = sortToShow;
+        initDataLists();
+        initRecyclerView();
+    }
+
+    /**
+     * Anlegen einer Geräteliste der benötigten Kategorie
+     *
+     * - Eine Liste aller Geräte erstellen
+     * - Dann eine kategoriespezifische Liste erstellen
+     */
     private void initDataLists() {
 
         allDevicesList = mainActivity.getDeviceList();
@@ -121,7 +120,11 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         isCategoryRoom = true;
         isCategoryGroup = false;
 
-        //Einstellung verändern, wenn es eine Gruppe ist
+        /*
+        Einstellung verändern, wenn es eine Gruppe ist
+        Interieren durch alle Gruppennammen. Bei einem eqlas(sortToShow) weiß man, dass es eine Gruppe ist,
+        ansonsten ein Raum
+         */
         if (mainActivity.getGroupList() != null) {
             for (Group group : mainActivity.getGroupList()) {
                 if (group.getName().equals(sortToShow)) {
@@ -134,7 +137,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             }
         }
 
-        if (isCategoryGroup) {
+                if (isCategoryGroup) {
 
             mainActivity.setCURRENT_LIST_CATEGORY(MainActivity.GROUP_FRAGMENT);
 
@@ -157,6 +160,9 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         }
     }
 
+    /**
+     * Die RecyclerView mit der zuvor erstellten Geräteliste initialisieren
+     */
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -170,6 +176,9 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         emptyViewHandler();
     }
 
+    /**
+     * Hanlder um bei einer leeren Liste das traurige Gesicht und den "Keine Geräte vorhanden" Text anzuzeigen
+     */
     private void emptyViewHandler() {
 
         if (adapter.getItemCount() == 0) {
@@ -190,6 +199,11 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     }
 
+    /**
+     * Das Bild für die EmptyView grau einfärben
+     * @param drawable
+     * @return
+     */
     protected Drawable convertToGrayscale(Drawable drawable) {
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);
@@ -201,6 +215,12 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         return drawable;
     }
 
+    /**
+     * Wird von der MainActivity aufgerufen, nachdem der User auf einen Switch auf dem ViewHolder geklickt hat
+     * Änderung des "isOn" Status des betroffenen Geräts
+     * @param adapterPosition Geräteposition in der Liste
+     * @param isOn neuer Zustand
+     */
     public void switchTheSwitch(int adapterPosition, boolean isOn) {
 
         try {
@@ -213,6 +233,12 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     }
 
+    /**
+     * Wird von der MainActivity aufgerufen, nachdem der User auf einen ViewHolder geklickt hat
+     * Aufruf der showDialogForThisDevice Methode in dem betroffenen Gerät
+     * @param adapterPosition Geräteposition in der Liste
+     * @param listItemType
+     */
     @Override
     public void openDialog(int adapterPosition, int listItemType) {
 
@@ -227,6 +253,12 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
 
     }
+
+
+
+    /*
+    ######################### LISTENER #############################################
+     */
 
     @Override
     public void onDataHasChanged() {
