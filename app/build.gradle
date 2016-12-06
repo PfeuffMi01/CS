@@ -38,6 +38,9 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1-SNAPSHOT'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-SNAPSHOT'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.thebluealliance:spectrum:0.6.0'
+    compile 'id.arieridwan:pageloader:0.0.2'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

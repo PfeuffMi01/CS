@@ -50,6 +50,9 @@ public class Constants {
 
 
     //MQTT
+
+    public static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
+
     public static final String MQTT_TOPIC_MAIN = "CS";
     public static final String MQTT_TOPIC_LIVINGROOM = "/livingroom";
     public static final String MQTT_TOPIC_OFFICE = "/office";

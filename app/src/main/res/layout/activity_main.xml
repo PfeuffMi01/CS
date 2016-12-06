@@ -9,9 +9,11 @@
     tools:context=".Activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:visibility="gone">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -24,28 +26,28 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            app:layout_scrollFlags="scroll"
             android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll"
             app:tabGravity="fill"
             app:tabIndicatorHeight="5dp"
             app:tabMode="fixed"
             app:tabTextColor="@color/white" />
     </android.support.design.widget.AppBarLayout>
 
+    <include
+        layout="@layout/mqtt_loading_layout" />
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:paddingTop="?attr/actionBarSize"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize" />
 
 </android.support.design.widget.CoordinatorLayout>

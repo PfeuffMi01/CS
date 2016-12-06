@@ -8,6 +8,8 @@ import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.michael.cs.Activities.MainActivity;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -34,10 +36,11 @@ public class MQTTHandler {
 
     public static int instanceCounter = 0;
 
+    private OnConnectionListener onConnectionListener;
     private Context context;
     private MqttAndroidClient mqttAndroidClient;
     private SharedPreferences sharedPreferences;
-    private boolean mqttConnectionSucceded;
+    private boolean mqttConnectionSucceded = false;
     private static MQTTHandler thisInstance;
 
     public static MQTTHandler getInstance(Context c) {
@@ -52,7 +55,6 @@ public class MQTTHandler {
     public MQTTHandler(Context c) {
         this.context = c;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        connectMQTT();
 
         Log.i(TAG, "MQTTHandler: " + ++instanceCounter);
     }
@@ -60,7 +62,7 @@ public class MQTTHandler {
     /*
     Erst connecten. Wenn erfolgreich: Callbacks setzen und subscriben
      */
-    private void connectMQTT() {
+    public void connect() {
 
         mqttAndroidClient = new MqttAndroidClient(context, MQTT_IP, "androidClient");
 
@@ -71,6 +73,7 @@ public class MQTTHandler {
                     Log.i(TAG, "onSuccess: Connection Success!");
                     mqttConnectionSucceded = true;
                     setMQTTCallbacks();
+                    onConnectionListener.onMQTTConnection(true);
 
                     try {
                         mqttAndroidClient.subscribe(MQTT_TOPIC, 0);
@@ -82,6 +85,7 @@ public class MQTTHandler {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.i(TAG, "onFailure: Connection Failure! " + exception.toString());
+                    onConnectionListener.onMQTTConnection(false);
                     mqttConnectionSucceded = false;
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
@@ -94,8 +98,8 @@ public class MQTTHandler {
                     bigText.setSummaryText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
                     notificationBuilder.setStyle(bigText);
                     notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
-                    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(MQTT_CONNECTION_ERROR_NOTI_ID, notificationBuilder.build());
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(MQTT_CONNECTION_ERROR_NOTI_ID, notificationBuilder.build());
                 }
             });
         } catch (MqttException ex) {
@@ -180,5 +184,9 @@ public class MQTTHandler {
 
     public boolean isMqttConnectionSucceded() {
         return mqttConnectionSucceded;
+    }
+
+    public void setOnConnectionListener(MainActivity mainActivity) {
+        this.onConnectionListener = mainActivity;
     }
 }
