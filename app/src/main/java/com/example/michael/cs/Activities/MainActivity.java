@@ -1,5 +1,6 @@
 package com.example.michael.cs.Activities;
 
+import android.animation.Animator;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -537,8 +539,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         alertDialog.show();
     }
 
-
-
     @Override
     public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering) {
 
@@ -554,9 +554,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             appBarLayout.setVisibility(VISIBLE);
             viewPager.setVisibility(VISIBLE);
 
-            if(getSupportActionBar() != null && !forcedAppEntering) {
+            if (getSupportActionBar() != null && !forcedAppEntering) {
                 getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
             }
+
+            animateLoadingLayout();
         } else {
 
             Log.i(TAG, "onMQTTConnection: NO SUCCESS");
@@ -577,11 +579,51 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             setSnackbarTextSize(snackbar);
             snackbar.show();
 
-            if(getSupportActionBar() != null) {
+            if (getSupportActionBar() != null) {
                 getSupportActionBar().setSubtitle("Keine Verbindung");
             }
         }
 
+    }
+
+    private void animateLoadingLayout() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            int cx = (mqttLoadingLayout.getLeft() + mqttLoadingLayout.getRight()) / 2;
+            int cy = (mqttLoadingLayout.getTop() + mqttLoadingLayout.getBottom()) / 2;
+            float finalRadius = (float) Math.hypot(cx, cy);
+
+            Animator anim = null;
+
+            anim = ViewAnimationUtils.createCircularReveal(mqttLoadingLayout, cx, cy, 0, finalRadius);
+
+
+            anim.setDuration(2000);
+            anim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            anim.start();
+
+        }
     }
 
 
