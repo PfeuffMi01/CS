@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CSHomeAutomation.iml" filepath="$PROJECT_DIR$/CSHomeAutomation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HS-Coburg Home Remote.iml" filepath="$PROJECT_DIR$/HS-Coburg Home Remote.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
