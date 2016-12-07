@@ -22,11 +22,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -51,8 +53,8 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
+import com.example.michael.cs.Interfaces.OnConnectionListener;
 import com.example.michael.cs.MQTTHandler;
-import com.example.michael.cs.Listener.OnConnectionListener;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         connectionFailImg.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                onMQTTConnection(true);
+                onMQTTConnection(true, true);
                 return true;
             }
         });
@@ -278,7 +280,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private void initMQTT() {
         mqttHandler = MQTTHandler.getInstance(getApplicationContext());
         mqttHandler.setOnConnectionListener(this);
-
         tryToConnectToMQTTBroker();
     }
 
@@ -391,7 +392,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     public void toolbarManager(String title, boolean showBackArrow) {
 
         getSupportActionBar().setTitle(title);
-        getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
         getSupportActionBar().setDisplayHomeAsUpEnabled(showBackArrow);
         getSupportActionBar().setDisplayShowHomeEnabled(showBackArrow);
     }
@@ -451,7 +451,17 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
     }
 
+    public void setSnackbarTextSize(Snackbar s) {
+        ViewGroup group = (ViewGroup) s.getView();
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View v = group.getChildAt(i);
+            if (v instanceof TextView) {
+                TextView t = (TextView) v;
+                t.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+            }
+        }
 
+    }
 
     /*
     ############################## MQTT #################################################
@@ -528,21 +538,13 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
 
-    /**
-     * Listener Aufruf
-     * Wenn die Verbindung erfolgreich war
-     * - ggf die Snackbar entfernen
-     * - Das Lade-Layout ausblenden
-     * - Das richtige Layout einblenden
-     * <p>
-     * Wird auch durch langen Klick auf das "Verbindungsfehler"-Image zwangsweise mit true aufgerufen
-     *
-     * @param isConnectionSuccessful
-     */
+
     @Override
-    public void onMQTTConnection(boolean isConnectionSuccessful) {
+    public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering) {
 
         if (isConnectionSuccessful) {
+
+            Log.i(TAG, "onMQTTConnection: SUCCESS");
 
             if (snackbar != null) {
                 snackbar.dismiss();
@@ -551,7 +553,13 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             mqttLoadingLayout.setVisibility(GONE);
             appBarLayout.setVisibility(VISIBLE);
             viewPager.setVisibility(VISIBLE);
+
+            if(getSupportActionBar() != null && !forcedAppEntering) {
+                getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
+            }
         } else {
+
+            Log.i(TAG, "onMQTTConnection: NO SUCCESS");
             connectionFailImg.setVisibility(VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
             loadingText.setText("");
@@ -566,7 +574,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                         }
                     });
 
+            setSnackbarTextSize(snackbar);
             snackbar.show();
+
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().setSubtitle("Keine Verbindung");
+            }
         }
 
     }
@@ -666,8 +679,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             deviceSingleSortListFragment.openDialog(adapterPosition, listItemType);
         }
     }
-
-
 
 
     /*

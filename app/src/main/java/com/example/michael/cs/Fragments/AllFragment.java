@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
-import com.example.michael.cs.Listener.OnDataChangedListener;
-import com.example.michael.cs.Listener.OnListItemClick;
+import com.example.michael.cs.Interfaces.OnDataChangedListener;
+import com.example.michael.cs.Interfaces.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         try {
             allDevicesList.get(adapterPosition).setOn(isOn);
             adapter.notifyItemChanged(adapterPosition);
-            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), isOn ? "/on" : "/off");
+            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), isOn ? "on" : "off");
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

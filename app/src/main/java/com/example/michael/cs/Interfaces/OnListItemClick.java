@@ -1,4 +1,4 @@
-package com.example.michael.cs.Listener;
+package com.example.michael.cs.Interfaces;
 
 /**
  * Um Fragmente zu informieren, dass für ein geklicktes Element der Dialog aufgehen soll

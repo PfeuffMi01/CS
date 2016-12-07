@@ -1,4 +1,4 @@
-package com.example.michael.cs.Listener;
+package com.example.michael.cs.Interfaces;
 
 /**
  * Um die Fragmente über Änderungen an den Daten zu informieren, damit sie ihre Adapter aktualisieren können

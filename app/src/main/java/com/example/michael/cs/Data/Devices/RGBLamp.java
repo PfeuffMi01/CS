@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
-import com.example.michael.cs.Listener.OnDataChangedListener;
+import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.R;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
@@ -77,7 +77,7 @@ public class RGBLamp extends Lamp {
         for (int i = 0; i < colorIntVals.length; i++) {
             if (selectedColor == colorIntVals[i]) {
                 selectedColorName = colorNames[i];
-                mqttBrokerNotifier(mainActivity, "/" + selectedColorName);
+                mqttBrokerNotifier(mainActivity, selectedColorName);
             }
         }
 
@@ -142,7 +142,7 @@ public class RGBLamp extends Lamp {
                                                    if (seekBar.getProgress() < 10) {
                                                        dim = "0" + dim;
                                                    }
-                                                   mqttBrokerNotifier(mainActivity, "/" + dim);
+                                                   mqttBrokerNotifier(mainActivity, dim);
 
                                                    listener.onDataHasChanged(adapterPosition);
                                                }

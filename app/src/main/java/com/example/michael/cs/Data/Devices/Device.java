@@ -6,7 +6,7 @@ import android.content.Context;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
-import com.example.michael.cs.Listener.OnDataChangedListener;
+import com.example.michael.cs.Interfaces.OnDataChangedListener;
 
 /**
  * Vaterklasse eines jeden Geräts, wie z.B. "Lampe RGB"

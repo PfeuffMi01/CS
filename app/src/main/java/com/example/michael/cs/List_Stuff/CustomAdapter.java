@@ -459,7 +459,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             holder.name.setText(device.getName());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_rgb));
             holder.room.setText(device.getRoom().getName());
-            holder.dim.setText("Dim: " + device.getDim() + " " + context.getString(R.string.percent));
+            holder.dim.setText("Dim: " + device.getDim() + context.getString(R.string.percent));
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
 
             // Den deutschen Namen der Farbe herausfinden

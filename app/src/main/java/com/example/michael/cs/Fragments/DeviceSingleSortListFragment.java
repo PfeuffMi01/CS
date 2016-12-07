@@ -21,8 +21,8 @@ import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.List_Stuff.CustomAdapter;
-import com.example.michael.cs.Listener.OnDataChangedListener;
-import com.example.michael.cs.Listener.OnListItemClick;
+import com.example.michael.cs.Interfaces.OnDataChangedListener;
+import com.example.michael.cs.Interfaces.OnListItemClick;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -226,7 +226,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         try {
             onlyNeededDeviceCategory.get(adapterPosition).setOn(isOn);
             adapter.notifyDataSetChanged();
-            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), isOn ? "/on" : "/off");
+            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), isOn ? "on" : "off");
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

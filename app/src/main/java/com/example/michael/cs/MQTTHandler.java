@@ -9,7 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Listener.OnConnectionListener;
+import com.example.michael.cs.Interfaces.OnConnectionListener;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -87,10 +87,10 @@ public class MQTTHandler {
             mqttAndroidClient.connect(null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.i(TAG, "onSuccess: Connection Success!");
+                    Log.i(TAG, "onSuccess: Connection Success!" + " " + asyncActionToken);
                     mqttConnectionSucceded = true;
                     setMQTTCallbacks();
-                    onConnectionListener.onMQTTConnection(true);
+                    onConnectionListener.onMQTTConnection(true, false);
 
                     try {
                         mqttAndroidClient.subscribe(MQTT_TOPIC, 0);
@@ -101,18 +101,17 @@ public class MQTTHandler {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.i(TAG, "onFailure: Connection Failure! " + exception.toString());
-                    onConnectionListener.onMQTTConnection(false);
+                    Log.i(TAG, "onFailure: Connection Failure! " + exception.toString() + " " + asyncActionToken);
+                    onConnectionListener.onMQTTConnection(false, false);
                     mqttConnectionSucceded = false;
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                            .setContentTitle("MQTT-Fehler").setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("MQTT-Fehler").setSmallIcon(R.drawable.ic_stat_launcher)
                             .setContentText("Fehler beim Verbinden zum MQTT-Server");
 
                     NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
                     bigText.bigText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
-                    bigText.setBigContentTitle("MQTT-Fehler");
-                    bigText.setSummaryText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
+                    bigText.setBigContentTitle("MQTT-Verbindungsfehler");
                     notificationBuilder.setStyle(bigText);
                     notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
                     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
