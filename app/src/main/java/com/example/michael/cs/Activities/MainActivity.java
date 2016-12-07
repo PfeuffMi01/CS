@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private ViewPager viewPager;
 
     private MQTTHandler mqttHandler;
+    private boolean appWasEnteredByLongClickOnNoConnectionIcon;
 
 
 
@@ -542,22 +544,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     @Override
     public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering) {
 
+        appWasEnteredByLongClickOnNoConnectionIcon = forcedAppEntering;
+
         if (isConnectionSuccessful) {
-
-            Log.i(TAG, "onMQTTConnection: SUCCESS");
-
-            if (snackbar != null) {
-                snackbar.dismiss();
-            }
-
-            mqttLoadingLayout.setVisibility(GONE);
-            appBarLayout.setVisibility(VISIBLE);
-            viewPager.setVisibility(VISIBLE);
-
-            if (getSupportActionBar() != null && !forcedAppEntering) {
-                getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
-            }
-
             animateLoadingLayout();
         } else {
 
@@ -586,46 +575,69 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     }
 
+    /**
+     * Lässt das Ladelayout in einer kreisförmigen Animation verschwinden
+     * Nur für OS Versionen ab Lollipop
+     */
     private void animateLoadingLayout() {
+
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
-            int cx = (mqttLoadingLayout.getLeft() + mqttLoadingLayout.getRight()) / 2;
-            int cy = (mqttLoadingLayout.getTop() + mqttLoadingLayout.getBottom()) / 2;
-            float finalRadius = (float) Math.hypot(cx, cy);
+            Log.i(TAG, "animateLoadingLayout: ");
+            View myView = findViewById(R.id.mqtt_loading_layout);
 
-            Animator anim = null;
+            // Animationszentrum bestimmen (Mitte des Screens)
+            int cx = (myView.getLeft() + myView.getRight()) / 2;
+            int cy = (myView.getTop() + myView.getBottom()) / 2;
 
-            anim = ViewAnimationUtils.createCircularReveal(mqttLoadingLayout, cx, cy, 0, finalRadius);
+            // den finalen Radius bestimmen
+            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
 
+            Animator animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
 
-            anim.setDuration(2000);
-            anim.addListener(new Animator.AnimatorListener() {
+            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+            animator.setDuration(600);
+            animator.addListener(new Animator.AnimatorListener() {
                 @Override
-                public void onAnimationStart(Animator animation) {
+                public void onAnimationStart(Animator animator) {
 
                 }
 
                 @Override
-                public void onAnimationEnd(Animator animation) {
+                public void onAnimationEnd(Animator animator) {
+                    letLoadingScreenDisappear();
+                }
 
+                @Override
+                public void onAnimationCancel(Animator animator) {
 
                 }
 
                 @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
+                public void onAnimationRepeat(Animator animator) {
 
                 }
             });
-            anim.start();
-
+            animator.start();
+        } else {
+            letLoadingScreenDisappear();
         }
     }
 
+    public void letLoadingScreenDisappear() {
+        if (snackbar != null) {
+            snackbar.dismiss();
+        }
+
+        mqttLoadingLayout.setVisibility(GONE);
+        appBarLayout.setVisibility(VISIBLE);
+        viewPager.setVisibility(VISIBLE);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
+        }
+    }
 
 
 
