@@ -69,13 +69,13 @@ public class MQTTHandler {
 
     /**
      * Erst connecten
-     *
+     * <p>
      * Wenn erfolgreich:
      * - Callbacks setzen und subscriben
-     *
+     * <p>
      * Wenn fehlerhaft:
      * - Benachrichtigung posten
-     *
+     * <p>
      * Immer:
      * - Listener informieren
      */
@@ -154,6 +154,7 @@ public class MQTTHandler {
 
     /**
      * Eine Nachricht publishen
+     *
      * @param topic
      * @param message
      */
@@ -188,27 +189,33 @@ public class MQTTHandler {
     }
 
     /**
-    * Erstellt einen Logeintrag in den SharedPreferences, der dann im Menü unter "MQTT Log" angezeigt wird.
-    * Mit Datum und ob es Empfangen oder gesendet wurde
-    */
+     * Erstellt einen Logeintrag in den SharedPreferences, der dann im Menü unter "MQTT Log" angezeigt wird.
+     * Mit Datum und ob es Empfangen oder gesendet wurde
+     */
     private void mqttLogCreator(String topic, String message, String sentOrReceived) {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String currentLog = sharedPreferences.getString("pref_mqtt_log", "");
-        currentLog += getDateTime() + " " + sentOrReceived + ": " + topic + message + MQTT_LOG_DIVIDER;
+        currentLog += sentOrReceived
+                + ":     "
+                + getDateTime()
+                + "\n" + topic
+                + "/" + message
+                + MQTT_LOG_DIVIDER;
         editor.putString("pref_mqtt_log", currentLog);
         editor.apply();
     }
 
     /**
      * Erzeugen eines Strings mit Datum und Zeit für den Logeintrag
+     *
      * @return
      */
     public String getDateTime() {
 
         Date now = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm");
-        String dateTime = formatter.format(now);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        String dateTime = formatter.format(now) + " Uhr";
 
         return dateTime;
     }

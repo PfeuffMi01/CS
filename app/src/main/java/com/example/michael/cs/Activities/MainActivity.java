@@ -364,6 +364,70 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
      */
 
     /**
+     * Lässt das Ladelayout in einer kreisförmigen Animation verschwinden
+     * Nur für OS Versionen ab Lollipop
+     */
+    private void animateLoadingLayout() {
+
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            Log.i(TAG, "animateLoadingLayout: ");
+            View myView = findViewById(R.id.mqtt_loading_layout);
+
+            // Animationszentrum bestimmen (Mitte des Screens)
+            int cx = (myView.getLeft() + myView.getRight()) / 2;
+            int cy = (myView.getTop() + myView.getBottom()) / 2;
+
+            // den finalen Radius bestimmen
+            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+            Animator animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
+
+            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+            animator.setDuration(600);
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    letLoadingScreenDisappear();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            animator.start();
+        } else {
+            letLoadingScreenDisappear();
+        }
+    }
+
+    public void letLoadingScreenDisappear() {
+        if (snackbar != null) {
+            snackbar.dismiss();
+        }
+
+        mqttLoadingLayout.setVisibility(GONE);
+        appBarLayout.setVisibility(VISIBLE);
+        viewPager.setVisibility(VISIBLE);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
+        }
+    }
+
+    /**
      * Wechselt Fragmente
      * Entscheidet über die Sichtbarkeit des fragContainers und des ViewPagers
      *
@@ -574,72 +638,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
 
     }
-
-    /**
-     * Lässt das Ladelayout in einer kreisförmigen Animation verschwinden
-     * Nur für OS Versionen ab Lollipop
-     */
-    private void animateLoadingLayout() {
-
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
-            Log.i(TAG, "animateLoadingLayout: ");
-            View myView = findViewById(R.id.mqtt_loading_layout);
-
-            // Animationszentrum bestimmen (Mitte des Screens)
-            int cx = (myView.getLeft() + myView.getRight()) / 2;
-            int cy = (myView.getTop() + myView.getBottom()) / 2;
-
-            // den finalen Radius bestimmen
-            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-            Animator animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
-
-            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-            animator.setDuration(600);
-            animator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    letLoadingScreenDisappear();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            animator.start();
-        } else {
-            letLoadingScreenDisappear();
-        }
-    }
-
-    public void letLoadingScreenDisappear() {
-        if (snackbar != null) {
-            snackbar.dismiss();
-        }
-
-        mqttLoadingLayout.setVisibility(GONE);
-        appBarLayout.setVisibility(VISIBLE);
-        viewPager.setVisibility(VISIBLE);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
-        }
-    }
-
-
 
     /*
     ############################## USER INTERACTION ABFAGEN #################################################
