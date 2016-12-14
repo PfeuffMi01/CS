@@ -37,9 +37,14 @@ public class Constants {
     public static final String ROOM_HALLWAY = "Flur";
     public static final String ROOM_KITCHEN = "Küche";
     public static final String ROOM_OFFICE = "Büro";
+    public static final String ROOM_OPENHAB ="Openhab";
     public static final String STATUS_OK = "OK";
 
     public static final boolean isDebugEnabled = true;
+    public static final int MQTT_CONNECTION_TIMEOUT = 6000;
+    public static final String ON = "an";
+    public static final String OFF = "aus";
+    public static final String OPENHAB_COLOR_TOPIC_ADDITION = "color";
 
     public static String FHEM_IP = "http://192.168.178.21";
     public static String FHEM_PORT = "8083";
@@ -74,10 +79,15 @@ public class Constants {
     public static final String MQTT_TOPIC_TEMPERATURE = "/temperatur";
     public static final String MQTT_TOPIC_HUMIDITY = "/humidity";
 
-    public static final String MQTT_SERVICE_INTENT_TOPIC = "mqtt_topic";
-    public static final String MQTT_SERVICE_INTENT_MESSAGE = "mqtt_message";
     public static final String MQTT_LOG_DIVIDER = "|";
 
     public static final int MQTT_CONNECTION_ERROR_NOTI_ID = 666;
+
+
+    public static final String MQTT_TOPIC_OPENHAB = "patrick/#";
+    public static final String MQTT_IP_OPENHAB = "tcp://192.168.178.20:1883";
+
+    public static final String MQTT_TOPIC_JOHANN = "CS/+/+/status";
+    public static final String MQTT_IP_JOHANN = "tcp://schlegel2.ddns.net:1883";
 
 }

@@ -16,6 +16,7 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -33,11 +34,10 @@ import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
 public class MQTTHandler {
 
     private static final String TAG = "MQTTHandler";
-    private static final String MQTT_TOPIC = "CS/+/+/state";
-    private static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
 
     public static int instanceCounter = 0;
 
+    private String connectionIP, connectionTopic;
     private OnConnectionListener onConnectionListener;
     private Context context;
     private MqttAndroidClient mqttAndroidClient;
@@ -58,6 +58,11 @@ public class MQTTHandler {
         }
 
         return thisInstance;
+    }
+
+    public void setConnetionDetails(String ip, String topic) {
+        connectionIP = ip;
+        connectionTopic = topic;
     }
 
     public MQTTHandler(Context c) {
@@ -81,19 +86,23 @@ public class MQTTHandler {
      */
     public void connect() {
 
-        mqttAndroidClient = new MqttAndroidClient(context, MQTT_IP, "androidClient");
+
+        mqttAndroidClient = new MqttAndroidClient(context, connectionIP, "androidClient");
+        MqttConnectOptions connectOptions = new MqttConnectOptions();
+        connectOptions.setConnectionTimeout(Constants.MQTT_CONNECTION_TIMEOUT);
 
         try {
-            mqttAndroidClient.connect(null, new IMqttActionListener() {
+
+            mqttAndroidClient.connect(connectOptions, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.i(TAG, "onSuccess: Connection Success!" + " " + asyncActionToken);
                     mqttConnectionSucceded = true;
                     setMQTTCallbacks();
-                    onConnectionListener.onMQTTConnection(true, false);
+                    onConnectionListener.onMQTTConnection(true, false, connectionIP);
 
                     try {
-                        mqttAndroidClient.subscribe(MQTT_TOPIC, 0);
+                        mqttAndroidClient.subscribe(connectionTopic, 1);
                     } catch (MqttException ex) {
                         Log.e(TAG, "onSuccess: Couldn't subscribe " + ex.toString());
                     }
@@ -102,7 +111,7 @@ public class MQTTHandler {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.i(TAG, "onFailure: Connection Failure! " + exception.toString() + " " + asyncActionToken);
-                    onConnectionListener.onMQTTConnection(false, false);
+                    onConnectionListener.onMQTTConnection(false, false, connectionIP);
                     mqttConnectionSucceded = false;
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
@@ -110,7 +119,7 @@ public class MQTTHandler {
                             .setContentText("Fehler beim Verbinden zum MQTT-Server");
 
                     NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-                    bigText.bigText("Verbindung zum MQTT Server " + MQTT_IP + " fehlgeschlagen");
+                    bigText.bigText("Verbindung zum MQTT Server " + connectionTopic + " fehlgeschlagen");
                     bigText.setBigContentTitle("MQTT-Verbindungsfehler");
                     notificationBuilder.setStyle(bigText);
                     notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -131,23 +140,19 @@ public class MQTTHandler {
             @Override
             public void connectionLost(Throwable cause) {
                 System.out.println("Connection was lost!");
-
             }
 
-            /*
-            Bei einer Empfangenen Nachrichti die SharedPReferences für den Log ergänzen
-             */
+           // Bei einer Empfangenen Nachricht die SharedPReferences für den Log ergänzen
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                System.out.println("Message Arrived!: " + topic + ": " + new String(message.getPayload()));
-                Log.i(TAG, "messageArrived: " + topic + " " + message);
 
+                Log.i(TAG, "messageArrived: " + topic + " " + message);
                 mqttLogCreator(topic, message.toString(), "RECEIVED");
             }
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                System.out.println("Delivery Complete! " + token.toString());
+                System.out.println("Delivery Complete! " + token);
             }
         });
     }
@@ -197,7 +202,7 @@ public class MQTTHandler {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String currentLog = sharedPreferences.getString("pref_mqtt_log", "");
         currentLog += sentOrReceived
-                + ":     "
+                + ": "
                 + getDateTime()
                 + "\n" + topic
                 + "/" + message
@@ -226,5 +231,15 @@ public class MQTTHandler {
 
     public void setOnConnectionListener(MainActivity mainActivity) {
         this.onConnectionListener = mainActivity;
+    }
+
+    public void disconnect() {
+        try {
+            Log.i(TAG, "disconnect: mqtt server disconnected");
+            this.mqttAndroidClient.disconnect();
+
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }

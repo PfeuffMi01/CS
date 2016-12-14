@@ -21,7 +21,6 @@ public class Room   implements ListItem,Comparable<Room> {
         this.topic = MQTT_TOPIC_MAIN + topic;
         this.image = image;
         this.name = name;
-        this.topic = MQTT_TOPIC_MAIN + topic;
     }
 
     @Override

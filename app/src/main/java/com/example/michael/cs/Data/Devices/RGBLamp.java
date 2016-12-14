@@ -12,12 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
+import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.R;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
+import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -37,7 +39,7 @@ public class RGBLamp extends Lamp {
     public RGBLamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, int selectedColor, String status, String topic) {
         super(context, _id, isOn, name, room, group, dim, topic);
 
-        colorNames = context.getResources().getStringArray(R.array.colorIntNames);
+        colorNames = context.getResources().getStringArray(R.array.colorMqtt);
         colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
         setSelectedColor(selectedColor);
         this.status = status;
@@ -95,6 +97,7 @@ public class RGBLamp extends Lamp {
     public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, final int adapterPosition) {
 //        mainActivity.startService(new Intent(context, MQTTService.class));
         final OnDataChangedListener listener = dataChangedListener;
+
 
         final LayoutInflater inflater = mainActivity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rbg_lamp, null);
@@ -167,7 +170,6 @@ public class RGBLamp extends Lamp {
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-
     }
 
     public void toaster(MainActivity m, String s) {
@@ -183,12 +185,14 @@ public class RGBLamp extends Lamp {
 
     public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
 
-        mainActivity.getMqttHandler().mqttPublish(getTopic(), message);
+        String topic = getTopic();
 
-  /*      Intent intent = new Intent(mainActivity, MQTTService.class);
-        intent.putExtra(MQTT_SERVICE_INTENT_TOPIC, getTopic());
-        intent.putExtra(MQTT_SERVICE_INTENT_MESSAGE, message);
-        mainActivity.startService(intent);*/
+        if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
+            topic += "/" + Constants.OPENHAB_COLOR_TOPIC_ADDITION;
+        }
+
+        mainActivity.getMqttHandler().mqttPublish(topic, message);
+        Log.i(TAG, "mqttBrokerNotifier: " + topic + message);
     }
 
 }

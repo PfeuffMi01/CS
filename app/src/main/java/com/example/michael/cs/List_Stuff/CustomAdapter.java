@@ -45,6 +45,8 @@ import static com.example.michael.cs.Constants.ROOM_GARDEN;
 import static com.example.michael.cs.Constants.ROOM_HALLWAY;
 import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
+import static com.example.michael.cs.Constants.ROOM_OFFICE;
+import static com.example.michael.cs.Constants.ROOM_OPENHAB;
 
 /**
  * Erzeugt die ViewHolder für die Geräte
@@ -465,7 +467,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             // Den deutschen Namen der Farbe herausfinden
             String colorName = device.getSelectedColorName();
             String colorNameGerman = "";
-            String[] colorNames = context.getResources().getStringArray(R.array.colorIntNames);
+            String[] colorNames = context.getResources().getStringArray(R.array.colorMqtt);
             String[] colorNamesGerman = context.getResources().getStringArray(R.array.colorIntNamesGerman);
 
             for (int i = 0; i < colorNames.length; i++) {
@@ -532,11 +534,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 img = context.getResources().getDrawable(R.drawable.bed_room);
                 break;
 
-
             case ROOM_GARAGE:
                 img = context.getResources().getDrawable(R.drawable.garage_room);
                 break;
 
+            case ROOM_OFFICE:
+                img = context.getResources().getDrawable(R.drawable.office_room);
+                break;
 
             case ROOM_GARDEN:
                 img = context.getResources().getDrawable(R.drawable.garden_room_);
@@ -552,6 +556,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             case ROOM_KITCHEN:
                 img = context.getResources().getDrawable(R.drawable.kitchen_room);
+                break;
+
+            case ROOM_OPENHAB:
+                img = context.getResources().getDrawable(R.drawable.openhab);
                 break;
 
             default:

@@ -12,13 +12,14 @@ import android.view.ViewGroup;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
-import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.Interfaces.OnListItemClick;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
+import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
 import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
@@ -96,6 +97,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
     /**
      * Wird von der MainActivity aufgerufen, nachdem der User auf einen ViewHolder geklickt hat
      * Aufruf der showDialogForThisDevice Methode in dem betroffenen Gerät
+     *
      * @param adapterPosition Geräteposition in der Liste
      * @param listItemType
      */
@@ -116,14 +118,22 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
     /**
      * Wird von der MainActivity aufgerufen, nachdem der User auf einen Switch auf dem ViewHolder geklickt hat
      * Änderung des "isOn" Status des betroffenen Geräts
+     *
      * @param adapterPosition Geräteposition in der Liste
-     * @param isOn neuer Zustand
+     * @param isOn            neuer Zustand
      */
     public void switchTheSwitch(int adapterPosition, boolean isOn) {
         try {
             allDevicesList.get(adapterPosition).setOn(isOn);
             adapter.notifyItemChanged(adapterPosition);
-            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), isOn ? "on" : "off");
+
+            String message = isOn ? "on" : "off";
+
+            if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
+                message = isOn ? "1" : "0";
+            }
+
+            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), message);
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

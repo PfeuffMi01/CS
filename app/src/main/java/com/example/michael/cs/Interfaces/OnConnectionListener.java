@@ -17,8 +17,8 @@ public interface OnConnectionListener {
      * Wird auch durch langen Klick auf das "Verbindungsfehler"-Image zwangsweise mit true aufgerufen
      * @param isConnectionSuccessful
      * @param forcedAppEntering Indikator ob man per langen Klick auf das "Verbindungsfehler"
-     * Image die App trotzdem betreten hat (die Toolbar muss dann trotzdem "Keine Verbindung" anzeigen)
+     * @param connectionIP
      */
-    public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering);
+    public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP);
 
 }

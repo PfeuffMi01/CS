@@ -8,4 +8,11 @@
         android:icon="@drawable/ic_format_list_bulleted_white_48dp"
         android:title="MQTT Log"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_switch_server"
+        android:enabled="true"
+        android:icon="@drawable/ic_format_list_bulleted_white_48dp"
+        android:title="Server wechseln"
+        app:showAsAction="never" />
 </menu>

@@ -23,6 +23,8 @@
         <item>@color/white</item>
     </array>
 
+
+
     <array name="colorIntVals">
         <item>-65528</item>
         <item>-5632</item>
@@ -31,12 +33,12 @@
         <item>-1</item>
     </array>
 
-    <array name="colorIntNames">
-        <item>red</item>
-        <item>yellow</item>
-        <item>blue</item>
-        <item>green</item>
-        <item>white</item>
+    <array name="colorMqtt">
+        <item>Rot</item>
+        <item>Yellow</item>
+        <item>Blau</item>
+        <item>Grruen</item>
+        <item>Weiss</item>
     </array>
 
     <array name="colorIntNamesGerman">

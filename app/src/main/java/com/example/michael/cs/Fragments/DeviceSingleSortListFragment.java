@@ -20,9 +20,9 @@ import android.widget.Toast;
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.Interfaces.OnListItemClick;
+import com.example.michael.cs.List_Stuff.CustomAdapter;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -66,7 +66,6 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +93,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     /**
      * Festlegen der Kategorie, die gezeigt werden soll mit anschließedener Listenerstellung
+     *
      * @param sortToShow
      */
     public void setSortToShow(String sortToShow) {
@@ -104,7 +104,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     /**
      * Anlegen einer Geräteliste der benötigten Kategorie
-     *
+     * <p>
      * - Eine Liste aller Geräte erstellen
      * - Dann eine kategoriespezifische Liste erstellen
      */
@@ -137,7 +137,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             }
         }
 
-                if (isCategoryGroup) {
+        if (isCategoryGroup) {
 
             mainActivity.setCURRENT_LIST_CATEGORY(MainActivity.GROUP_FRAGMENT);
 
@@ -201,6 +201,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     /**
      * Das Bild für die EmptyView grau einfärben
+     *
      * @param drawable
      * @return
      */
@@ -218,15 +219,18 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
     /**
      * Wird von der MainActivity aufgerufen, nachdem der User auf einen Switch auf dem ViewHolder geklickt hat
      * Änderung des "isOn" Status des betroffenen Geräts
+     *
      * @param adapterPosition Geräteposition in der Liste
-     * @param isOn neuer Zustand
+     * @param isOn            neuer Zustand
      */
     public void switchTheSwitch(int adapterPosition, boolean isOn) {
 
         try {
             onlyNeededDeviceCategory.get(adapterPosition).setOn(isOn);
             adapter.notifyDataSetChanged();
-            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), isOn ? "on" : "off");
+
+//            String message = isOn ? Constants.ON : Constants.OFF;
+            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(),  isOn? "1" : "0");
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }
@@ -236,6 +240,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
     /**
      * Wird von der MainActivity aufgerufen, nachdem der User auf einen ViewHolder geklickt hat
      * Aufruf der showDialogForThisDevice Methode in dem betroffenen Gerät
+     *
      * @param adapterPosition Geräteposition in der Liste
      * @param listItemType
      */
