@@ -20,6 +20,8 @@ import com.example.michael.cs.R;
 import java.util.ArrayList;
 
 import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
+import static com.example.michael.cs.Constants.OFF;
+import static com.example.michael.cs.Constants.ON;
 import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
@@ -127,7 +129,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
             allDevicesList.get(adapterPosition).setOn(isOn);
             adapter.notifyItemChanged(adapterPosition);
 
-            String message = isOn ? "on" : "off";
+            String message = isOn ? ON : OFF;
 
             if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
                 message = isOn ? "1" : "0";

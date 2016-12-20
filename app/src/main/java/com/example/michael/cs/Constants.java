@@ -60,24 +60,24 @@ public class Constants {
     public static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
 
     public static final String MQTT_TOPIC_MAIN = "CS";
-    public static final String MQTT_TOPIC_LIVINGROOM = "/livingroom";
-    public static final String MQTT_TOPIC_OFFICE = "/office";
-    public static final String MQTT_TOPIC_KITCHEN = "/kitchen";
-    public static final String MQTT_TOPIC_BEDROOM = "/bedroom";
-    public static final String MQTT_TOPIC_FLOOR = "/floor";
+    public static final String MQTT_TOPIC_LIVINGROOM = "/wohnzimmer";
+    public static final String MQTT_TOPIC_OFFICE = "/buero";
+    public static final String MQTT_TOPIC_KITCHEN = "/kueche";
+    public static final String MQTT_TOPIC_BEDROOM = "/schlafzimmer";
+    public static final String MQTT_TOPIC_FLOOR = "/flur";
     public static final String MQTT_TOPIC_GARAGE = "/garage";
-    public static final String MQTT_TOPIC_GARDEN = "/garden";
+    public static final String MQTT_TOPIC_GARDEN = "/garten";
 
     public static final String[] MQTT_TOPICS_ROOMS = {MQTT_TOPIC_LIVINGROOM, MQTT_TOPIC_OFFICE, MQTT_TOPIC_KITCHEN,
             MQTT_TOPIC_BEDROOM, MQTT_TOPIC_FLOOR, MQTT_TOPIC_GARAGE, MQTT_TOPIC_GARDEN};
 
-    public static final String MQTT_TOPIC_LIGHT = "/light";
-    public static final String MQTT_TOPIC_SOCKET = "/socket";
-    public static final String MQTT_TOPIC_MOTION = "/motion";
-    public static final String MQTT_TOPIC_DOOR = "/door";
-    public static final String MQTT_TOPIC_WINDOW = "/window";
+    public static final String MQTT_TOPIC_LIGHT = "/licht";
+    public static final String MQTT_TOPIC_SOCKET = "/steckdose";
+    public static final String MQTT_TOPIC_MOTION = "/bewegt";
+    public static final String MQTT_TOPIC_DOOR = "/tuer";
+    public static final String MQTT_TOPIC_WINDOW = "/fenster";
     public static final String MQTT_TOPIC_TEMPERATURE = "/temperatur";
-    public static final String MQTT_TOPIC_HUMIDITY = "/humidity";
+    public static final String MQTT_TOPIC_HUMIDITY = "/feuchtigkeit";
 
     public static final String MQTT_LOG_DIVIDER = "|";
 

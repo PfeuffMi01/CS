@@ -29,6 +29,9 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
+import static com.example.michael.cs.Constants.OFF;
+import static com.example.michael.cs.Constants.ON;
 import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
@@ -229,8 +232,13 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             onlyNeededDeviceCategory.get(adapterPosition).setOn(isOn);
             adapter.notifyDataSetChanged();
 
-//            String message = isOn ? Constants.ON : Constants.OFF;
-            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(),  isOn? "1" : "0");
+            String message = isOn ? ON : OFF;
+
+            if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
+                message = isOn ? "1" : "0";
+            }
+
+            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), message);
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

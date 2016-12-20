@@ -142,9 +142,6 @@ public class RGBLamp extends Lamp {
                                                    deviceActivator(mainActivity);
 
                                                    String dim = "" + seekBar.getProgress();
-                                                   if (seekBar.getProgress() < 10) {
-                                                       dim = "0" + dim;
-                                                   }
                                                    mqttBrokerNotifier(mainActivity, dim);
 
                                                    listener.onDataHasChanged(adapterPosition);
