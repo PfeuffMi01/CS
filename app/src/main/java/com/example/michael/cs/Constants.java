@@ -37,7 +37,15 @@ public class Constants {
     public static final String ROOM_HALLWAY = "Flur";
     public static final String ROOM_KITCHEN = "Küche";
     public static final String ROOM_OFFICE = "Büro";
-    public static final String ROOM_OPENHAB ="Openhab";
+
+    public static final String[] ROOM_ARRAY = {ROOM_LIVING, ROOM_GARAGE, ROOM_BED,
+            ROOM_GARDEN, ROOM_HALLWAY, ROOM_KITCHEN, ROOM_OFFICE};
+
+    public static final String[] CATEGORY_ARRAY = {"Bewegungsmelder", "Fenstersensor", "Feuchtigkeit",
+            "Licht RGB", "Licht Weiß", "Steckdose", "Steckdose mit Verbrauch", "Temperatur", "Türsensor",
+            "Wetterstation"};
+
+    public static final String ROOM_OPENHAB = "Openhab";
     public static final String STATUS_OK = "OK";
 
     public static final boolean isDebugEnabled = true;
@@ -90,4 +98,8 @@ public class Constants {
     public static final String MQTT_TOPIC_JOHANN = "CS/+/+/status";
     public static final String MQTT_IP_JOHANN = "tcp://schlegel2.ddns.net:1883";
 
+    public static String PROFILE_DIV = "~";
+    public static String DATA_DIV = ";";
+    public static String DATA_DEVICES_DIV = "+";
+    public static String DEVICES_DIV = "$";
 }

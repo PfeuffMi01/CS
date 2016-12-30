@@ -13,7 +13,7 @@ import com.example.michael.cs.Interfaces.OnDataChangedListener;
  */
 
 
-public class Device {
+public class Device implements Cloneable {
 
     public String _id;
     public boolean isOn;
@@ -31,6 +31,11 @@ public class Device {
         this.room = room;
         this.group = group;
         this.topic = this.room.getTopic() + topic;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public String getTopic() {

@@ -68,12 +68,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
         TextView name;
         TextView room;
         ImageView icon;
         ImageView roomImg;
+        ImageView editBtn;
         SwitchCompat switchOnOff;
 
         public ViewHolder(View v) {
@@ -82,9 +83,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.icon = (ImageView) v.findViewById(R.id.image);
             this.name = (TextView) v.findViewById(R.id.device_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
+            this.editBtn = (ImageView) v.findViewById(R.id.room_footer_edit) ;
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
             this.switchOnOff.setOnCheckedChangeListener(this);
+            this.editBtn.setOnClickListener(this);
+
         }
 
         @Override
@@ -93,6 +97,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             if (!onBind) {
                 int adapterPosition = getAdapterPosition();
                 ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (!onBind) {
+                int adapterPosition = getAdapterPosition();
+                ((MainActivity) context).editButtonHasBeenClicked(adapterPosition);
             }
         }
     }

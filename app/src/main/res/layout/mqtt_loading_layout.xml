@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:visibility="visible">
 
-    <ImageView
+   <!-- <ImageView
         android:id="@+id/no_connection_image"
         android:layout_width="160dp"
         android:layout_height="160dp"
@@ -29,6 +29,7 @@
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
+        android:visibility="invisible"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
@@ -41,6 +42,6 @@
         android:gravity="center"
         android:text="Verbindung wird aufgebaut..."
         android:textColor="@color/white"
-        android:textSize="25sp" />
+        android:textSize="25sp" />-->
 
 </RelativeLayout>

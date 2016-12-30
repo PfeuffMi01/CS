@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profilename_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profilename_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Profilname"
+            android:inputType="textNoSuggestions" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profile_ip_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profile_ip_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textNoSuggestions"
+            android:hint="Server-IP"
+            android:typeface="monospace" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profile_port_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profile_port_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Port"
+            android:inputType="number|textNoSuggestions"
+            android:typeface="monospace" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

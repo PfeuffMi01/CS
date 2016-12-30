@@ -7,8 +7,8 @@ android {
         applicationId "com.example.michael.cs"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4
-        versionName "0.1.5-06_12_16"
+        versionCode 5
+        versionName "0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -41,4 +41,5 @@ dependencies {
     compile 'com.thebluealliance:spectrum:0.6.0'
     compile 'id.arieridwan:pageloader:0.0.2'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

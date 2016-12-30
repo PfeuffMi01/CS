@@ -63,6 +63,8 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         view = inflater.inflate(R.layout.fragment_all, container, false);
         mainActivity = (MainActivity) getActivity();
 
+        mainActivity.setOnDataChangedListener(this);
+
         refreshList();
         initRecyclerView();
 
@@ -91,6 +93,21 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_all);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if(dy > 0) {
+                    mainActivity.hideFab();
+                } else {
+                    mainActivity.showFab();
+                }
+
+            }
+        });
+
 
         adapter = new CustomAdapter(getContext(), allDevicesList);
         recyclerView.setAdapter(adapter);
@@ -147,6 +164,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
     @Override
     public void onDataHasChanged() {
+        refreshList();
         adapter.notifyDataSetChanged();
     }
 
