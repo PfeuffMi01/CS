@@ -13,8 +13,8 @@ public class HumiditySensor extends Device {
 
     private int humidity;
 
-    public HumiditySensor(Context context, String _id, boolean isOn, String name, Room room, Group group, int humidity, String topic) {
-        super(context,_id, isOn, name, room, group, topic);
+    public HumiditySensor(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int humidity, String topic) {
+        super(deviceType, context,_id, isOn, name, room, group, topic);
 
         this.humidity = humidity;
     }

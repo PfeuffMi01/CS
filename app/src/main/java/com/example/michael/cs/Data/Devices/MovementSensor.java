@@ -13,8 +13,8 @@ public class MovementSensor extends Device {
 
     private String lastMovement;
 
-    public MovementSensor(Context context, String _id, boolean isOn, String name, Room room, Group group, String lastMovement, String topic) {
-        super(context,_id, isOn, name, room, group, topic);
+    public MovementSensor(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, String lastMovement, String topic) {
+        super(deviceType, context,_id, isOn, name, room, group, topic);
 
         this.lastMovement = lastMovement;
 

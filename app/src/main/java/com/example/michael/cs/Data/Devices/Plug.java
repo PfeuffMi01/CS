@@ -14,8 +14,8 @@ public class Plug extends Device {
 
     private String status;
 
-    public Plug(Context context, String _id, boolean isOn, String name, Room room, Group group, String status, String topic) {
-        super(context,_id, isOn, name, room, group, topic);
+    public Plug(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, String status, String topic) {
+        super(deviceType, context,_id, isOn, name, room, group, topic);
 
         this.status = status;
     }

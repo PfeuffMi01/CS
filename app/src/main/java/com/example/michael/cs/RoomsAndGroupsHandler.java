@@ -1,6 +1,7 @@
 package com.example.michael.cs;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
@@ -37,7 +38,7 @@ import static com.example.michael.cs.Constants.ROOM_OFFICE;
 public class RoomsAndGroupsHandler {
 
     private static RoomsAndGroupsHandler thisInstance;
-
+    private static final String TAG = "RoomsAndGroupsHandler";
     private Context context;
     private ArrayList<Room> roomList;
     private ArrayList<Group> groupList;
@@ -112,23 +113,23 @@ public class RoomsAndGroupsHandler {
 
         for (Room r : roomList) {
             if (r.getName().equals(name)) {
+                Log.i(TAG, "getRoomByName: returning NOT null " + name + " -- " + r.getName());
                 return r;
             }
         }
-
+        Log.i(TAG, "getRoomByName: returning null " + name);
         return null;
-
     }
 
     public Group getGroupByName(String name) {
 
         for (Group g : groupList) {
             if (g.getName().equals(name)) {
+                Log.i(TAG, "getGroupByName: returning NOT null " + name + " -- " + g.getName());
                 return g;
             }
         }
-
+        Log.i(TAG, "getGroupByName: returning null " + name);
         return null;
-
     }
 }

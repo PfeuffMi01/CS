@@ -46,7 +46,6 @@ import static com.example.michael.cs.Constants.ROOM_HALLWAY;
 import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
 import static com.example.michael.cs.Constants.ROOM_OFFICE;
-import static com.example.michael.cs.Constants.ROOM_OPENHAB;
 
 /**
  * Erzeugt die ViewHolder für die Geräte
@@ -83,7 +82,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             this.icon = (ImageView) v.findViewById(R.id.image);
             this.name = (TextView) v.findViewById(R.id.device_name);
             this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.editBtn = (ImageView) v.findViewById(R.id.room_footer_edit) ;
+            this.editBtn = (ImageView) v.findViewById(R.id.room_footer_edit);
             this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
             this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
             this.switchOnOff.setOnCheckedChangeListener(this);
@@ -320,7 +319,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         switch (viewType) {
 
             case -1:
-                returnViewHolder = null;
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.recycler_list_item_temp, viewGroup, false);
+                returnViewHolder = new TempViewHolder(v);
                 break;
 
             case LIST_ITEM_TEMP:
@@ -570,10 +571,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 img = context.getResources().getDrawable(R.drawable.kitchen_room);
                 break;
 
-            case ROOM_OPENHAB:
-                img = context.getResources().getDrawable(R.drawable.openhab);
-                break;
-
             default:
                 img = context.getResources().getDrawable(R.drawable.home);
                 break;
@@ -590,23 +587,25 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public int getItemViewType(int position) {
 
-        if (deviceList.get(position) instanceof PlugWithConsumption) {
-            return Constants.LIST_ITEM_PLUG_CONSUMPTION;
-        } else if (deviceList.get(position) instanceof Plug) {
-            return Constants.LIST_ITEM_PLUG;
-        } else if (deviceList.get(position) instanceof WhiteLamp) {
-            return Constants.LIST_ITEM_LAMP_WHITE;
-        } else if (deviceList.get(position) instanceof RGBLamp) {
-            return Constants.LIST_ITEM_LAMP_RGB;
-        } else if (deviceList.get(position) instanceof Temp) {
+        Log.i(TAG, "getItemViewType: " + position);
+
+        if (deviceList.get(position).getDeviceType() == LIST_ITEM_PLUG_CONSUMPTION) {
+            return LIST_ITEM_PLUG_CONSUMPTION;
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_PLUG) {
+            return LIST_ITEM_PLUG;
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_LAMP_WHITE) {
+            return LIST_ITEM_LAMP_WHITE;
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_LAMP_RGB) {
+            return LIST_ITEM_LAMP_RGB;
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_TEMP) {
             return LIST_ITEM_TEMP;
-        } else if (deviceList.get(position) instanceof WindowSensor) {
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_WINDOW_SENSOR) {
             return LIST_ITEM_WINDOW_SENSOR;
-        } else if (deviceList.get(position) instanceof DoorSensor) {
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_DOOR_SENSOR) {
             return LIST_ITEM_DOOR_SENSOR;
-        } else if (deviceList.get(position) instanceof MovementSensor) {
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_MOVEMENT_SENSOR) {
             return LIST_ITEM_MOVEMENT_SENSOR;
-        } else if (deviceList.get(position) instanceof HumiditySensor) {
+        } else if (deviceList.get(position).getDeviceType() == LIST_ITEM_HUMIDITY) {
             return LIST_ITEM_HUMIDITY;
         } else
 

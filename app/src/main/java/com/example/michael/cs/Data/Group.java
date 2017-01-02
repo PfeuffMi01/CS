@@ -26,6 +26,7 @@ public class Group implements ListItem, Comparable<Group> {
         this.image = image;
     }
 
+
     public String getName() {
         return name;
     }
@@ -38,4 +39,6 @@ public class Group implements ListItem, Comparable<Group> {
     public int compareTo(Group group) {
         return this.getName().compareTo(group.getName());
     }
+
+
 }

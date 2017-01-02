@@ -89,18 +89,26 @@ import static com.example.michael.cs.Constants.GROUP_MOVEMENT_SENSOR;
 import static com.example.michael.cs.Constants.GROUP_PLUGS;
 import static com.example.michael.cs.Constants.GROUP_TEMP;
 import static com.example.michael.cs.Constants.GROUP_WINDOW_SENSOR;
+import static com.example.michael.cs.Constants.LIST_ITEM_DOOR_SENSOR;
+import static com.example.michael.cs.Constants.LIST_ITEM_HUMIDITY;
+import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_RGB;
+import static com.example.michael.cs.Constants.LIST_ITEM_LAMP_WHITE;
+import static com.example.michael.cs.Constants.LIST_ITEM_MOVEMENT_SENSOR;
+import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
+import static com.example.michael.cs.Constants.LIST_ITEM_PLUG_CONSUMPTION;
+import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
+import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
 import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
-import static com.example.michael.cs.Constants.MQTT_IP_JOHANN;
-import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
+
 import static com.example.michael.cs.Constants.MQTT_TOPIC_BEDROOM;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_FLOOR;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARAGE;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARDEN;
-import static com.example.michael.cs.Constants.MQTT_TOPIC_JOHANN;
+
 import static com.example.michael.cs.Constants.MQTT_TOPIC_KITCHEN;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_LIVINGROOM;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_OFFICE;
-import static com.example.michael.cs.Constants.MQTT_TOPIC_OPENHAB;
+
 import static com.example.michael.cs.Constants.ROOM_ARRAY;
 import static com.example.michael.cs.Constants.ROOM_BED;
 import static com.example.michael.cs.Constants.ROOM_GARAGE;
@@ -151,9 +159,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
-
-    private boolean isConnectedToJohann = true;
-
     private MQTTHandler mqttHandler;
     private boolean appWasEnteredByLongClickOnNoConnectionIcon;
     private ImageView noConnectionImage;
@@ -161,10 +166,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private OnDataChangedListener onDataChangedListener;
 
 
-
+    private static void CATEGORY_LIFECYCLE() {
     /*
     ############################## LIFECYCLE #################################################
      */
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         mqttHandler.setOnConnectionLostListener(this);
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl_main);
-        currentlyConnectedServer = MQTT_IP_JOHANN;
 
         initUI();
     }
@@ -201,6 +207,15 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         super.onDestroy();
     }
 
+    @Override
+    protected void onStop() {
+
+        profileHandler.saveDevicesToSharedPreferences();
+
+        super.onStop();
+    }
+
+
     /**
      * Menü anlegen
      *
@@ -217,10 +232,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
 
-
+    private static void CATEGORY_INITS() {
     /*
     ############################## INITS #################################################
      */
+    }
 
 
     private void initUI() {
@@ -234,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(this);
 
-        initExampleData();
+        initRoomsAndGroups();
         initFragment();
         initTabs();
 
@@ -266,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         progressBar.setVisibility(INVISIBLE);
         loadingText.setVisibility(INVISIBLE);
 
-        snackbar = Snackbar
+   /*     snackbar = Snackbar
                 .make(coordinatorLayout, "Kein Internet", Snackbar.LENGTH_INDEFINITE)
                 .setActionTextColor(Color.RED)
                 .setAction("ERNEUT VERSUCHEN", new View.OnClickListener() {
@@ -289,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                 });
 
         setSnackbarTextSize(snackbar);
-        snackbar.show();
+        snackbar.show();*/
 
     }
 
@@ -382,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
      * Kontrollieren, mit welchem Server man gerade verbunden ist und nur die entsprechenden Geräte dafür laden
      * TODO Nur die wirklich verfügbaren Geräte anlegen (Status vom Server)
      */
-    private void initExampleData() {
+    private void initRoomsAndGroups() {
 
         roomsList = new ArrayList<>();
         groupList = new ArrayList<>();
@@ -437,6 +453,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         Collections.sort(roomsList);
         Collections.sort(groupList);
 
+        loadDevicesFromProfileHandler();
+
+
      /*   for (Device device : deviceList) {
             Log.i(TAG, "initExampleData: " + device.getName() + " " + device.getTopic());
         }*/
@@ -449,9 +468,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    private static void CATEGORY_UI_AND_VIEWS() {
     /*
     ############################## UI & VIEWS #################################################
      */
+    }
 
     /**
      * Lässt das Ladelayout in einer kreisförmigen Animation verschwinden
@@ -663,13 +684,25 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
 
         for (Device d : deviceList) {
-            if(d.getName().equals(deviceName) && d.getRoom().getName().equals(room)) {
+            if (d.getName().equals(deviceName) && d.getRoom().getName().equals(room)) {
                 Log.i(TAG, "doesDeviceExist: found exsiting device");
                 return true;
             }
         }
         return false;
     }
+
+    private void loadDevicesFromProfileHandler() {
+        Log.i(TAG, "loadDevicesFromProfileHandler: " + profileHandler.getCurrentProfile().getStringForSharedPreferences());
+
+        this.deviceList = profileHandler.getCurrentProfile().getDeviceList();
+
+        for(Device d : deviceList) {
+            Log.i(TAG, "loadDevicesFromProfileHandler: " + d.getName());
+        }
+    }
+
+
 
     private void createNewDevice(String deviceName, String category, String room) {
 
@@ -696,31 +729,31 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         if (category.equals(catArray[0])) {
             // Bewegungsmelder
-            newDevice = new MovementSensor(this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", "");
+            newDevice = new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", "");
         } else if (category.equals(catArray[1])) {
             // Fenstersensor
-            newDevice = new WindowSensor(this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", "");
+            newDevice = new WindowSensor(LIST_ITEM_WINDOW_SENSOR, this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", "");
         } else if (category.equals(catArray[2])) {
             // Feuchtigkeit
-            newDevice = new HumiditySensor(this, "1", false, deviceName, tmpRoom, humidity, 80, "");
+            newDevice = new HumiditySensor(LIST_ITEM_HUMIDITY, this, "1", false, deviceName, tmpRoom, humidity, 80, "");
         } else if (category.equals(catArray[3])) {
             // RGB Licht
-            newDevice = new RGBLamp(MainActivity.this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", "");
+            newDevice = new RGBLamp(LIST_ITEM_LAMP_RGB, this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", "");
         } else if (category.equals(catArray[4])) {
             // Weißes Licht
-            newDevice = new WhiteLamp(MainActivity.this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", "");
+            newDevice = new WhiteLamp(LIST_ITEM_LAMP_WHITE, this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", "");
         } else if (category.equals(catArray[5])) {
             // Steckdose
-            newDevice = new Plug(this, "1", false, deviceName, tmpRoom, plugs, "aus", "");
+            newDevice = new Plug(LIST_ITEM_PLUG, this, "1", false, deviceName, tmpRoom, plugs, "aus", "");
         } else if (category.equals(catArray[6])) {
             // Steckdose mit Verbrauch
-            newDevice = new PlugWithConsumption(this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", "");
+            newDevice = new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", "");
         } else if (category.equals(catArray[7])) {
             // Temperatur
-            newDevice = new Temp(this, "1", false, deviceName, tmpRoom, temperature, 24, "");
+            newDevice = new Temp(LIST_ITEM_TEMP, this, "1", false, deviceName, tmpRoom, temperature, 24, "");
         } else if (category.equals(catArray[8])) {
             // Türsensor
-            newDevice = new DoorSensor(this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", "");
+            newDevice = new DoorSensor(LIST_ITEM_DOOR_SENSOR, this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", "");
         } else if (category.equals(catArray[9])) {
             // Wetterstation
         }
@@ -730,7 +763,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             deviceList.add(newDevice);
             onDataChangedListener.onDataHasChanged();
         }
-
     }
 
     private void setupSpinnersForNewDeviceDialog(Spinner category, Spinner room, final CheckBox dim, final String[] spinnerArrayCategories, String[] spinnerArrayRooms) {
@@ -830,9 +862,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
     }
 
+    private static void CATEGORY_MQTT() {
     /*
     ############################## MQTT #################################################
      */
+    }
 
     /**
      * Verbindungsversuch beginnt nacht 0,5 Sekunden, damit man die Progressbar für eine kurze Zeit zu Gesicht bekommt
@@ -919,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         appWasEnteredByLongClickOnNoConnectionIcon = forcedAppEntering;
 
         if (isConnectionSuccessful) {
-            initExampleData();
+            initRoomsAndGroups();
             initFragment();
             initTabs();
 
@@ -955,51 +989,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
     }
 
+    private static void CATEGORY_USER_INTERACTION_ABFAGEN() {
     /*
     ############################## USER INTERACTION ABFAGEN #################################################
      */
-
-    private void showSwitchServerDialog() {
-
-        final LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_change_server, null);
-
-        final Spinner serverSpinner = (Spinner) dialogView.findViewById(R.id.server_spinner);
-        String[] spinnerArray = new String[]{MQTT_IP_JOHANN, MQTT_IP_OPENHAB};
-        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                spinnerArray);
-        serverSpinner.setAdapter(spinnerArrayAdapter);
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setView(dialogView);
-        dialogBuilder.setTitle("Server auswählen");
-        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
-
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        Log.i(TAG, "onClick: " + serverSpinner.getSelectedItemPosition());
-
-                        mqttHandler.disconnect();
-
-                        switch (serverSpinner.getSelectedItemPosition()) {
-                            case 0:
-                                initMQTT(MQTT_IP_JOHANN, "1234", MQTT_TOPIC_JOHANN);
-
-                                break;
-                            case 1:
-                                initMQTT(MQTT_IP_OPENHAB, "1234", MQTT_TOPIC_OPENHAB);
-                                break;
-                        }
-                    }
-                }
-        );
-
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-
     }
 
     /**
@@ -1041,11 +1034,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
             case R.id.action_log:
                 showMQTTLogDialog();
-                break;
-
-            case R.id.action_switch_server:
-                showSwitchServerDialog();
-
                 break;
 
             default:
@@ -1090,7 +1078,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     public void editButtonHasBeenClicked(final int adapterPosition) {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(deviceList.get(adapterPosition).getName() + " löschen?");
+        dialogBuilder.setTitle("\"" + deviceList.get(adapterPosition).getName() + "\"" + " löschen?");
         dialogBuilder.setMessage("Wollen Sie das Gerät " + deviceList.get(adapterPosition).getName() + " wirklich löschen?");
         dialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     @Override
@@ -1168,9 +1156,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
 
+    private static void CATEGORY_GETTER_AND_SETTER() {
     /*
     ############################## GETTER & SETTER #################################################
      */
+    }
 
     public MQTTHandler getMqttHandler() {
         return mqttHandler;

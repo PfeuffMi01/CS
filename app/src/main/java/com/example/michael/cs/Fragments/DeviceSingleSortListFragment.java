@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
 import static com.example.michael.cs.Constants.OFF;
 import static com.example.michael.cs.Constants.ON;
 import static com.example.michael.cs.Constants.isDebugEnabled;
@@ -154,6 +153,8 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
             mainActivity.setCURRENT_LIST_CATEGORY(MainActivity.ROOM_FRAGMENT);
             Log.i(TAG, "initDataLists: room " + sortToShow);
+
+
             for (Device d : allDevicesList) {
 
                 if (d.getRoom().getName().equals(sortToShow)) {
@@ -234,9 +235,6 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
             String message = isOn ? ON : OFF;
 
-            if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
-                message = isOn ? "1" : "0";
-            }
 
             mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), message);
         } catch (Exception e) {

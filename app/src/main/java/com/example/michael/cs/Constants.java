@@ -24,11 +24,10 @@ public class Constants {
     public static final String GROUP_LAMPS = "Lichter";
     public static final String GROUP_PLUGS = "Steckdosen";
     public static final String GROUP_TEMP = "Temperatur";
-    public static final String GROUP_MOVEMENT_SENSOR = "Bewegungsm...";
+    public static final String GROUP_MOVEMENT_SENSOR = "Bewegungsmelder";
     public static final String GROUP_DOOR_SENSOR = "Türsensoren";
     public static final String GROUP_WINDOW_SENSOR = "Fenstersensoren";
     public static final String GROUP_HUMIDITY = "Feuchtigkeit";
-    public static final String GROUP_WEATHER_STATION = "Wetterstation";
 
     public static final String ROOM_LIVING = "Wohnzimmer";
     public static final String ROOM_GARAGE = "Garage";
@@ -42,17 +41,14 @@ public class Constants {
             ROOM_GARDEN, ROOM_HALLWAY, ROOM_KITCHEN, ROOM_OFFICE};
 
     public static final String[] CATEGORY_ARRAY = {"Bewegungsmelder", "Fenstersensor", "Feuchtigkeit",
-            "Licht RGB", "Licht Weiß", "Steckdose", "Steckdose mit Verbrauch", "Temperatur", "Türsensor",
-            "Wetterstation"};
+            "Licht RGB", "Licht Weiß", "Steckdose", "Steckdose mit Verbrauch", "Temperatur", "Türsensor"};
 
-    public static final String ROOM_OPENHAB = "Openhab";
     public static final String STATUS_OK = "OK";
 
     public static final boolean isDebugEnabled = true;
     public static final int MQTT_CONNECTION_TIMEOUT = 6000;
     public static final String ON = "an";
     public static final String OFF = "aus";
-    public static final String OPENHAB_COLOR_TOPIC_ADDITION = "color";
 
     public static String FHEM_IP = "http://192.168.178.21";
     public static String FHEM_PORT = "8083";
@@ -91,15 +87,12 @@ public class Constants {
 
     public static final int MQTT_CONNECTION_ERROR_NOTI_ID = 666;
 
-
-    public static final String MQTT_TOPIC_OPENHAB = "patrick/#";
-    public static final String MQTT_IP_OPENHAB = "tcp://192.168.178.20:1883";
-
-    public static final String MQTT_TOPIC_JOHANN = "CS/+/+/status";
-    public static final String MQTT_IP_JOHANN = "tcp://schlegel2.ddns.net:1883";
-
-    public static String PROFILE_DIV = "~";
+    /**
+     * EXAMPLE
+     * Profil 1;tcp://schlegel2.ddns.net;1883~Melder1§Büro§Bewegungsmelder
+     */
+    public static String PROFILE_DEVICES_DIV = "~";
     public static String DATA_DIV = ";";
-    public static String DATA_DEVICES_DIV = "+";
-    public static String DEVICES_DIV = "$";
+    public static String DEVICES_DIV = "?";
+    public static String DATA_DEVICES_DIV = "§";
 }

@@ -54,7 +54,6 @@ public class ViewHolderGroup extends ViewHolder implements View.OnClickListener 
 
         tVGroupTitle.setText(name);
         ivGroup.setImageResource(image);
-
     }
 
 

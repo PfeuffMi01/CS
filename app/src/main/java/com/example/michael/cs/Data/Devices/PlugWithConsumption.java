@@ -12,8 +12,8 @@ import com.example.michael.cs.Data.Room;
 public class PlugWithConsumption extends Plug {
     private String consumption;
 
-    public PlugWithConsumption(Context context, String _id, boolean isOn, String name, Room room, Group group, String status, String consumption, String topic) {
-        super(context,_id, isOn, name, room, group, status, topic);
+    public PlugWithConsumption(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, String status, String consumption, String topic) {
+        super(deviceType, context,_id, isOn, name, room, group, status, topic);
 
         this.consumption = consumption;
     }

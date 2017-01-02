@@ -27,8 +27,8 @@ public class WhiteLamp extends Lamp {
 
     public String status;
 
-    public WhiteLamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String status, String topic) {
-        super(context, _id, isOn, name, room, group, dim, topic);
+    public WhiteLamp(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String status, String topic) {
+        super(deviceType, context, _id, isOn, name, room, group, dim, topic);
 
         this.status = status;
     }

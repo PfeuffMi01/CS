@@ -13,8 +13,8 @@ public class Lamp extends Device {
 
     public int dim;
 
-    public Lamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String topic) {
-        super(context,_id, isOn, name, room, group, topic);
+    public Lamp(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, String topic) {
+        super(deviceType,  context,_id, isOn, name, room, group, topic);
 
         this.dim = dim;
     }

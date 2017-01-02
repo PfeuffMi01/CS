@@ -6,8 +6,7 @@ package com.example.michael.cs.List_Stuff;
  */
 public interface ListItem {
 
-    static final String TAG = "ListItem";
-
+    final String TAG = "ListItem";
 
     /**
      * GETTERS ++++++++++++++++++++++++++++++++++
@@ -24,4 +23,6 @@ public interface ListItem {
     void setName(String s);
 
     void setImage(int i);
+
+
 }

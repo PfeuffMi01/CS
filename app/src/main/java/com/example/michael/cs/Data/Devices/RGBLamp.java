@@ -12,14 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
-import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.R;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
-import static com.example.michael.cs.Constants.MQTT_IP_OPENHAB;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -36,8 +34,8 @@ public class RGBLamp extends Lamp {
     public String selectedColorName;
 
 
-    public RGBLamp(Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, int selectedColor, String status, String topic) {
-        super(context, _id, isOn, name, room, group, dim, topic);
+    public RGBLamp(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, int selectedColor, String status, String topic) {
+        super(deviceType, context, _id, isOn, name, room, group, dim, topic);
 
         colorNames = context.getResources().getStringArray(R.array.colorMqtt);
         colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
@@ -183,10 +181,6 @@ public class RGBLamp extends Lamp {
     public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
 
         String topic = getTopic();
-
-        if (mainActivity.getCurrentlyConnectedServer().equals(MQTT_IP_OPENHAB)) {
-            topic += "/" + Constants.OPENHAB_COLOR_TOPIC_ADDITION;
-        }
 
         mainActivity.getMqttHandler().mqttPublish(topic, message);
         Log.i(TAG, "mqttBrokerNotifier: " + topic + message);

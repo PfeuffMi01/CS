@@ -45,6 +45,9 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        Log.i(TAG, "onCreate: Lifecycle");
+
         super.onCreate(savedInstanceState);
         profileHandler = ProfileHandler.getInstance(this);
         mqttHandler = MQTTHandler.getInstance(this);
@@ -71,9 +74,18 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         imageHSC.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+
+                int amountProfiles = sharedPreferences.getInt("pref_amount_profiles", 0);
+
+
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.remove("pref_profiles");
+
+                for (int i = 0; i < amountProfiles; i++) {
+                    editor.remove("pref_profiles_" + (i + 1));
+                }
+
+                editor.remove("pref_amount_profiles");
                 editor.apply();
 
                 profileHandler.initSavedProfiles();
@@ -104,8 +116,7 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
                                                           + profileToConnectTo.getName()
                                                           + " "
                                                           + profileToConnectTo.getServerIP(), Toast.LENGTH_SHORT).show();
-                                              }
-                                              else {
+                                              } else {
                                                   loadingViewHandler(false, true);
                                                   InternetConnectionHandler.noInternetAvailable(StartActivity.this);
                                               }
@@ -206,16 +217,20 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
 
     @Override
     protected void onStart() {
+        Log.i(TAG, "onStart: Lifecycle");
+
         super.onStart();
     }
 
     @Override
     protected void onStop() {
+        Log.i(TAG, "onStop: Lifecycle");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "onDestroy: Lifecycle");
         super.onDestroy();
         thingsToDoBeforeOnDestroy();
     }
@@ -223,18 +238,27 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
 
     private void thingsToDoBeforeOnDestroy() {
 
-        String saveToPrefs = profileHandler.getStringToSaveToPrefs();
-
-        Log.i(TAG, "onDestroy: " + saveToPrefs);
+        Log.i(TAG, "thingsToDoBeforeOnDestroy: ");
 
         if (mqttHandler.isConnected()) {
             Log.i(TAG, "thingsToDoBeforeOnDestroy: onDestroy");
-//            mqttHandler.disconnect();
+            mqttHandler.disconnect();
         }
+
+        String[] profiles = profileHandler.getStringToSaveToPrefs();
+        int amountProfiles = profiles.length;
+
+        Log.i(TAG, "thingsToDoBeforeOnDestroy: " + amountProfiles);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("pref_profiles", saveToPrefs);
+        editor.putInt("pref_amount_profiles", amountProfiles);
+
+        for (int i = 0; i < amountProfiles; i++) {
+            editor.putString("pref_profiles_" + (i + 1), profiles[i]);
+            Log.i(TAG, "thingsToDoBeforeOnDestroy: " + profiles[i]);
+        }
+
         editor.apply();
     }
 
@@ -289,7 +313,7 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
 
         if (isConnectionSuccessful) {
 
-            Log.i(TAG, "onMQTTConnection: success");            
+            Log.i(TAG, "onMQTTConnection: success");
             profileHandler.setCurrentProfile(profileHandler.getProfileList().get(profileSpinner.getSelectedItemPosition()));
             loadingViewHandler(false, false);
 

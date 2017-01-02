@@ -54,7 +54,6 @@
                 android:id="@+id/profiles_spinner"
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
-
                 android:layout_height="wrap_content"
                 android:layout_weight="0.03" />
         </LinearLayout>
@@ -78,13 +77,14 @@
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/new_profile_btn"
         android:layout_width="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@drawable/button_outline"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:layout_weight="0.03"
+        android:elevation="4dp"
         android:gravity="center"
         android:text="Profil hinzufügen"
-        android:textColor="@color/white"
+        android:textColor="@color/colorAccent"
         android:textSize="20sp" />
 
     <RelativeLayout

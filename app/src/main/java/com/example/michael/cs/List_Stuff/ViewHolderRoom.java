@@ -50,7 +50,7 @@ public class ViewHolderRoom extends ViewHolder implements View.OnClickListener {
         name = ((Room) item).getName();
         int image = ((Room) item).getImage();
 
-        Log.i(TAG, "bindType: " + name + " " + image);
+        Log.i(TAG, "bindType: " + name);
 
         tVRoomTitle.setText(name);
         ivRoom.setImageResource(image);
