@@ -82,6 +82,9 @@ import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.CATEGORY_ARRAY;
+import static com.example.michael.cs.Constants.DATA_DEVICES_DIV;
+import static com.example.michael.cs.Constants.DATA_DIV;
+import static com.example.michael.cs.Constants.DEVICES_DIV;
 import static com.example.michael.cs.Constants.GROUP_DOOR_SENSOR;
 import static com.example.michael.cs.Constants.GROUP_HUMIDITY;
 import static com.example.michael.cs.Constants.GROUP_LAMPS;
@@ -99,16 +102,14 @@ import static com.example.michael.cs.Constants.LIST_ITEM_PLUG_CONSUMPTION;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
 import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
 import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
-
 import static com.example.michael.cs.Constants.MQTT_TOPIC_BEDROOM;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_FLOOR;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARAGE;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARDEN;
-
 import static com.example.michael.cs.Constants.MQTT_TOPIC_KITCHEN;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_LIVINGROOM;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_OFFICE;
-
+import static com.example.michael.cs.Constants.PROFILE_DEVICES_DIV;
 import static com.example.michael.cs.Constants.ROOM_ARRAY;
 import static com.example.michael.cs.Constants.ROOM_BED;
 import static com.example.michael.cs.Constants.ROOM_GARAGE;
@@ -644,6 +645,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
                         boolean errorEmptyName = false;
                         boolean errorExistingName = false;
+                        boolean unsupportedCharacter = false;
 
                         String deviceName = String.valueOf(name.getText());
 
@@ -655,10 +657,22 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                             errorExistingName = true;
                         }
 
-                        if (errorEmptyName) {
-                            Toast.makeText(MainActivity.this, "Bitte Gerätenamen eingeben", Toast.LENGTH_SHORT).show();
+                        if (deviceName.contains(PROFILE_DEVICES_DIV)
+                                || deviceName.contains(DATA_DIV)
+                                || deviceName.contains(DEVICES_DIV)
+                                || deviceName.contains(DATA_DEVICES_DIV)) {
+                            unsupportedCharacter = true;
+                        }
+                        if (unsupportedCharacter) {
+                            Toast.makeText(MainActivity.this, "Folgende Zeichen sind nicht erlaubt:\n"
+                                    + PROFILE_DEVICES_DIV
+                                    + "   " + DATA_DIV
+                                    + "   " + DEVICES_DIV
+                                    + "   " + DATA_DEVICES_DIV, Toast.LENGTH_LONG).show();
+                        } else if (errorEmptyName) {
+                            Toast.makeText(MainActivity.this, "Bitte Gerätenamen eingeben", Toast.LENGTH_LONG).show();
                         } else if (errorExistingName) {
-                            Toast.makeText(MainActivity.this, "Dieses Gerät gibt es bereits", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Dieses Gerät gibt es bereits", Toast.LENGTH_LONG).show();
                         } else if (!errorEmptyName && !errorExistingName) {
                             createNewDevice(deviceName, spinnerArrayCategories[category.getSelectedItemPosition()], spinnerArrayRooms[room.getSelectedItemPosition()]);
                         }
@@ -697,11 +711,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         this.deviceList = profileHandler.getCurrentProfile().getDeviceList();
 
-        for(Device d : deviceList) {
+        for (Device d : deviceList) {
             Log.i(TAG, "loadDevicesFromProfileHandler: " + d.getName());
         }
     }
-
 
 
     private void createNewDevice(String deviceName, String category, String room) {
