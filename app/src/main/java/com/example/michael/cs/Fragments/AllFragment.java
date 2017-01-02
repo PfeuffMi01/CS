@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
@@ -19,6 +20,8 @@ import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.OFF;
 import static com.example.michael.cs.Constants.ON;
 import static com.example.michael.cs.Constants.isDebugEnabled;
@@ -41,6 +44,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
     private RecyclerView recyclerView;
     private ArrayList<Device> allDevicesList;
     private CustomAdapter adapter;
+    private LinearLayout emptyView;
 
 
     public AllFragment() {
@@ -63,6 +67,8 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         mainActivity = (MainActivity) getActivity();
 
         mainActivity.setOnDataChangedListener(this);
+
+        emptyView = (LinearLayout) view.findViewById(R.id.empty_view_all);
 
         refreshList();
         initRecyclerView();
@@ -88,6 +94,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
      */
     private void initRecyclerView() {
 
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_all);
         recyclerView.setLayoutManager(layoutManager);
@@ -98,7 +105,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if(dy > 0) {
+                if (dy > 0) {
                     mainActivity.hideFab();
                 } else {
                     mainActivity.showFab();
@@ -107,9 +114,10 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
             }
         });
 
-
         adapter = new CustomAdapter(getContext(), allDevicesList);
         recyclerView.setAdapter(adapter);
+
+        emptyViewHandler();
     }
 
     /**
@@ -154,6 +162,21 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         }
     }
 
+    /**
+     * Hanlder um bei einer leeren Liste das traurige Gesicht und den "Keine Geräte vorhanden" Text anzuzeigen
+     */
+    private void emptyViewHandler() {
+
+        if (adapter.getItemCount() == 0) {
+            recyclerView.setVisibility(GONE);
+            emptyView.setVisibility(VISIBLE);
+        } else {
+            recyclerView.setVisibility(VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+    }
+
     /*
     ######################### LISTENER #############################################
      */
@@ -162,10 +185,12 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
     public void onDataHasChanged() {
         refreshList();
         adapter.notifyDataSetChanged();
+        emptyViewHandler();
     }
 
     @Override
     public void onDataHasChanged(int position) {
         adapter.notifyItemChanged(position);
+        emptyViewHandler();
     }
 }

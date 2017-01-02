@@ -12,22 +12,25 @@
         android:layout_height="match_parent" />
 
     <LinearLayout
+        android:id="@+id/empty_view_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
         android:visibility="gone"
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/empty_view_icon"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_home_grey600_48dp" />
+            android:src="@drawable/all_devices_bw" />
 
         <TextView
+            android:id="@+id/empty_view_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="GRUPPEN"
+            android:layout_gravity="center_horizontal"
+            android:text="Keine Geräte vorhanden"
             android:textSize="20sp" />
     </LinearLayout>
 </RelativeLayout>
