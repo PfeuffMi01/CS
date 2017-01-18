@@ -18,6 +18,19 @@
             android:inputType="textNoSuggestions" />
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/deviceid_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/deviceid_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ID / Topic"
+            android:inputType="textNoSuggestions" />
+    </android.support.design.widget.TextInputLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,6 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         android:text="Dimmbar" />
 
 </LinearLayout>

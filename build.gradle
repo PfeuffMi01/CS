@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://repo.eclipse.org/content/repositories/paho-releases/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
@@ -16,6 +17,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url 'https://repo.eclipse.org/content/repositories/paho-releases/' }
     }
 }
 

@@ -41,10 +41,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +76,6 @@ import java.util.List;
 
 import static android.R.attr.mode;
 import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.CATEGORY_ARRAY;
 import static com.example.michael.cs.Constants.DATA_DEVICES_DIV;
@@ -152,17 +148,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
-    private ImageView connectionFailImg;
-    private RelativeLayout mqttLoadingLayout;
-    private ProgressBar progressBar;
-    private TextView loadingText;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private MQTTHandler mqttHandler;
     private boolean appWasEnteredByLongClickOnNoConnectionIcon;
-    private ImageView noConnectionImage;
     private ProfileHandler profileHandler;
     private OnDataChangedListener onDataChangedListener;
 
@@ -190,6 +181,19 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         initUI();
     }
 
+    @Override
+    protected void onResume() {
+        mqttHandler.setOnConnectionListener(this);
+        mqttHandler.setOnConnectionLostListener(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mqttHandler.unregisterConnectionListeners();
+        super.onPause();
+    }
+
     /**
      * Lifecycle Aufruf bevor die App beendet wird.
      * Benachrichtigung der fehlerhaften MQTT Verbindung löschen
@@ -199,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(MQTT_CONNECTION_ERROR_NOTI_ID);
+
+        mqttHandler.disconnect(TAG + " onDestroy");
 
      /*   if (mqttHandler.isConnected()) {
             Log.i(TAG, "onDestroy: ");
@@ -210,9 +216,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     @Override
     protected void onStop() {
-
-        profileHandler.saveDevicesToSharedPreferences();
-
         super.onStop();
     }
 
@@ -255,13 +258,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         initFragment();
         initTabs();
 
-        getSupportActionBar().setSubtitle(profileHandler.getCurrentProfile().getName());
+        getSupportActionBar().setSubtitle("Verbunden zu Profil " + profileHandler.getCurrentProfile().getName());
     }
 
     private void noInternetConnectionHandler() {
-
-        noConnectionImage.setVisibility(VISIBLE);
-        mqttLoadingLayout.setVisibility(VISIBLE);
 
         try {
             viewPager.setVisibility(GONE);
@@ -269,45 +269,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         } catch (Exception e) {
             Log.e(TAG, "noInternetConnectionHandler: Layout was null");
         }
-
-
-        // Bei langem Klick auf das "No Connection" Bild die App zwingen trotzdem zu starten
-        noConnectionImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                onMQTTConnection(true, true, "");
-                return true;
-            }
-        });
-
-        progressBar.setVisibility(INVISIBLE);
-        loadingText.setVisibility(INVISIBLE);
-
-   /*     snackbar = Snackbar
-                .make(coordinatorLayout, "Kein Internet", Snackbar.LENGTH_INDEFINITE)
-                .setActionTextColor(Color.RED)
-                .setAction("ERNEUT VERSUCHEN", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        noConnectionImage.setVisibility(INVISIBLE);
-                        progressBar.setVisibility(VISIBLE);
-                        loadingText.setVisibility(VISIBLE);
-
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            public void run() {
-                                initMQTT(MQTT_IP_JOHANN, "1234", MQTT_TOPIC_JOHANN);
-                            }
-                        }, 2000);
-
-
-                    }
-                });
-
-        setSnackbarTextSize(snackbar);
-        snackbar.show();*/
-
     }
 
     /**
@@ -360,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     fab.show();
 
                     CURRENT_FRAGMENT = ALL_FRAGMENT;
+                    CURRENT_LIST_CATEGORY = 0;
                 } else {
 
                     fab.hide();
@@ -382,11 +344,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
      * Holen des Singleton Objekts
      * Setzen des Listeners
      */
-    private void initMQTT(String ip, String port, String topic) {
+    private void initMQTT(String ip, String port, String topic, String username, String password) {
 
         if (isNetworkAvailable()) {
             mqttHandler = MQTTHandler.getInstance(getApplicationContext());
-            mqttHandler.setConnetionDetails(ip, port, topic);
+            mqttHandler.setConnetionDetails(ip, port, topic, username, password.toCharArray());
             mqttHandler.setOnConnectionListener(this);
             tryToConnectToMQTTBroker();
         } else {
@@ -530,7 +492,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             snackbar.dismiss();
         }
 
-        mqttLoadingLayout.setVisibility(GONE);
         appBarLayout.setVisibility(VISIBLE);
         viewPager.setVisibility(VISIBLE);
 
@@ -629,6 +590,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         View dialogView = inflater.inflate(R.layout.dialog_new_device, null);
 
         final TextInputEditText name = (TextInputEditText) dialogView.findViewById(R.id.devicename_et);
+        final TextInputEditText topic = (TextInputEditText) dialogView.findViewById(R.id.deviceid_et);
         final Spinner category = (Spinner) dialogView.findViewById(R.id.category_spin);
         final Spinner room = (Spinner) dialogView.findViewById(R.id.room_spin);
         final CheckBox dim = (CheckBox) dialogView.findViewById(R.id.dim_check);
@@ -644,13 +606,25 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         boolean errorEmptyName = false;
+                        boolean errorEmptyTopic = false;
                         boolean errorExistingName = false;
                         boolean unsupportedCharacter = false;
+                        boolean errorExistingTopic = false;
 
                         String deviceName = String.valueOf(name.getText());
 
                         if (deviceName.equals("")) {
                             errorEmptyName = true;
+                        }
+
+                        String deviceTopic = String.valueOf(topic.getText());
+
+                        if (deviceTopic.equals("")) {
+                            errorEmptyTopic = true;
+                        }
+
+                        if (doesTopicExist(deviceTopic)) {
+                            errorExistingTopic = true;
                         }
 
                         if (doesDeviceExist(deviceName, spinnerArrayRooms[room.getSelectedItemPosition()])) {
@@ -663,6 +637,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                                 || deviceName.contains(DATA_DEVICES_DIV)) {
                             unsupportedCharacter = true;
                         }
+
                         if (unsupportedCharacter) {
                             Toast.makeText(MainActivity.this, "Folgende Zeichen sind nicht erlaubt:\n"
                                     + PROFILE_DEVICES_DIV
@@ -671,12 +646,15 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                                     + "   " + DATA_DEVICES_DIV, Toast.LENGTH_LONG).show();
                         } else if (errorEmptyName) {
                             Toast.makeText(MainActivity.this, "Bitte Gerätenamen eingeben", Toast.LENGTH_LONG).show();
+                        } else if (errorEmptyTopic) {
+                            Toast.makeText(MainActivity.this, "Bitte ID / Topic eingeben", Toast.LENGTH_LONG).show();
+                        } else if (errorExistingTopic) {
+                            Toast.makeText(MainActivity.this, "Das Topic " + deviceTopic + " gibt es bereits", Toast.LENGTH_LONG).show();
                         } else if (errorExistingName) {
                             Toast.makeText(MainActivity.this, "Dieses Gerät gibt es bereits", Toast.LENGTH_LONG).show();
-                        } else if (!errorEmptyName && !errorExistingName) {
-                            createNewDevice(deviceName, spinnerArrayCategories[category.getSelectedItemPosition()], spinnerArrayRooms[room.getSelectedItemPosition()]);
+                        } else if (!errorEmptyName && !errorEmptyTopic && !errorExistingName) {
+                            createNewDevice(deviceName, deviceTopic, spinnerArrayCategories[category.getSelectedItemPosition()], spinnerArrayRooms[room.getSelectedItemPosition()]);
                         }
-
                     }
                 }
         );
@@ -689,6 +667,20 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+    }
+
+    private boolean doesTopicExist(String deviceTopic) {
+
+        if (deviceList == null) {
+            deviceList = new ArrayList<>();
+        }
+
+        for (Device d : deviceList) {
+            if (d.getTopic().equals(deviceTopic)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean doesDeviceExist(String deviceName, String room) {
@@ -717,7 +709,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
 
-    private void createNewDevice(String deviceName, String category, String room) {
+    private void createNewDevice(String deviceName, String deviceTopic, String category, String room) {
 
         final String[] catArray = CATEGORY_ARRAY;
         Room tmpRoom = null;
@@ -742,31 +734,31 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         if (category.equals(catArray[0])) {
             // Bewegungsmelder
-            newDevice = new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", "");
+            newDevice = new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[1])) {
             // Fenstersensor
-            newDevice = new WindowSensor(LIST_ITEM_WINDOW_SENSOR, this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", "");
+            newDevice = new WindowSensor(LIST_ITEM_WINDOW_SENSOR, this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[2])) {
             // Feuchtigkeit
-            newDevice = new HumiditySensor(LIST_ITEM_HUMIDITY, this, "1", false, deviceName, tmpRoom, humidity, 80, "");
+            newDevice = new HumiditySensor(LIST_ITEM_HUMIDITY, this, "1", false, deviceName, tmpRoom, humidity, 80, deviceTopic);
         } else if (category.equals(catArray[3])) {
             // RGB Licht
-            newDevice = new RGBLamp(LIST_ITEM_LAMP_RGB, this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", "");
+            newDevice = new RGBLamp(LIST_ITEM_LAMP_RGB, this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", deviceTopic);
         } else if (category.equals(catArray[4])) {
             // Weißes Licht
-            newDevice = new WhiteLamp(LIST_ITEM_LAMP_WHITE, this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", "");
+            newDevice = new WhiteLamp(LIST_ITEM_LAMP_WHITE, this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", deviceTopic);
         } else if (category.equals(catArray[5])) {
             // Steckdose
-            newDevice = new Plug(LIST_ITEM_PLUG, this, "1", false, deviceName, tmpRoom, plugs, "aus", "");
+            newDevice = new Plug(LIST_ITEM_PLUG, this, "1", false, deviceName, tmpRoom, plugs, "aus", deviceTopic);
         } else if (category.equals(catArray[6])) {
             // Steckdose mit Verbrauch
-            newDevice = new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", "");
+            newDevice = new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", deviceTopic);
         } else if (category.equals(catArray[7])) {
             // Temperatur
-            newDevice = new Temp(LIST_ITEM_TEMP, this, "1", false, deviceName, tmpRoom, temperature, 24, "");
+            newDevice = new Temp(LIST_ITEM_TEMP, this, "1", false, deviceName, tmpRoom, temperature, 24, deviceTopic);
         } else if (category.equals(catArray[8])) {
             // Türsensor
-            newDevice = new DoorSensor(LIST_ITEM_DOOR_SENSOR, this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", "");
+            newDevice = new DoorSensor(LIST_ITEM_DOOR_SENSOR, this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[9])) {
             // Wetterstation
         }
@@ -812,7 +804,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     }
                 }
 
-                dim.setVisibility(i == rgbIndex || i == whiteIndex ? VISIBLE : GONE);
+                //dim.setVisibility(i == rgbIndex || i == whiteIndex ? VISIBLE : GONE);
             }
 
             @Override
@@ -887,13 +879,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
      */
     private void tryToConnectToMQTTBroker() {
 
-        noConnectionImage.setVisibility(INVISIBLE);
-        mqttLoadingLayout.setVisibility(VISIBLE);
         appBarLayout.setVisibility(GONE);
         viewPager.setVisibility(GONE);
-
-        connectionFailImg.setVisibility(INVISIBLE);
-        progressBar.setVisibility(VISIBLE);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -958,7 +945,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     @Override
     public void onMQTTConnectionLost() {
-        Toast.makeText(this, TAG + " Connection Lost", Toast.LENGTH_SHORT).show();
+        String text = "Verbindung zum Profil " + profileHandler.getCurrentProfile() + " verloren";
+        getSupportActionBar().setSubtitle(text);
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -977,9 +966,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         } else {
 
             Log.i(TAG, "onMQTTConnection: NO SUCCESS");
-            connectionFailImg.setVisibility(VISIBLE);
-            progressBar.setVisibility(INVISIBLE);
-            loadingText.setText("");
 
             snackbar = Snackbar
                     .make(coordinatorLayout, "Verbindungsfehler", Snackbar.LENGTH_INDEFINITE)
@@ -1015,12 +1001,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     public void onBackPressed() {
 
         if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
-
             fragChanger(GONE, VISIBLE, false, getResources().getString(R.string.app_name), mode);
             CURRENT_FRAGMENT = 999;
-        } else {
-            mqttHandler.disconnect();
-            super.onBackPressed();
+        }else {
+            Log.i(TAG, "onBackPressed: 3");
+            logout();
         }
     }
 
@@ -1049,11 +1034,22 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                 showMQTTLogDialog();
                 break;
 
+            case R.id.action_logout:
+                logout();
+                break;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
 
         return true;
+    }
+
+    private void logout() {
+
+        mqttHandler.disconnect(TAG + " logout");
+        profileHandler.setCurrentProfile(null);
+        super.onBackPressed();
     }
 
 

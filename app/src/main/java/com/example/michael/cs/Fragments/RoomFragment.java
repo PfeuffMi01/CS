@@ -67,7 +67,7 @@ public class RoomFragment extends Fragment {
     private void initRecyclerView() {
 
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(),  getResources().getInteger(R.integer.room_or_group_grid_columns));
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_rooms);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);

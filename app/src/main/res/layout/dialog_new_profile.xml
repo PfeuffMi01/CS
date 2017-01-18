@@ -29,11 +29,10 @@
             android:id="@+id/profile_ip_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:hint="Server-IP"
-            android:text="tcp://schlegel2.ddns.net"
+            android:inputType="textNoSuggestions"
+            android:text="tcp://82.165.207.248"
             android:typeface="monospace" />
-
     </android.support.design.widget.TextInputLayout>
 
 
@@ -48,8 +47,52 @@
             android:layout_height="wrap_content"
             android:hint="Port"
             android:inputType="number|textNoSuggestions"
+            android:text="1883"
             android:typeface="monospace" />
+    </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profile_topic_prefix_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profile_topic_prefix_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Topic Prefix"
+            android:inputType="textNoSuggestions"
+            android:text="CS"
+            android:typeface="monospace" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profile_user_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profile_user_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Benutzername (Optional)"
+            android:inputType="textNoSuggestions"
+            android:text="MqttCsUser" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/profile_pwd_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/profile_pwd_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Passwort (Optional)"
+            android:inputType="textPassword|textNoSuggestions"
+            android:text="$tudent17"
+            android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

@@ -1,9 +1,7 @@
 package com.example.michael.cs;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +16,7 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -26,14 +25,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
 import static com.example.michael.cs.Constants.MQTT_LOG_DIVIDER;
+import static com.example.michael.cs.Constants.NO_PWD;
 
 /**
  * Kümmert sich um alles, was mit MQTT zu tun hat
  * Ist eine Singleton Klasse
  */
-public class MQTTHandler {
+public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
     private static final String TAG = "MQTTHandler";
 
@@ -43,11 +42,16 @@ public class MQTTHandler {
     private OnConnectionListener onConnectionListener;
     private Context context;
     private boolean isConnected;
-    private MqttAndroidClient mqttAndroidClient;
+    private MqttAndroidClient mqttClient;
     private SharedPreferences sharedPreferences;
     private boolean mqttConnectionSucceded = false;
     private static MQTTHandler thisInstance;
     private OnConnectionLostListener onConnectionLostListener;
+    private char[] connectionPassword;
+    private String connectionUsername;
+    private boolean hasPasswordAndUsername;
+    private MqttClient client;
+    private String topic;
 
     /**
      * Singleton Initialisierung
@@ -64,10 +68,24 @@ public class MQTTHandler {
         return thisInstance;
     }
 
-    public void setConnetionDetails(String ip, String port, String topic) {
+    public void setConnetionDetails(String ip, String port, String topicToSubscribe, String username, char[] password) {
+
         connectionIP = ip;
-        connectionTopic = topic;
         connectionPort = port;
+        connectionTopic = topicToSubscribe;
+
+        String pwd = new String(password);
+
+        Log.i(TAG, "setConnetionDetails: " + ip + " " + port + " " + username + " " + pwd);
+
+
+        if (String.copyValueOf(password).equals(NO_PWD)) {
+            hasPasswordAndUsername = false;
+        } else {
+            hasPasswordAndUsername = true;
+            connectionPassword = password;
+            connectionUsername = username;
+        }
     }
 
 
@@ -90,68 +108,54 @@ public class MQTTHandler {
      * - Listener informieren
      */
     public void connect() {
+      /*
+        - MQTT-Broker-Adresse: 82.165.207.248
+        - MQTT-Port: 1883 (Standard Port)
+        - MQTT-Login: MqttCsUser
+        - MQTT-Password: $tudent17
+       */
 
-        mqttAndroidClient = new MqttAndroidClient(context, connectionIP + ":" + connectionPort, "androidClient");
+   /*     try {
+             client = new MqttClient(connectionIP + ":" + connectionPort, "1234");
+
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setPassword(connectionPassword);
+            options.setUserName(connectionUsername);
+            client.connect();
+
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+*/
+
+
+        Log.i(TAG, "connect: ");
+        mqttClient = new MqttAndroidClient(context, connectionIP + ":" + connectionPort, "1234");
+
         MqttConnectOptions connectOptions = new MqttConnectOptions();
-        connectOptions.setConnectionTimeout(Constants.MQTT_CONNECTION_TIMEOUT);
+
+
+        Log.i(TAG, "connect: " + mqttClient.getServerURI() + " " + mqttClient.getClientId());
+
+        if (hasPasswordAndUsername) {
+            Log.i(TAG, "connect: setting username:  " + connectionUsername + " and password: " + String.copyValueOf(connectionPassword));
+            connectOptions.setPassword(connectionPassword);
+            connectOptions.setUserName(connectionUsername);
+        }
 
         try {
-
-            mqttAndroidClient.connect(connectOptions, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.i(TAG, "onSuccess: Connection Success!" + " " + asyncActionToken);
-                    isConnected = true;
-                    mqttConnectionSucceded = true;
-                    setMQTTCallbacks();
-
-                    try {
-                        onConnectionListener.onMQTTConnection(true, false, connectionIP);
-                    } catch (Exception e) {
-                        Log.e(TAG, "onFailure: ");
-                    }
-
-                    try {
-                        mqttAndroidClient.subscribe(connectionTopic, 1);
-                    } catch (MqttException ex) {
-                        Log.e(TAG, "onSuccess: Couldn't subscribe " + ex.toString());
-                    }
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.i(TAG, "onFailure: Connection Failure! " + exception.toString() + " " + asyncActionToken);
-
-                    try {
-                        onConnectionListener.onMQTTConnection(false, false, connectionIP);
-                    } catch (Exception e) {
-                        Log.e(TAG, "onFailure: ");
-                    }
-                    mqttConnectionSucceded = false;
-
-                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                            .setContentTitle("MQTT-Fehler").setSmallIcon(R.drawable.ic_stat_launcher)
-                            .setContentText("Fehler beim Verbinden zum MQTT-Server");
-
-                    NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-                    bigText.bigText("Verbindung zum MQTT Server " + connectionTopic + " fehlgeschlagen");
-                    bigText.setBigContentTitle("MQTT-Verbindungsfehler");
-                    notificationBuilder.setStyle(bigText);
-                    notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                    notificationManager.notify(MQTT_CONNECTION_ERROR_NOTI_ID, notificationBuilder.build());
-                }
-            });
-        } catch (MqttException ex) {
+            mqttClient.connect(connectOptions, this);
+        } catch (MqttException e) {
+            Log.e(TAG, "connect: " + e.getCause() + " " + e.getReasonCode() + " " + e.getMessage());
         }
     }
 
-    /**
+   /* *//**
      * Um auf MQTT Ereignisse reagieren zu können
-     */
+     *//*
     private void setMQTTCallbacks() {
 
-        mqttAndroidClient.setCallback(new MqttCallback() {
+        mqttClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
                 System.out.println(TAG + " Connection was lost!");
@@ -172,25 +176,31 @@ public class MQTTHandler {
                 System.out.println(TAG + " Delivery Complete! " + token);
             }
         });
-    }
-
+    }*/
 
 
     /**
      * Eine Nachricht publishen
      *
-     * @param topic
+     * @param t
      * @param message
      */
-    public void mqttPublish(final String topic, final String message) {
+    public void mqttPublish(final String t, final String message) {
 
-        if (mqttAndroidClient.isConnected() && mqttConnectionSucceded) {
+        Log.i(TAG, "mqttPublish: " + t + " " + message);
+
+        ProfileHandler profileHandler = ProfileHandler.getInstance(context);
+
+        topic = profileHandler.getCurrentProfile().getTopicPrefix().equals("") ? "" : (profileHandler.getCurrentProfile().getTopicPrefix() + "/");
+        topic += t;
+
+        if (mqttClient.isConnected()) {
 
             try {
 
                 Log.i(TAG, "mqttPublish: " + topic + " " + message);
 
-                mqttAndroidClient.publish(topic, new MqttMessage(message.getBytes()), this, new IMqttActionListener() {
+                mqttClient.publish(topic, new MqttMessage(message.getBytes()), this, new IMqttActionListener() {
 
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
@@ -201,14 +211,16 @@ public class MQTTHandler {
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                         Log.i(TAG, "onFailure: publish failure");
-                        Toast.makeText(context, "Fehler beim Publish der Nachricht " + topic + "/" + message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Fehler beim Publish der Nachricht "  + topic + " " + message, Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (MqttException e) {
                 e.printStackTrace();
             }
+
+
         } else {
-            Log.i(TAG, "mqttPublish: not connected. " + mqttAndroidClient.isConnected() + " " + mqttConnectionSucceded);
+            Log.i(TAG, "mqttPublish: not connected. " + mqttClient.isConnected() + " " + mqttConnectionSucceded);
         }
     }
 
@@ -268,13 +280,74 @@ public class MQTTHandler {
         return isConnected;
     }
 
-    public void disconnect() {
-        try {
-            Log.i(TAG, "disconnect: mqtt server disconnected");
-            this.mqttAndroidClient.disconnect();
+    public void disconnect(String from) {
+        Log.i(TAG, "disconnect: " + from);
 
-        } catch (MqttException e) {
-            e.printStackTrace();
+        if(mqttClient.isConnected()) {
+            try {
+                mqttClient.disconnect();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
+
+
+/*
+        if (mqttClient != null) {
+            Log.i(TAG, "disconnect: client not null");
+            mqttClient.unregisterResources();
+            mqttClient.close();
+        }*/
+    }
+
+    @Override
+    public void connectionLost(Throwable cause) {
+        Log.i(TAG, "Connection was lost!");
+        if (onConnectionLostListener != null) {
+            onConnectionLostListener.onMQTTConnectionLost();
+            isConnected = false;
+        }
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        Log.i(TAG, "messageArrived: " + topic + " " + message);
+        mqttLogCreator(topic, message.toString(), "RECEIVED");
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        Log.i(TAG, " Delivery Complete! " + token);
+    }
+
+
+    @Override
+    public void onSuccess(IMqttToken asyncActionToken) {
+        Log.i(TAG, "onSuccess: ");
+
+        isConnected = true;
+
+        if (onConnectionListener != null) {
+            onConnectionListener.onMQTTConnection(true, false, mqttClient.getServerURI());
+        }
+    }
+
+    @Override
+    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+        Log.e(TAG, "onFailure: " + asyncActionToken.toString());
+        Log.e(TAG, "onFailure: " + asyncActionToken.getException().getCause());
+        Log.e(TAG, "onFailure: " + exception.getCause() + " " + exception.getMessage());
+        exception.printStackTrace();
+
+        if (onConnectionListener != null) {
+            onConnectionListener.onMQTTConnection(false, true, mqttClient.getServerURI());
+        }
+
+        Toast.makeText(context, "Verbindungsfehler: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    public void unregisterConnectionListeners() {
+        onConnectionListener = null;
+        onConnectionLostListener = null;
     }
 }

@@ -33,7 +33,7 @@ public class Device implements Cloneable {
         this.name = name;
         this.room = room;
         this.group = group;
-        this.topic = "";
+        this.topic = topic;
 
         Log.i(TAG, "Device: " + name + " " + room.getName() + " " + group.getName());
     }

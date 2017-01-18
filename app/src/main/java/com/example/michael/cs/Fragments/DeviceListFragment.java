@@ -78,6 +78,7 @@ public class DeviceListFragment extends Fragment {
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setAutoMeasureEnabled(true);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_devices);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);

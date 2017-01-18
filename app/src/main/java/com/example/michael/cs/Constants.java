@@ -49,39 +49,34 @@ public class Constants {
     public static final int MQTT_CONNECTION_TIMEOUT = 6000;
     public static final String ON = "an";
     public static final String OFF = "aus";
-
-    public static String FHEM_IP = "http://192.168.178.21";
-    public static String FHEM_PORT = "8083";
+    public static final String NO_PWD = "NO_PASSWORD";
+    public static final String NO_USER = "NO_USER";
 
     public static final int MAX_TEMP = 30;
     public static final int MIN_TEMP = 10;
 
     public static long DIALOG_LISTENER_DELAY = 200;
 
-
     //MQTT
 
-    public static final String MQTT_IP = "tcp://schlegel2.ddns.net:1883";
-
-    public static final String MQTT_TOPIC_MAIN = "CS";
-    public static final String MQTT_TOPIC_LIVINGROOM = "/wohnzimmer";
-    public static final String MQTT_TOPIC_OFFICE = "/buero";
-    public static final String MQTT_TOPIC_KITCHEN = "/kueche";
-    public static final String MQTT_TOPIC_BEDROOM = "/schlafzimmer";
-    public static final String MQTT_TOPIC_FLOOR = "/flur";
-    public static final String MQTT_TOPIC_GARAGE = "/garage";
-    public static final String MQTT_TOPIC_GARDEN = "/garten";
+    public static final String MQTT_TOPIC_LIVINGROOM = "wohnzimmer";
+    public static final String MQTT_TOPIC_OFFICE = "buero";
+    public static final String MQTT_TOPIC_KITCHEN = "kueche";
+    public static final String MQTT_TOPIC_BEDROOM = "schlafzimmer";
+    public static final String MQTT_TOPIC_FLOOR = "flur";
+    public static final String MQTT_TOPIC_GARAGE = "garage";
+    public static final String MQTT_TOPIC_GARDEN = "garten";
 
     public static final String[] MQTT_TOPICS_ROOMS = {MQTT_TOPIC_LIVINGROOM, MQTT_TOPIC_OFFICE, MQTT_TOPIC_KITCHEN,
             MQTT_TOPIC_BEDROOM, MQTT_TOPIC_FLOOR, MQTT_TOPIC_GARAGE, MQTT_TOPIC_GARDEN};
 
-    public static final String MQTT_TOPIC_LIGHT = "/licht";
-    public static final String MQTT_TOPIC_SOCKET = "/steckdose";
-    public static final String MQTT_TOPIC_MOTION = "/bewegt";
-    public static final String MQTT_TOPIC_DOOR = "/tuer";
-    public static final String MQTT_TOPIC_WINDOW = "/fenster";
-    public static final String MQTT_TOPIC_TEMPERATURE = "/temperatur";
-    public static final String MQTT_TOPIC_HUMIDITY = "/feuchtigkeit";
+    public static final String MQTT_TOPIC_LIGHT = "licht";
+    public static final String MQTT_TOPIC_SOCKET = "steckdose";
+    public static final String MQTT_TOPIC_MOTION = "bewegt";
+    public static final String MQTT_TOPIC_DOOR = "tuer";
+    public static final String MQTT_TOPIC_WINDOW = "fenster";
+    public static final String MQTT_TOPIC_TEMPERATURE = "temperatur";
+    public static final String MQTT_TOPIC_HUMIDITY = "feuchtigkeit";
 
     public static final String MQTT_LOG_DIVIDER = "|";
 
@@ -95,4 +90,5 @@ public class Constants {
     public static String DATA_DIV = ";";
     public static String DEVICES_DIV = "?";
     public static String DATA_DEVICES_DIV = "§";
+
 }

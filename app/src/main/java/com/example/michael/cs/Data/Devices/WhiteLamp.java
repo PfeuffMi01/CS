@@ -113,6 +113,8 @@ public class WhiteLamp extends Lamp {
     }
 
     public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
-        mainActivity.getMqttHandler().mqttPublish(getTopic(), message);
+
+        String topic = getRoom().getTopic() + "/" + this.getTopic();
+        mainActivity.getMqttHandler().mqttPublish(topic, message);
     }
 }

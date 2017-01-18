@@ -5,8 +5,15 @@
     <item
         android:id="@+id/action_log"
         android:enabled="true"
-        android:icon="@drawable/ic_format_list_bulleted_white_48dp"
+        android:icon="@drawable/ic_format_list_bulleted_white_24dp"
         android:title="MQTT Log"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:enabled="true"
+        android:icon="@drawable/ic_logout_white_24dp"
+        android:title="Logout"
+        app:showAsAction="always" />
 
 </menu>

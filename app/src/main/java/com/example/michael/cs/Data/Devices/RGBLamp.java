@@ -180,7 +180,7 @@ public class RGBLamp extends Lamp {
 
     public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
 
-        String topic = getTopic();
+        String topic = getRoom().getTopic() + "/" + this.getTopic();
 
         mainActivity.getMqttHandler().mqttPublish(topic, message);
         Log.i(TAG, "mqttBrokerNotifier: " + topic + message);

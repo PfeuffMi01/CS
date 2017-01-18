@@ -225,10 +225,5 @@ public class ProfileHandler {
     public Profile getCurrentProfile() {
         return currentProfile;
     }
-
-
-    public void saveDevicesToSharedPreferences() {
-
-    }
 }
 

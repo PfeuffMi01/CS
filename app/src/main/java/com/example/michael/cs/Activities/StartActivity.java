@@ -10,10 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -30,7 +32,7 @@ import com.example.michael.cs.R;
 /**
  * Created by Patrick PC on 22.12.2016.
  */
-public class StartActivity extends AppCompatActivity implements OnConnectionListener, OnConnectionLostListener {
+public class StartActivity extends AppCompatActivity implements OnConnectionListener, OnConnectionLostListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "StartActivity";
     private SharedPreferences sharedPreferences;
@@ -42,6 +44,7 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
     private ImageView imageHSC;
     private ImageView imageNoConn;
     private ProgressBar progressBar;
+    private SwitchCompat forceLogin;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,74 +61,27 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         setupProfiles();
     }
 
-
     private void initUI() {
         setContentView(R.layout.activity_start);
 
+        forceLogin = (SwitchCompat) findViewById(R.id.switch_force_login);
         imageHSC = (ImageView) findViewById(R.id.hsc_img);
         imageNoConn = (ImageView) findViewById(R.id.no_connection_img);
         profileSpinner = (Spinner) findViewById(R.id.profiles_spinner);
-
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
         connectBtn = (AppCompatButton) findViewById(R.id.connect_btn);
         newProfileBtn = (AppCompatButton) findViewById(R.id.new_profile_btn);
 
         imageHSC.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-
-                int amountProfiles = sharedPreferences.getInt("pref_amount_profiles", 0);
-
-
-                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                for (int i = 0; i < amountProfiles; i++) {
-                    editor.remove("pref_profiles_" + (i + 1));
-                }
-
-                editor.remove("pref_amount_profiles");
-                editor.apply();
-
-                profileHandler.initSavedProfiles();
-                setupProfiles();
+                removeAllProfiles();
                 return false;
             }
         });
 
-        connectBtn.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View view) {
-
-                                              if (InternetConnectionHandler.isInternetAvailable(StartActivity.this)) {
-
-                                                  loadingViewHandler(true, false);
-
-                                                  if (mqttHandler.isConnected()) {
-                                                      mqttHandler.disconnect();
-                                                  }
-
-                                                  Profile profileToConnectTo = profileHandler.getProfileList().get(profileSpinner.getSelectedItemPosition());
-
-                                                  mqttHandler.setConnetionDetails(profileToConnectTo.getServerIP(), profileToConnectTo.getServerPort(), "");
-                                                  mqttHandler.setOnConnectionListener(StartActivity.this);
-                                                  mqttHandler.connect();
-
-                                                  Toast.makeText(StartActivity.this, "Verbindung zu "
-                                                          + profileToConnectTo.getName()
-                                                          + " "
-                                                          + profileToConnectTo.getServerIP(), Toast.LENGTH_SHORT).show();
-                                              } else {
-                                                  loadingViewHandler(false, true);
-                                                  InternetConnectionHandler.noInternetAvailable(StartActivity.this);
-                                              }
-                                          }
-
-                                      }
-
-        );
-
+        connectBtn.setOnClickListener(this);
+forceLogin.setOnCheckedChangeListener(this);
         newProfileBtn.setOnClickListener(new View.OnClickListener()
 
                                          {
@@ -138,6 +94,24 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         );
 
 
+    }
+
+    private void removeAllProfiles() {
+        int amountProfiles = sharedPreferences.getInt("pref_amount_profiles", 0);
+
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        for (int i = 0; i < amountProfiles; i++) {
+            editor.remove("pref_profiles_" + (i + 1));
+        }
+
+        editor.remove("pref_amount_profiles");
+        editor.apply();
+
+        profileHandler.initSavedProfiles();
+        setupProfiles();
     }
 
     private void loadingViewHandler(boolean isProgressBarVisisble, boolean isNoConnImgVisible) {
@@ -155,6 +129,9 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         final TextInputEditText name = (TextInputEditText) dialogView.findViewById(R.id.profilename_et);
         final TextInputEditText ip = (TextInputEditText) dialogView.findViewById(R.id.profile_ip_et);
         final TextInputEditText port = (TextInputEditText) dialogView.findViewById(R.id.profile_port_et);
+        final TextInputEditText user = (TextInputEditText) dialogView.findViewById(R.id.profile_user_et);
+        final TextInputEditText pwd = (TextInputEditText) dialogView.findViewById(R.id.profile_pwd_et);
+        final TextInputEditText topicPre = (TextInputEditText) dialogView.findViewById(R.id.profile_topic_prefix_et);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
@@ -172,7 +149,7 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         dialogBuilder.setNeutralButton("Abbrechen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mqttHandler.disconnect();
+                mqttHandler.disconnect(TAG + " showNewProfileDialog");
             }
         });
 
@@ -194,11 +171,16 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
                 String n = String.valueOf(name.getText());
                 String ip_ = String.valueOf(ip.getText());
                 String p = String.valueOf(port.getText());
+                String username = String.valueOf(user.getText());
+                String pass = String.valueOf(pwd.getText());
+                String tPre = String.valueOf(topicPre.getText());
+
 
                 if (!n.equals("") && !ip_.equals("") && !p.equals("")) {
 
-                    Profile tmpProfile = new Profile(n, ip_, p);
+                    Profile tmpProfile = new Profile(n, ip_, p, tPre, username, pass);
                     profileHandler.addProfile(tmpProfile);
+                    thingsToDoBeforeOnDestroy();
 
                     wantToCloseDialog = true;
                     setupProfiles();
@@ -218,21 +200,22 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
     @Override
     protected void onStart() {
         Log.i(TAG, "onStart: Lifecycle");
-
         super.onStart();
     }
 
     @Override
     protected void onStop() {
         Log.i(TAG, "onStop: Lifecycle");
+      //  mqttHandler.disconnect(TAG + " onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: Lifecycle");
-        super.onDestroy();
         thingsToDoBeforeOnDestroy();
+        mqttHandler.disconnect(TAG + " onDestroy");
+        super.onDestroy();
     }
 
 
@@ -240,17 +223,12 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
 
         Log.i(TAG, "thingsToDoBeforeOnDestroy: ");
 
-        if (mqttHandler.isConnected()) {
-            Log.i(TAG, "thingsToDoBeforeOnDestroy: onDestroy");
-            mqttHandler.disconnect();
-        }
-
         String[] profiles = profileHandler.getStringToSaveToPrefs();
         int amountProfiles = profiles.length;
 
         Log.i(TAG, "thingsToDoBeforeOnDestroy: " + amountProfiles);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("pref_amount_profiles", amountProfiles);
 
@@ -288,8 +266,6 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
             profileSpinner.setAdapter(spinnerArrayAdapter);
             profileSpinner.setEnabled(true);
             connectBtn.setEnabled(true);
-/*            connectBtn.setTextColor(getResources().getColor(R.color.white));
-            connectBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));*/
             connectBtn.setVisibility(View.VISIBLE);
 
         } else {
@@ -301,8 +277,6 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
             profileSpinner.setAdapter(spinnerArrayAdapter);
             profileSpinner.setEnabled(false);
             connectBtn.setEnabled(false);
-/*            connectBtn.setTextColor(getResources().getColor(R.color.text_gray));
-            connectBtn.setBackgroundColor(getResources().getColor(R.color.text_light_gray));*/
             connectBtn.setVisibility(View.GONE);
         }
 
@@ -311,6 +285,8 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
     @Override
     public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP) {
 
+        Log.i(TAG, "onMQTTConnection: ");
+        
         if (isConnectionSuccessful) {
 
             Log.i(TAG, "onMQTTConnection: success");
@@ -331,5 +307,70 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
     @Override
     public void onMQTTConnectionLost() {
         Toast.makeText(this, TAG + " Connection Lost", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+
+            case R.id.connect_btn:
+                initConnection();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void initConnection() {
+
+        if (sharedPreferences.getBoolean("pref_force_login", false)) {
+            onMQTTConnection(true, true, "");
+        } else {
+            
+            // Nur wenn eine Internetverbindung besteht
+            if (InternetConnectionHandler.isInternetAvailable(StartActivity.this)) {
+
+                loadingViewHandler(true, false);
+
+               /* if (mqttHandler.isConnected()) {
+                    mqttHandler.disconnect();
+                }*/
+
+                Profile profileToConnectTo = profileHandler.getProfileList().get(profileSpinner.getSelectedItemPosition());
+                String pwd = profileToConnectTo.getPassword();
+
+                mqttHandler.setConnetionDetails(
+                        profileToConnectTo.getServerIP(),
+                        profileToConnectTo.getServerPort(),
+                        "",
+                        profileToConnectTo.getUsername(),
+                        pwd.toCharArray());
+
+                mqttHandler.setOnConnectionListener(StartActivity.this);
+                mqttHandler.connect();
+
+                Toast.makeText(StartActivity.this, "Verbindung zu "
+                        + profileToConnectTo.getName()
+                        + " "
+                        + profileToConnectTo.getServerIP(), Toast.LENGTH_SHORT).show();
+            } else {
+                
+                //TODO Trotzdem in die App gehen, aber mit Hinweis dass man offline ist.
+                loadingViewHandler(false, true);
+                InternetConnectionHandler.noInternetAvailable(StartActivity.this);
+            }
+
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("pref_force_login", b);
+        editor.apply();
+
     }
 }

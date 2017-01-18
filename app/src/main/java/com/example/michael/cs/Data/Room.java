@@ -2,7 +2,6 @@ package com.example.michael.cs.Data;
 
 import com.example.michael.cs.List_Stuff.ListItem;
 
-import static com.example.michael.cs.Constants.MQTT_TOPIC_MAIN;
 
 /**
  * Repräsentiert einen Raum, wie z.B. Wohnzimmer oder Küche
@@ -18,7 +17,7 @@ public class Room   implements ListItem,Comparable<Room> {
 
 
     public Room(int image, String name, String topic) {
-        this.topic = MQTT_TOPIC_MAIN + topic;
+        this.topic = topic;
         this.image = image;
         this.name = name;
     }

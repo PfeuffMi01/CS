@@ -155,8 +155,8 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
 
             String message = isOn ? ON : OFF;
 
-
-            mainActivity.getMqttHandler().mqttPublish(allDevicesList.get(adapterPosition).getTopic(), message);
+            Device device = allDevicesList.get(adapterPosition);
+            mainActivity.getMqttHandler().mqttPublish(device.getRoom().getTopic() + "/" + device.getTopic(), message);
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }

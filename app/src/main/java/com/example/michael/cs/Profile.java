@@ -30,6 +30,8 @@ import static com.example.michael.cs.Constants.LIST_ITEM_PLUG;
 import static com.example.michael.cs.Constants.LIST_ITEM_PLUG_CONSUMPTION;
 import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
 import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
+import static com.example.michael.cs.Constants.NO_PWD;
+import static com.example.michael.cs.Constants.NO_USER;
 import static com.example.michael.cs.Constants.PROFILE_DEVICES_DIV;
 
 
@@ -44,19 +46,24 @@ public class Profile {
     private String name;
     private String serverIP;
     private String serverPort;
+    private String username;
+    private String password;
+    private String topicPrefix;
     public ArrayList<Device> deviceList;
 
-    public Profile(String name, String serverIP, String serverPort) {
+    public Profile(String name, String serverIP, String serverPort, String tPre, String username, String password) {
 
         this.name = name;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
+        this.topicPrefix = tPre;
+        this.username = username.equals("") ? NO_USER : username;
+        this.password = password.equals("") ? NO_PWD : password;
+
     }
 
-    public Profile() {
-
+    public Profile(String n, String ip_, String p, String username, String pass) {
         this.deviceList = new ArrayList<>();
-
     }
 
     public Profile(String s, RoomsAndGroupsHandler rgh, Context c) {
@@ -67,24 +74,40 @@ public class Profile {
         if (!s.equals("")) {
 
             String[] profile_devices_separated = s.split("\\~", 2);
-            String[] profile = profile_devices_separated[0].split("\\;", 3);
+            String[] profile = profile_devices_separated[0].split("\\;", 6);
 
             if (profile_devices_separated.length > 1) {
                 Log.i(TAG, "Profile: PROFILDATEN: " + profile_devices_separated[0]);
                 Log.i(TAG, "Profile: GERÄTEDATEN: " + profile_devices_separated[1]);
             }
 
-            Log.i(TAG, "Profile: PROFILATTRIBUT 1: " + profile[0]);
-            Log.i(TAG, "Profile: PROFILATTRIBUT 2: " + profile[1]);
-            Log.i(TAG, "Profile: PROFILATTRIBUT 3: " + profile[2]);
+            Log.i(TAG, "Profile: PROFILATTRIBUT 1 Name: " + profile[0]);
+            Log.i(TAG, "Profile: PROFILATTRIBUT 2 URL: " + profile[1]);
+            Log.i(TAG, "Profile: PROFILATTRIBUT 3 Port: " + profile[2]);
+            Log.i(TAG, "Profile: PROFILATTRIBUT 4 Topic Prefix: " + profile[3]);
+
+            try {
+                Log.i(TAG, "Profile: PROFILATTRIBUT 5 User: " + profile[4]);
+                Log.i(TAG, "Profile: PROFILATTRIBUT 6 Passwort: " + profile[5]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
             this.name = profile[0];
             this.serverIP = profile[1];
             this.serverPort = profile[2];
+            this.topicPrefix = profile[3];
 
-            if (profile_devices_separated.length == 1 || profile_devices_separated[1] == null || profile_devices_separated.equals("") || !profile_devices_separated[1].contains(DEVICES_DIV)) {
-                Log.i(TAG, "Profile: Not devices to split from profile");
-            } else {
+            try {
+                this.username = profile[4];
+                this.password = profile[5];
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            if(profile_devices_separated.length > 1 && profile_devices_separated[1] != null) {
                 String[] devices = profile_devices_separated[1].split("\\?");
                 String a = profile_devices_separated[1];
                 Log.i(TAG, "Profile: String to split: " + a);
@@ -101,7 +124,7 @@ public class Profile {
 
                         String[] device = str.split("\\§");
 
-                        if (device.length == 4) {
+                        if (device.length == 5) {
 
                             Log.i(TAG, "Profile: GERÄT ATTRIBUT 1: " + device[0]);
                             Log.i(TAG, "Profile: GERÄT ATTRIBUT 2: " + device[1]);
@@ -112,8 +135,9 @@ public class Profile {
                             String name = device[1];
                             Room r = rgh.getRoomByName(device[2]);
                             Group g = rgh.getGroupByName(device[3]);
+                            String topic = device[4];
 
-                            createCorrectDevice(deviceType, c, "", false, name, r, g);
+                            createCorrectDevice(deviceType, c, "", false, name, r, g, topic);
 
                         } else {
                             Log.e(TAG, "Profile: Device Array ist not 3");
@@ -128,42 +152,60 @@ public class Profile {
         }
     }
 
-    private void createCorrectDevice(int deviceType, Context c, String s, boolean b, String name, Room r, Group g) {
+    private void createCorrectDevice(int deviceType, Context c, String s, boolean b, String name, Room r, Group g, String topic) {
 
         switch (deviceType) {
 
             case LIST_ITEM_TEMP:
-                deviceList.add((new Temp(LIST_ITEM_TEMP, c, "", b, name, r, g, 20, "")));
+                deviceList.add((new Temp(LIST_ITEM_TEMP, c, "", b, name, r, g, 20, topic)));
                 break;
             case LIST_ITEM_PLUG:
-                deviceList.add((new Plug(LIST_ITEM_PLUG, c, "", b, name, r, g, "An", "")));
+                deviceList.add((new Plug(LIST_ITEM_PLUG, c, "", b, name, r, g, "An", topic)));
                 break;
             case LIST_ITEM_PLUG_CONSUMPTION:
-                deviceList.add((new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, c, "", b, name, r, g, "An", "20kw", "")));
+                deviceList.add((new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, c, "", b, name, r, g, "An", "20kw", topic)));
                 break;
             case LIST_ITEM_LAMP_WHITE:
-                deviceList.add((new WhiteLamp(LIST_ITEM_LAMP_WHITE, c, "", b, name, r, g, 10, "", "")));
+                deviceList.add((new WhiteLamp(LIST_ITEM_LAMP_WHITE, c, "", b, name, r, g, 10, "", topic)));
                 break;
             case LIST_ITEM_LAMP_RGB:
-                deviceList.add((new RGBLamp(LIST_ITEM_LAMP_RGB, c, "", b, name, r, g, 10, -1, "", "")));
+                deviceList.add((new RGBLamp(LIST_ITEM_LAMP_RGB, c, "", b, name, r, g, 10, -1, "", topic)));
                 break;
             case LIST_ITEM_DOOR_SENSOR:
-                deviceList.add((new DoorSensor(LIST_ITEM_DOOR_SENSOR, c, "", b, name, r, g, "Vorhin", "")));
+                deviceList.add((new DoorSensor(LIST_ITEM_DOOR_SENSOR, c, "", b, name, r, g, "Vorhin", topic)));
                 break;
             case LIST_ITEM_WINDOW_SENSOR:
-                deviceList.add((new WindowSensor(LIST_ITEM_WINDOW_SENSOR, c, "", b, name, r, g, "Vorhin", "")));
+                deviceList.add((new WindowSensor(LIST_ITEM_WINDOW_SENSOR, c, "", b, name, r, g, "Vorhin", topic)));
                 break;
             case LIST_ITEM_MOVEMENT_SENSOR:
-                deviceList.add((new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, c, "", b, name, r, g, "Vorhin", "")));
+                deviceList.add((new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, c, "", b, name, r, g, "Vorhin", topic)));
                 break;
             case LIST_ITEM_HUMIDITY:
-                deviceList.add((new HumiditySensor(LIST_ITEM_HUMIDITY, c, "", b, name, r, g, 76, "")));
+                deviceList.add((new HumiditySensor(LIST_ITEM_HUMIDITY, c, "", b, name, r, g, 76, topic)));
                 break;
 
 
         }
 
 
+    }
+
+    public String getTopicPrefix() {
+
+
+        return topicPrefix;
+    }
+
+    public void setTopicPrefix(String topicPrefix) {
+        this.topicPrefix = topicPrefix;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
@@ -218,7 +260,7 @@ public class Profile {
      * Name, IP und Port müssen vorhanden sein.
      * <p>
      * BEISPIEL
-     * Zuhause;192.168.1.0;1883~Lampe Rgb 1+Küche+Lampe$Lampe weiß+Wohnzimmer+Lampe
+     * Zuhause;192.168.1.0;1883~Lampe Rgb 1+Küche+Lampe$Lampe weiß+Wohnzimmer+Lampe+topicLampe
      *
      * @return
      */
@@ -227,11 +269,21 @@ public class Profile {
         if (!this.name.equals("") && !this.serverIP.equals("") && !this.serverPort.equals("")) {
 
             String resultString = "";
+
+            String pwd = getPassword().equals("") ? NO_PWD : getPassword();
+            String user = getUsername().equals("") ? NO_USER : getUsername();
+
             resultString += getName()
                     + DATA_DIV
                     + getServerIP()
                     + DATA_DIV
-                    + getServerPort();
+                    + getServerPort()
+                    + DATA_DIV
+                    + getTopicPrefix()
+                    + DATA_DIV
+                    + user
+                    + DATA_DIV
+                    + pwd;
 
             // Wenn Geräte für dieses Profil vorhanden sind, ebenfalls anhängen
             if (this.deviceList != null && this.deviceList.size() > 0) {
@@ -245,7 +297,9 @@ public class Profile {
                             + DATA_DEVICES_DIV
                             + deviceList.get(i).getRoom().getName()
                             + DATA_DEVICES_DIV
-                            + deviceList.get(i).getGroup().getName();
+                            + deviceList.get(i).getGroup().getName()
+                            + DATA_DEVICES_DIV
+                            + deviceList.get(i).getTopic();
 
                     // Wenn noch ein Gerät danach kommt, den Divider anhängen
                     if ((deviceList.size() - 1) - i > 0) {

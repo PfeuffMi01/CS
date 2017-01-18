@@ -1,23 +1,8 @@
 <resources>
     <string name="app_name">Home Remote</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="group">Gruppe</string>
-    <!--<string name="room">Raum</string>-->
     <string name="celcius">°C</string>
     <string name="percent">%</string>
-
-
-
-    <string-array name="server_elements">
-        <item>Johann: schlegel2.ddns.net</item>
-        <item>Openhab: 192.168.178.20</item>
-    </string-array>
-
-    <string name="group_lamps">Lichter</string>
-    <string name="group_temp">Temperatur</string>
-    <string name="group_circuit">Schalter</string>
-    <string name="group_plug">Steckdosen</string>
 
 </resources>

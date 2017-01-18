@@ -170,6 +170,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
     private void initRecyclerView() {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setAutoMeasureEnabled(true);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_device_single_sort_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -235,8 +236,8 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
             String message = isOn ? ON : OFF;
 
-
-            mainActivity.getMqttHandler().mqttPublish(onlyNeededDeviceCategory.get(adapterPosition).getTopic(), message);
+            Device device = onlyNeededDeviceCategory.get(adapterPosition);
+            mainActivity.getMqttHandler().mqttPublish(device.getRoom().getTopic() + "/" + device.getTopic(), message);
         } catch (Exception e) {
             Log.e(TAG, "changeSwitchState: ");
         }
