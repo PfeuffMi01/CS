@@ -330,14 +330,12 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
     public void subscribeToTopic(String t) {
 
-        if (mqttClient != null || mqttClient.isConnected()) {
             try {
                 mqttClient.subscribe(t, 0);
                 Log.i(TAG, "subscribeToTopic: " + t + " subscribed");
             } catch (MqttException e) {
                 e.printStackTrace();
             }
-        }
     }
 
     @Override
