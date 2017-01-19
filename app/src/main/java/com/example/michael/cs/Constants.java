@@ -17,7 +17,6 @@ public class Constants {
     public static final int LIST_ITEM_MOVEMENT_SENSOR = 8;
     public static final int LIST_ITEM_HUMIDITY = 9;
 
-
     public static final int GROUPS = 1;
     public static final int ROOMS = 2;
 
@@ -40,22 +39,25 @@ public class Constants {
     public static final String[] ROOM_ARRAY = {ROOM_LIVING, ROOM_GARAGE, ROOM_BED,
             ROOM_GARDEN, ROOM_HALLWAY, ROOM_KITCHEN, ROOM_OFFICE};
 
-    public static final String[] CATEGORY_ARRAY = {"Bewegungsmelder", "Fenstersensor", "Feuchtigkeit",
-            "Licht RGB", "Licht Weiß", "Steckdose", "Steckdose mit Verbrauch", "Temperatur", "Türsensor"};
+    public static final String CAT_MOVE = "Bewegungsmelder";
+    public static final String CAT_WINDOW = "Fenstersensor";
+    public static final String CAT_HUMID = "Feuchtigkeit";
+    public static final String CAT_LAMP_RGB = "Licht RGB";
+    public static final String CAT_LAMP_W = "Licht Weiß";
+    public static final String CAT_PLUG = "Steckdose";
+    public static final String CAT_PLUG_C = "Steckdose mit Verbrauch";
+    public static final String CAT_TEMP = "Temperatur";
+    public static final String CAT_DOOR = "Türsensor";
 
-    public static final String STATUS_OK = "OK";
+    public static final String[] CATEGORY_ARRAY = {CAT_MOVE, CAT_WINDOW, CAT_HUMID,
+            CAT_LAMP_RGB, CAT_LAMP_W, CAT_PLUG, CAT_PLUG_C, CAT_TEMP, CAT_DOOR};
+
 
     public static final boolean isDebugEnabled = true;
-    public static final int MQTT_CONNECTION_TIMEOUT = 6000;
     public static final String ON = "an";
     public static final String OFF = "aus";
     public static final String NO_PWD = "NO_PASSWORD";
     public static final String NO_USER = "NO_USER";
-
-    public static final int MAX_TEMP = 30;
-    public static final int MIN_TEMP = 10;
-
-    public static long DIALOG_LISTENER_DELAY = 200;
 
     //MQTT
 
@@ -70,14 +72,6 @@ public class Constants {
     public static final String[] MQTT_TOPICS_ROOMS = {MQTT_TOPIC_LIVINGROOM, MQTT_TOPIC_OFFICE, MQTT_TOPIC_KITCHEN,
             MQTT_TOPIC_BEDROOM, MQTT_TOPIC_FLOOR, MQTT_TOPIC_GARAGE, MQTT_TOPIC_GARDEN};
 
-    public static final String MQTT_TOPIC_LIGHT = "licht";
-    public static final String MQTT_TOPIC_SOCKET = "steckdose";
-    public static final String MQTT_TOPIC_MOTION = "bewegt";
-    public static final String MQTT_TOPIC_DOOR = "tuer";
-    public static final String MQTT_TOPIC_WINDOW = "fenster";
-    public static final String MQTT_TOPIC_TEMPERATURE = "temperatur";
-    public static final String MQTT_TOPIC_HUMIDITY = "feuchtigkeit";
-
     public static final String MQTT_LOG_DIVIDER = "|";
 
     public static final int MQTT_CONNECTION_ERROR_NOTI_ID = 666;
@@ -90,5 +84,6 @@ public class Constants {
     public static String DATA_DIV = ";";
     public static String DEVICES_DIV = "?";
     public static String DATA_DEVICES_DIV = "§";
+    public static String MQTT_TOPIC_DIVIDER = "/";
 
 }

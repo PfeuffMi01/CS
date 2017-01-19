@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Handler;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Group;
+import com.example.michael.cs.Data.Profile;
 import com.example.michael.cs.Data.Room;
 
 import java.util.ArrayList;
@@ -33,6 +34,14 @@ public class ProfileHandler {
     private ArrayList<Room> roomsList;
     private ArrayList<Group> groupList;
 
+    public ProfileHandler(Context c) {
+        this.context = c;
+        this.profileList = new ArrayList<>();
+        this.roomsAndGroupsHandler = RoomsAndGroupsHandler.getInstance(c);
+
+        initSavedProfiles();
+    }
+
     /**
      * Singleton Initialisierung
      *
@@ -47,15 +56,6 @@ public class ProfileHandler {
 
         return thisInstance;
     }
-
-    public ProfileHandler(Context c) {
-        this.context = c;
-        this.profileList = new ArrayList<>();
-        this.roomsAndGroupsHandler = RoomsAndGroupsHandler.getInstance(c);
-
-        initSavedProfiles();
-    }
-
 
     public void initSavedProfiles() {
 
@@ -217,13 +217,12 @@ public class ProfileHandler {
         return result;
     }
 
+    public Profile getCurrentProfile() {
+        return currentProfile;
+    }
 
     public void setCurrentProfile(Profile profile) {
         this.currentProfile = profile;
-    }
-
-    public Profile getCurrentProfile() {
-        return currentProfile;
     }
 }
 

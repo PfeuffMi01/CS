@@ -16,13 +16,18 @@ import com.example.michael.cs.Interfaces.OnDataChangedListener;
 
 public class Device implements Cloneable {
     private static final String TAG = "Device";
-    public String _id;
-    public boolean isOn;
-    public String name;
-    public Room room;
-    public Group group;
-    public String topic;
+
     public Context context;
+
+    private Room room;
+    private Group group;
+
+    private String _id;
+    private String name;
+    private String topic;
+
+    private boolean isOn;
+
     private int deviceType;
 
     public Device(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, String topic) {
@@ -37,6 +42,7 @@ public class Device implements Cloneable {
 
         Log.i(TAG, "Device: " + name + " " + room.getName() + " " + group.getName());
     }
+
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -95,11 +101,11 @@ public class Device implements Cloneable {
 
     }
 
-    public void setDeviceType(int deviceType) {
-        this.deviceType = deviceType;
-    }
-
     public int getDeviceType() {
         return deviceType;
+    }
+
+    public void setDeviceType(int deviceType) {
+        this.deviceType = deviceType;
     }
 }

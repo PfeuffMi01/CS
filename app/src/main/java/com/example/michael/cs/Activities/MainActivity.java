@@ -39,7 +39,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -62,11 +61,12 @@ import com.example.michael.cs.Fragments.AllFragment;
 import com.example.michael.cs.Fragments.DeviceSingleSortListFragment;
 import com.example.michael.cs.Fragments.GroupFragment;
 import com.example.michael.cs.Fragments.RoomFragment;
+import com.example.michael.cs.Handler.MQTTHandler;
+import com.example.michael.cs.Handler.ProfileHandler;
 import com.example.michael.cs.Interfaces.OnConnectionListener;
 import com.example.michael.cs.Interfaces.OnConnectionLostListener;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
-import com.example.michael.cs.MQTTHandler;
-import com.example.michael.cs.ProfileHandler;
+import com.example.michael.cs.Interfaces.OnMQTTMessageArrived;
 import com.example.michael.cs.R;
 
 import java.util.ArrayList;
@@ -78,6 +78,15 @@ import static android.R.attr.mode;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.CATEGORY_ARRAY;
+import static com.example.michael.cs.Constants.CAT_DOOR;
+import static com.example.michael.cs.Constants.CAT_HUMID;
+import static com.example.michael.cs.Constants.CAT_LAMP_RGB;
+import static com.example.michael.cs.Constants.CAT_LAMP_W;
+import static com.example.michael.cs.Constants.CAT_MOVE;
+import static com.example.michael.cs.Constants.CAT_PLUG;
+import static com.example.michael.cs.Constants.CAT_PLUG_C;
+import static com.example.michael.cs.Constants.CAT_TEMP;
+import static com.example.michael.cs.Constants.CAT_WINDOW;
 import static com.example.michael.cs.Constants.DATA_DEVICES_DIV;
 import static com.example.michael.cs.Constants.DATA_DIV;
 import static com.example.michael.cs.Constants.DEVICES_DIV;
@@ -99,6 +108,7 @@ import static com.example.michael.cs.Constants.LIST_ITEM_TEMP;
 import static com.example.michael.cs.Constants.LIST_ITEM_WINDOW_SENSOR;
 import static com.example.michael.cs.Constants.MQTT_CONNECTION_ERROR_NOTI_ID;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_BEDROOM;
+import static com.example.michael.cs.Constants.MQTT_TOPIC_DIVIDER;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_FLOOR;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARAGE;
 import static com.example.michael.cs.Constants.MQTT_TOPIC_GARDEN;
@@ -115,13 +125,12 @@ import static com.example.michael.cs.Constants.ROOM_KITCHEN;
 import static com.example.michael.cs.Constants.ROOM_LIVING;
 import static com.example.michael.cs.Constants.ROOM_OFFICE;
 
-public class MainActivity extends AppCompatActivity implements OnConnectionListener, OnConnectionLostListener, View.OnClickListener {
-    private static final String TAG = "MainActivity";
+public class MainActivity extends AppCompatActivity implements OnConnectionListener, OnConnectionLostListener, View.OnClickListener, OnMQTTMessageArrived {
     public static final int ALL_FRAGMENT = 0;
     public static final int ROOM_FRAGMENT = 1;
     public static final int GROUP_FRAGMENT = 2;
     public static final int DEVICE_SINGLE_SORT_LIST_FRAGMENT = 3;
-
+    private static final String TAG = "MainActivity";
     public int CURRENT_FRAGMENT;
     public int CURRENT_LIST_CATEGORY;
 
@@ -156,6 +165,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private boolean appWasEnteredByLongClickOnNoConnectionIcon;
     private ProfileHandler profileHandler;
     private OnDataChangedListener onDataChangedListener;
+    private Device deviceToEdit;
+    private int deviceToEditAdapterPos;
 
 
     private static void CATEGORY_LIFECYCLE() {
@@ -164,6 +175,35 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
      */
     }
 
+    private static void CATEGORY_INITS() {
+    /*
+    ############################## INITS #################################################
+     */
+    }
+
+    private static void CATEGORY_UI_AND_VIEWS() {
+    /*
+    ############################## UI & VIEWS #################################################
+     */
+    }
+
+    private static void CATEGORY_MQTT() {
+    /*
+    ############################## MQTT #################################################
+     */
+    }
+
+    private static void CATEGORY_USER_INTERACTION_ABFAGEN() {
+    /*
+    ############################## USER INTERACTION ABFAGEN #################################################
+     */
+    }
+
+    private static void CATEGORY_GETTER_AND_SETTER() {
+    /*
+    ############################## GETTER & SETTER #################################################
+     */
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,18 +213,20 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         profileHandler = ProfileHandler.getInstance(this);
         mqttHandler = MQTTHandler.getInstance(this);
 
-        mqttHandler.setOnConnectionListener(this);
-        mqttHandler.setOnConnectionLostListener(this);
-
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl_main);
-
         initUI();
+        initRoomsAndGroups();
+        initFragment();
+        initTabs();
+        subscribeMQTTTopics();
+        getSupportActionBar().setSubtitle("Verbunden zu Profil " + profileHandler.getCurrentProfile().getName());
     }
 
     @Override
     protected void onResume() {
         mqttHandler.setOnConnectionListener(this);
         mqttHandler.setOnConnectionLostListener(this);
+        mqttHandler.setOnMQTTMessageArrivedListener(this);
+
         super.onResume();
     }
 
@@ -219,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         super.onStop();
     }
 
-
     /**
      * Menü anlegen
      *
@@ -235,16 +276,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         return super.onCreateOptionsMenu(menu);
     }
 
-
-    private static void CATEGORY_INITS() {
-    /*
-    ############################## INITS #################################################
-     */
-    }
-
-
     private void initUI() {
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.cl_main);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
@@ -254,11 +288,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(this);
 
-        initRoomsAndGroups();
-        initFragment();
-        initTabs();
-
-        getSupportActionBar().setSubtitle("Verbunden zu Profil " + profileHandler.getCurrentProfile().getName());
     }
 
     private void noInternetConnectionHandler() {
@@ -341,22 +370,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
     /**
-     * Holen des Singleton Objekts
-     * Setzen des Listeners
-     */
-    private void initMQTT(String ip, String port, String topic, String username, String password) {
-
-        if (isNetworkAvailable()) {
-            mqttHandler = MQTTHandler.getInstance(getApplicationContext());
-            mqttHandler.setConnetionDetails(ip, port, topic, username, password.toCharArray());
-            mqttHandler.setOnConnectionListener(this);
-            tryToConnectToMQTTBroker();
-        } else {
-            noInternetConnectionHandler();
-        }
-    }
-
-    /**
      * Erstellen aller Räume, Gruppen und Geräte
      * Kontrollieren, mit welchem Server man gerade verbunden ist und nur die entsprechenden Geräte dafür laden
      * TODO Nur die wirklich verfügbaren Geräte anlegen (Status vom Server)
@@ -429,12 +442,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private static void CATEGORY_UI_AND_VIEWS() {
-    /*
-    ############################## UI & VIEWS #################################################
-     */
     }
 
     /**
@@ -583,6 +590,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     private void showNewDeviceDialog() {
 
+        final boolean createNewDevice = deviceToEdit == null;
+
         final String[] spinnerArrayCategories = CATEGORY_ARRAY;
         final String[] spinnerArrayRooms = ROOM_ARRAY;
 
@@ -593,13 +602,17 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         final TextInputEditText topic = (TextInputEditText) dialogView.findViewById(R.id.deviceid_et);
         final Spinner category = (Spinner) dialogView.findViewById(R.id.category_spin);
         final Spinner room = (Spinner) dialogView.findViewById(R.id.room_spin);
-        final CheckBox dim = (CheckBox) dialogView.findViewById(R.id.dim_check);
 
-        setupSpinnersForNewDeviceDialog(category, room, dim, spinnerArrayCategories, spinnerArrayRooms);
+        setupSpinnersForNewDeviceDialog(category, room, spinnerArrayCategories, spinnerArrayRooms);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
-        dialogBuilder.setTitle("Gerät hinzufügen");
+
+        if (!createNewDevice) {
+            setupDialogForEditingDevice(name, topic, spinnerArrayCategories, spinnerArrayRooms, category, room, dialogBuilder);
+        } else {
+            dialogBuilder.setTitle("Gerät hinzufügen");
+        }
 
         dialogBuilder.setPositiveButton("Speichern", new DialogInterface.OnClickListener() {
                     @Override
@@ -623,18 +636,25 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                             errorEmptyTopic = true;
                         }
 
-                        if (doesTopicExist(deviceTopic)) {
+                        if (createNewDevice && doesTopicExist(deviceTopic)) {
                             errorExistingTopic = true;
                         }
 
-                        if (doesDeviceExist(deviceName, spinnerArrayRooms[room.getSelectedItemPosition()])) {
+                        if (createNewDevice && doesDeviceExist(deviceName, spinnerArrayRooms[room.getSelectedItemPosition()])) {
                             errorExistingName = true;
                         }
 
-                        if (deviceName.contains(PROFILE_DEVICES_DIV)
-                                || deviceName.contains(DATA_DIV)
-                                || deviceName.contains(DEVICES_DIV)
-                                || deviceName.contains(DATA_DEVICES_DIV)) {
+                        if (
+                                deviceName.contains(PROFILE_DEVICES_DIV)
+                                        || deviceName.contains(DATA_DIV)
+                                        || deviceName.contains(DEVICES_DIV)
+                                        || deviceName.contains(DATA_DEVICES_DIV)
+                                        || deviceName.contains(MQTT_TOPIC_DIVIDER)
+                                        || deviceTopic.contains(PROFILE_DEVICES_DIV)
+                                        || deviceTopic.contains(DATA_DIV)
+                                        || deviceTopic.contains(DEVICES_DIV)
+                                        || deviceTopic.contains(DATA_DEVICES_DIV)
+                                        || deviceTopic.contains(MQTT_TOPIC_DIVIDER)) {
                             unsupportedCharacter = true;
                         }
 
@@ -652,8 +672,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                             Toast.makeText(MainActivity.this, "Das Topic " + deviceTopic + " gibt es bereits", Toast.LENGTH_LONG).show();
                         } else if (errorExistingName) {
                             Toast.makeText(MainActivity.this, "Dieses Gerät gibt es bereits", Toast.LENGTH_LONG).show();
-                        } else if (!errorEmptyName && !errorEmptyTopic && !errorExistingName) {
-                            createNewDevice(deviceName, deviceTopic, spinnerArrayCategories[category.getSelectedItemPosition()], spinnerArrayRooms[room.getSelectedItemPosition()]);
+
+                            // Wenn alle Eingaben OK sind
+                        } else if (!errorEmptyName && !errorEmptyTopic && !errorExistingName && !errorExistingTopic) {
+                            createOrEditDevice(createNewDevice, deviceName, deviceTopic, spinnerArrayCategories[category.getSelectedItemPosition()], spinnerArrayRooms[room.getSelectedItemPosition()]);
                         }
                     }
                 }
@@ -661,12 +683,102 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         dialogBuilder.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
 
+        dialogBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                Log.i(TAG, "onDismiss: ");
+                deviceToEdit = null;
+                deviceToEditAdapterPos = -1;
             }
         });
 
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+    }
+
+    private void setupDialogForEditingDevice(TextInputEditText name, TextInputEditText topic, String[] spinnerArrayCategories, String[] spinnerArrayRooms, Spinner category, Spinner room, AlertDialog.Builder dialogBuilder) {
+
+        dialogBuilder.setNeutralButton("Löschen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Device deletedDevice = null;
+                try {
+                    deletedDevice = (Device) deviceToEdit.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+
+                unsubscribeMQTTTopic(deviceToEdit);
+                deviceList.remove(deviceToEdit);
+                onDataChangedListener.onDataHasChanged();
+
+                showUndoSnackbar(deletedDevice, deviceToEditAdapterPos);
+            }
+        });
+
+        dialogBuilder.setTitle(deviceToEdit.getName() + " editieren");
+
+        name.setText(deviceToEdit.getName());
+        topic.setText(deviceToEdit.getTopic());
+
+        int type = deviceToEdit.getDeviceType();
+        String toLookFor = "";
+
+        switch (type) {
+            case LIST_ITEM_TEMP:
+                toLookFor = CAT_TEMP;
+                break;
+
+            case LIST_ITEM_PLUG:
+                toLookFor = CAT_PLUG;
+                break;
+
+            case LIST_ITEM_PLUG_CONSUMPTION:
+                toLookFor = CAT_PLUG_C;
+                break;
+
+            case LIST_ITEM_LAMP_WHITE:
+                toLookFor = CAT_LAMP_W;
+                break;
+
+            case LIST_ITEM_LAMP_RGB:
+                toLookFor = CAT_LAMP_RGB;
+                break;
+
+            case LIST_ITEM_DOOR_SENSOR:
+                toLookFor = CAT_DOOR;
+                break;
+
+            case LIST_ITEM_WINDOW_SENSOR:
+                toLookFor = CAT_WINDOW;
+                break;
+
+            case LIST_ITEM_MOVEMENT_SENSOR:
+                toLookFor = CAT_MOVE;
+                break;
+
+            case LIST_ITEM_HUMIDITY:
+                toLookFor = CAT_HUMID;
+                break;
+        }
+
+
+        for (int i = 0; i < spinnerArrayCategories.length; i++) {
+            if (spinnerArrayCategories[i].equals(toLookFor)) {
+                category.setSelection(i);
+            }
+        }
+
+        for (int i = 0; i < spinnerArrayRooms.length; i++) {
+            if (spinnerArrayRooms[i].equals(deviceToEdit.getRoom().getName())) {
+                room.setSelection(i);
+            }
+        }
+
     }
 
     private boolean doesTopicExist(String deviceTopic) {
@@ -708,8 +820,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
     }
 
-
-    private void createNewDevice(String deviceName, String deviceTopic, String category, String room) {
+    private void createOrEditDevice(boolean createNewDevice, String deviceName, String deviceTopic, String category, String room) {
 
         final String[] catArray = CATEGORY_ARRAY;
         Room tmpRoom = null;
@@ -728,49 +839,64 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         // GERÄTETYP AUSWAHL
         //####################
 
-      /* "Bewegungsmelder", "Fenstersensor", "Feuchtigkeit","Licht RGB", "Licht Weiß", "Steckdose", "Steckdose mit Verbrauch", "Temperatur", "Türsensor", "Wetterstation"};*/
+      /*
+      "Bewegungsmelder",
+      "Fenstersensor",
+      "Feuchtigkeit",
+      "Licht RGB",
+      "Licht Weiß",
+      "Steckdose",
+      "Steckdose mit Verbrauch",
+      "Temperatur",
+      "Türsensor",
+      "Wetterstation"};*/
 
-        Device newDevice = null;
+        if (!createNewDevice) {
+            deviceList.remove(deviceToEditAdapterPos);
+        }
 
         if (category.equals(catArray[0])) {
             // Bewegungsmelder
-            newDevice = new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", deviceTopic);
+            deviceToEdit = new MovementSensor(LIST_ITEM_MOVEMENT_SENSOR, this, "1", false, deviceName, tmpRoom, movementSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[1])) {
             // Fenstersensor
-            newDevice = new WindowSensor(LIST_ITEM_WINDOW_SENSOR, this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", deviceTopic);
+            deviceToEdit = new WindowSensor(LIST_ITEM_WINDOW_SENSOR, this, "1", false, deviceName, tmpRoom, windowSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[2])) {
             // Feuchtigkeit
-            newDevice = new HumiditySensor(LIST_ITEM_HUMIDITY, this, "1", false, deviceName, tmpRoom, humidity, 80, deviceTopic);
+            deviceToEdit = new HumiditySensor(LIST_ITEM_HUMIDITY, this, "1", false, deviceName, tmpRoom, humidity, 80, deviceTopic);
         } else if (category.equals(catArray[3])) {
             // RGB Licht
-            newDevice = new RGBLamp(LIST_ITEM_LAMP_RGB, this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", deviceTopic);
+            deviceToEdit = new RGBLamp(LIST_ITEM_LAMP_RGB, this, "1", false, deviceName, tmpRoom, lamps, 100, getResources().getColor(R.color.white), "aus", deviceTopic);
         } else if (category.equals(catArray[4])) {
             // Weißes Licht
-            newDevice = new WhiteLamp(LIST_ITEM_LAMP_WHITE, this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", deviceTopic);
+            deviceToEdit = new WhiteLamp(LIST_ITEM_LAMP_WHITE, this, "1", false, deviceName, tmpRoom, lamps, 100, "aus", deviceTopic);
         } else if (category.equals(catArray[5])) {
             // Steckdose
-            newDevice = new Plug(LIST_ITEM_PLUG, this, "1", false, deviceName, tmpRoom, plugs, "aus", deviceTopic);
+            deviceToEdit = new Plug(LIST_ITEM_PLUG, this, "1", false, deviceName, tmpRoom, plugs, "aus", deviceTopic);
         } else if (category.equals(catArray[6])) {
             // Steckdose mit Verbrauch
-            newDevice = new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", deviceTopic);
+            deviceToEdit = new PlugWithConsumption(LIST_ITEM_PLUG_CONSUMPTION, this, "1", false, deviceName, tmpRoom, plugs, "aus", "24", deviceTopic);
         } else if (category.equals(catArray[7])) {
             // Temperatur
-            newDevice = new Temp(LIST_ITEM_TEMP, this, "1", false, deviceName, tmpRoom, temperature, 24, deviceTopic);
+            deviceToEdit = new Temp(LIST_ITEM_TEMP, this, "1", false, deviceName, tmpRoom, temperature, 24, deviceTopic);
         } else if (category.equals(catArray[8])) {
             // Türsensor
-            newDevice = new DoorSensor(LIST_ITEM_DOOR_SENSOR, this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", deviceTopic);
+            deviceToEdit = new DoorSensor(LIST_ITEM_DOOR_SENSOR, this, "1", false, deviceName, tmpRoom, doorSens, "Vorhin", deviceTopic);
         } else if (category.equals(catArray[9])) {
             // Wetterstation
         }
 
 
-        if (newDevice != null) {
-            deviceList.add(newDevice);
-            onDataChangedListener.onDataHasChanged();
+        if (!createNewDevice) {
+            deviceList.add(deviceToEditAdapterPos, deviceToEdit);
+        } else {
+            deviceList.add(deviceToEdit);
         }
+        onDataChangedListener.onDataHasChanged();
+        subscribeMQTTTopics();
     }
 
-    private void setupSpinnersForNewDeviceDialog(Spinner category, Spinner room, final CheckBox dim, final String[] spinnerArrayCategories, String[] spinnerArrayRooms) {
+    private void setupSpinnersForNewDeviceDialog(Spinner category, Spinner room, final String[] spinnerArrayCategories, String[] spinnerArrayRooms) {
 
         Arrays.sort(spinnerArrayCategories);
         Arrays.sort(spinnerArrayRooms);
@@ -816,44 +942,114 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     }
 
     public void setOnDataChangedListener(AllFragment allFragment) {
-
         onDataChangedListener = allFragment;
     }
 
+    @Override
+    public void onMQTTMessageArrived(String topic, String message) {
+        Toast.makeText(this, topic + " " + message, Toast.LENGTH_SHORT).show();
+
+        String[] colorArray = getResources().getStringArray(R.array.colorMqtt);
+        List<String> colors = Arrays.asList(colorArray);
+
+        if (message.equalsIgnoreCase("an") || message.equalsIgnoreCase("aus")) {
+            handleArrivedOnOffMessage(topic, message);
+        } else if (colors.contains(message.substring(0, 1).toUpperCase() + message.substring(1))) {
+            handleArrivedColorMessage(topic, message);
+        } else if (isMessageNumber(message)) {
+            handleArrivedDimMessage(topic, message);
+        } else if (false) {
+        }
+    }
+
     /**
-     * Ist für das TabLayout nötig
+     * Herausfinden ob RGB oder Weiße Lapme, dann den Dim-Wert setzen
+     * Durch die vorherige Prüfung in isMessageNumber() können hier nur Werte zwischen 0 und 100 sein
+     *
+     * @param topic
+     * @param message
      */
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final FragmentManager fragmentManager;
-        private Fragment fragmentAtPos0;
-        private final List<Fragment> fragmentList = new ArrayList<>();
-        private final List<String> fragmentTitleList = new ArrayList<>();
+    private void handleArrivedDimMessage(String topic, String message) {
+        Log.i(TAG, "handleArrivedDimMessage: ");
 
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-            fragmentManager = manager;
+        for (Device d : deviceList) {
+            if (d.getTopic().equals(topic)) {
+                if (d instanceof RGBLamp) {
+                    ((RGBLamp) d).setDim(Integer.parseInt(message));
+                    onDataChangedListener.onDataHasChanged();
+                } else if (d instanceof WhiteLamp) {
+                    ((WhiteLamp) d).setDim(Integer.parseInt(message));
+                    onDataChangedListener.onDataHasChanged();
+                }
+            }
+        }
+    }
+
+    /**
+     * Nur RGBLampen können die Farbe wechseln, also erst das passende Gerät suchen, dann auf instanceOf prüfen
+     *
+     * @param topic
+     * @param message
+     */
+    private void handleArrivedColorMessage(String topic, String message) {
+        Log.i(TAG, "handleArrivedColorMessage: ");
+
+        for (Device d : deviceList) {
+            if (d.getTopic().equals(topic)) {
+                Log.i(TAG, "handleArrivedColorMessage: 1");
+                if (d instanceof RGBLamp) {
+                    Log.i(TAG, "handleArrivedColorMessage: 2");
+                    ((RGBLamp) d).setColorByName(message);
+                    Log.i(TAG, "handleArrivedColorMessage: " + ((RGBLamp) d).getSelectedColor() + " " + ((RGBLamp) d).getSelectedColorName());
+                    onDataChangedListener.onDataHasChanged();
+                }
+            }
+        }
+    }
+
+    /**
+     * Sucht das passende Gerät anhand des topics und setzt es auf an oder aus
+     *
+     * @param topic
+     * @param message
+     */
+    private void handleArrivedOnOffMessage(String topic, String message) {
+        Log.i(TAG, "handleArrivedOnOffMessage: ");
+
+        for (Device d : deviceList) {
+            if (d.getTopic().equals(topic)) {
+                d.setOn(message.equalsIgnoreCase("an"));
+                onDataChangedListener.onDataHasChanged();
+            }
+        }
+    }
+
+    /**
+     * Kontrolliert ob ein String eine Zahl ist und falls ja, ob diese Zahl im Dim-Bereich von 0-100 liegt
+     *
+     * @param message zu parsener String
+     * @return
+     */
+    private boolean isMessageNumber(String message) {
+
+        boolean isNumber = true;
+        int i = -1;
+
+        // Wenn es sich parsen lässt, ist es eine Zahl
+        try {
+            i = Integer.parseInt(message);
+        } catch (NumberFormatException e) {
+            isNumber = false;
         }
 
-        @Override
-        public Fragment getItem(int position) {
-            return fragmentList.get(position);
+        // Erlaubte Dim-Werte
+        if (isNumber) {
+            if (i < 0 || i > 100) {
+                isNumber = false;
+            }
         }
 
-        @Override
-        public int getCount() {
-            return fragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            fragmentList.add(fragment);
-            fragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Log.i(TAG, "getPageTitle: " + fragmentTitleList.get(position));
-            return fragmentTitleList.get(position);
-        }
+        return isNumber;
     }
 
     public void setSnackbarTextSize(Snackbar s) {
@@ -865,12 +1061,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                 t.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
             }
         }
-    }
-
-    private static void CATEGORY_MQTT() {
-    /*
-    ############################## MQTT #################################################
-     */
     }
 
     /**
@@ -942,22 +1132,31 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         alertDialog.show();
     }
 
-
     @Override
     public void onMQTTConnectionLost() {
-        String text = "Verbindung zum Profil " + profileHandler.getCurrentProfile() + " verloren";
-        getSupportActionBar().setSubtitle(text);
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+
+        Log.i(TAG, "onMQTTConnectionLost: ");
+        try {
+            String text = "Verbindung zum Profil " + profileHandler.getCurrentProfile().getName() + " verloren";
+            getSupportActionBar().setSubtitle(text);
+            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onMQTTConnectionLost: ");
+        }
     }
 
     @Override
     public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP) {
+     /*   Log.i(TAG, "onMQTTConnection: ");
+
         appWasEnteredByLongClickOnNoConnectionIcon = forcedAppEntering;
 
         if (isConnectionSuccessful) {
+            Log.i(TAG, "onMQTTConnection: ");
             initRoomsAndGroups();
             initFragment();
             initTabs();
+
 
             animateLoadingLayout();
             currentlyConnectedServer = connectionIP;
@@ -973,8 +1172,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     .setAction("ERNEUT VERSUCHEN", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
-
                             tryToConnectToMQTTBroker();
                         }
                     });
@@ -985,13 +1182,32 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setSubtitle("Keine Verbindung");
             }
+        }*/
+    }
+
+    private void subscribeMQTTTopics() {
+
+        String prefix = getTopicPrefix();
+
+        Log.i(TAG, "subscribeMQTTTopics: " + deviceList.size());
+
+        for (Device d : deviceList) {
+            String topic = prefix + d.getRoom().getTopic() + "/" + d.getTopic();
+            Log.i(TAG, "subscribeMQTTTopics: " + topic);
+            mqttHandler.subscribeToTopic(topic);
         }
     }
 
-    private static void CATEGORY_USER_INTERACTION_ABFAGEN() {
-    /*
-    ############################## USER INTERACTION ABFAGEN #################################################
-     */
+    private void unsubscribeMQTTTopic(Device deviceToEdit) {
+
+        String prefix = getTopicPrefix();
+        String topic = prefix + deviceToEdit.getRoom().getTopic() + "/" + deviceToEdit.getTopic();
+        mqttHandler.unsubscribeFromTopic(topic);
+
+    }
+
+    public String getTopicPrefix() {
+        return profileHandler.getCurrentProfile().getTopicPrefix().equals("") ? "" : (profileHandler.getCurrentProfile().getTopicPrefix() + "/");
     }
 
     /**
@@ -1003,7 +1219,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         if (CURRENT_FRAGMENT == DEVICE_SINGLE_SORT_LIST_FRAGMENT) {
             fragChanger(GONE, VISIBLE, false, getResources().getString(R.string.app_name), mode);
             CURRENT_FRAGMENT = 999;
-        }else {
+        } else {
             Log.i(TAG, "onBackPressed: 3");
             logout();
         }
@@ -1086,40 +1302,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     public void editButtonHasBeenClicked(final int adapterPosition) {
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle("\"" + deviceList.get(adapterPosition).getName() + "\"" + " löschen?");
-        dialogBuilder.setMessage("Wollen Sie das Gerät " + deviceList.get(adapterPosition).getName() + " wirklich löschen?");
-        dialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        if (deviceList == null) {
-                            deviceList = new ArrayList<Device>();
-                        }
-
-                        Device deletedDevice = null;
-                        try {
-                            deletedDevice = (Device) deviceList.get(adapterPosition).clone();
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-
-                        deviceList.remove(adapterPosition);
-                        onDataChangedListener.onDataHasChanged();
-
-                        showUndoSnackbar(deletedDevice, adapterPosition);
-                    }
-                }
-        );
-        dialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
+        deviceToEdit = deviceList.get(adapterPosition);
+        deviceToEditAdapterPos = adapterPosition;
+        showNewDeviceDialog();
     }
 
     private void showUndoSnackbar(final Device d, final int adapterPosition) {
@@ -1133,7 +1318,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     @Override
                     public void onClick(View view) {
 
-                        deviceList.add(adapterPosition, d);
+                        if (deviceToEditAdapterPos != -1) {
+                            deviceList.add(adapterPosition, d);
+                        } else {
+                            deviceList.add(d);
+                        }
                         onDataChangedListener.onDataHasChanged();
 
                     }
@@ -1141,7 +1330,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         setSnackbarTextSize(undoDeleteSnackbar);
         undoDeleteSnackbar.show();
-
     }
 
 
@@ -1162,13 +1350,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         } else {
             deviceSingleSortListFragment.openDialog(adapterPosition, listItemType);
         }
-    }
-
-
-    private static void CATEGORY_GETTER_AND_SETTER() {
-    /*
-    ############################## GETTER & SETTER #################################################
-     */
     }
 
     public MQTTHandler getMqttHandler() {
@@ -1197,5 +1378,42 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     public void setCURRENT_LIST_CATEGORY(int CURRENT_LIST_CATEGORY) {
         this.CURRENT_LIST_CATEGORY = CURRENT_LIST_CATEGORY;
+    }
+
+    /**
+     * Ist für das TabLayout nötig
+     */
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final FragmentManager fragmentManager;
+        private final List<Fragment> fragmentList = new ArrayList<>();
+        private final List<String> fragmentTitleList = new ArrayList<>();
+        private Fragment fragmentAtPos0;
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+            fragmentManager = manager;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            fragmentList.add(fragment);
+            fragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Log.i(TAG, "getPageTitle: " + fragmentTitleList.get(position));
+            return fragmentTitleList.get(position);
+        }
+
     }
 }

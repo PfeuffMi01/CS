@@ -1,10 +1,11 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Handler;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.R;
 
 import java.util.ArrayList;
 
@@ -37,11 +38,19 @@ import static com.example.michael.cs.Constants.ROOM_OFFICE;
 
 public class RoomsAndGroupsHandler {
 
-    private static RoomsAndGroupsHandler thisInstance;
     private static final String TAG = "RoomsAndGroupsHandler";
+    private static RoomsAndGroupsHandler thisInstance;
     private Context context;
     private ArrayList<Room> roomList;
     private ArrayList<Group> groupList;
+
+    public RoomsAndGroupsHandler(Context c) {
+        this.context = c;
+        roomList = new ArrayList<>();
+        groupList = new ArrayList<>();
+
+        initData();
+    }
 
     /**
      * Singleton Initialisierung
@@ -56,14 +65,6 @@ public class RoomsAndGroupsHandler {
         }
 
         return thisInstance;
-    }
-
-    public RoomsAndGroupsHandler(Context c) {
-        this.context = c;
-        roomList = new ArrayList<>();
-        groupList = new ArrayList<>();
-
-        initData();
     }
 
     private void initData() {

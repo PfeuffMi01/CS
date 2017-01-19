@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Handler;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

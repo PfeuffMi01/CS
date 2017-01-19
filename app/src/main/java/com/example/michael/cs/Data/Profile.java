@@ -1,4 +1,4 @@
-package com.example.michael.cs;
+package com.example.michael.cs.Data;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,8 +13,7 @@ import com.example.michael.cs.Data.Devices.RGBLamp;
 import com.example.michael.cs.Data.Devices.Temp;
 import com.example.michael.cs.Data.Devices.WhiteLamp;
 import com.example.michael.cs.Data.Devices.WindowSensor;
-import com.example.michael.cs.Data.Group;
-import com.example.michael.cs.Data.Room;
+import com.example.michael.cs.Handler.RoomsAndGroupsHandler;
 
 import java.util.ArrayList;
 
@@ -43,13 +42,13 @@ import static com.example.michael.cs.Constants.PROFILE_DEVICES_DIV;
 public class Profile {
 
     private static final String TAG = "Profile_tag";
+    public ArrayList<Device> deviceList;
     private String name;
     private String serverIP;
     private String serverPort;
     private String username;
     private String password;
     private String topicPrefix;
-    public ArrayList<Device> deviceList;
 
     public Profile(String name, String serverIP, String serverPort, String tPre, String username, String password) {
 
@@ -241,6 +240,10 @@ public class Profile {
         return deviceList;
     }
 
+    public void setDeviceList(ArrayList<Device> deviceList) {
+        this.deviceList = deviceList;
+    }
+
     public void addDeviceToDeviceList(Device device) {
 
         if (this.deviceList == null) {
@@ -248,10 +251,6 @@ public class Profile {
         }
 
         this.deviceList.add(device);
-    }
-
-    public void setDeviceList(ArrayList<Device> deviceList) {
-        this.deviceList = deviceList;
     }
 
     /**

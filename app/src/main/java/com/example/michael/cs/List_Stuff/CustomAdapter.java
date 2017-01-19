@@ -58,6 +58,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     ArrayList<Device> deviceList;
     private boolean onBind;
 
+    public CustomAdapter(Context contexts, ArrayList<Device> deviceList) {
+
+        this.context = contexts;
+        this.deviceList = deviceList;
+    }
+
     private void listItemHasBeenClicked(int adapterPosition, int list_item_id, View view) {
         ((MainActivity) context).listItemHasBeenClicked(adapterPosition, list_item_id, view);
     }
@@ -66,247 +72,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public void onClick(View view) {
 
     }
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
-
-        TextView name;
-        TextView room;
-        ImageView icon;
-        ImageView roomImg;
-        ImageView editBtn;
-        SwitchCompat switchOnOff;
-
-        public ViewHolder(View v) {
-            super(v);
-
-            this.icon = (ImageView) v.findViewById(R.id.image);
-            this.name = (TextView) v.findViewById(R.id.device_name);
-            this.room = (TextView) v.findViewById(R.id.room_footer);
-            this.editBtn = (ImageView) v.findViewById(R.id.room_footer_edit);
-            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
-            this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
-            this.switchOnOff.setOnCheckedChangeListener(this);
-            this.editBtn.setOnClickListener(this);
-
-        }
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-            if (!onBind) {
-                int adapterPosition = getAdapterPosition();
-                ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
-            }
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (!onBind) {
-                int adapterPosition = getAdapterPosition();
-                ((MainActivity) context).editButtonHasBeenClicked(adapterPosition);
-            }
-        }
-    }
-
-
-    public class HumidityViewHolder extends ViewHolder {
-
-        TextView humidity;
-
-        public HumidityViewHolder(View v) {
-            super(v);
-
-            this.humidity = (TextView) v.findViewById(R.id.humidity);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, LIST_ITEM_HUMIDITY, view);
-                }
-            });
-        }
-    }
-
-    public class MovementSensorViewHolder extends ViewHolder {
-
-        TextView lastMovement;
-
-        public MovementSensorViewHolder(View v) {
-            super(v);
-
-            this.lastMovement = (TextView) v.findViewById(R.id.last_movement);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_MOVEMENT_SENSOR, view);
-                }
-            });
-        }
-    }
-
-    public class DoorSensorViewHolder extends ViewHolder {
-
-        TextView status;
-
-        public DoorSensorViewHolder(View v) {
-            super(v);
-
-            this.status = (TextView) v.findViewById(R.id.status);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_DOOR_SENSOR, view);
-                }
-            });
-        }
-    }
-
-    public class WindowSensorViewHolder extends ViewHolder {
-
-        TextView status;
-
-        public WindowSensorViewHolder(View v) {
-            super(v);
-
-            this.status = (TextView) v.findViewById(R.id.status);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WINDOW_SENSOR, view);
-                }
-            });
-        }
-    }
-
-
-    public class RGBLampViewHolder extends ViewHolder {
-
-        TextView color;
-        TextView dim;
-        TextView status;
-
-
-        public RGBLampViewHolder(View v) {
-            super(v);
-
-            this.color = (TextView) v.findViewById(R.id.color);
-            this.dim = (TextView) v.findViewById(R.id.dim);
-            this.status = (TextView) v.findViewById(R.id.status);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_RGB, view);
-                }
-            });
-        }
-    }
-
-
-    public class WhiteLampViewHolder extends ViewHolder {
-        TextView dim;
-        TextView status;
-
-        public WhiteLampViewHolder(View v) {
-            super(v);
-
-            this.dim = (TextView) v.findViewById(R.id.dim);
-            this.status = (TextView) v.findViewById(R.id.status);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_WHITE, view);
-                }
-            });
-        }
-    }
-
-    public class TempViewHolder extends ViewHolder {
-
-        TextView temp;
-
-
-        public TempViewHolder(View v) {
-            super(v);
-
-            this.temp = (TextView) v.findViewById(R.id.temperature);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_TEMP, view);
-                }
-            });
-        }
-    }
-
-    public class PlugViewHolder extends ViewHolder {
-
-        TextView status;
-
-        public PlugViewHolder(View v) {
-            super(v);
-
-            this.status = (TextView) v.findViewById(R.id.status);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
-                }
-            });
-        }
-    }
-
-    public class PlugWithConsumptionViewHolder extends ViewHolder {
-
-        TextView status;
-        TextView consumption;
-
-        public PlugWithConsumptionViewHolder(View v) {
-            super(v);
-
-            this.status = (TextView) v.findViewById(R.id.status);
-            this.consumption = (TextView) v.findViewById(R.id.consumption);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    int adapterPosition = getAdapterPosition();
-                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
-                }
-            });
-        }
-    }
-
-
-    public CustomAdapter(Context contexts, ArrayList<Device> deviceList) {
-
-        this.context = contexts;
-        this.deviceList = deviceList;
-    }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -401,6 +166,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             Plug device = (Plug) deviceList.get(position);
             PlugViewHolder holder = (PlugViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_group));
             holder.room.setText(device.getRoom().getName());
             holder.status.setText("Status: " + device.getStatus());
@@ -414,6 +180,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             MovementSensor device = (MovementSensor) deviceList.get(position);
             MovementSensorViewHolder holder = (MovementSensorViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.movement_sens));
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -427,6 +194,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             PlugWithConsumption device = (PlugWithConsumption) deviceList.get(position);
             PlugWithConsumptionViewHolder holder = (PlugWithConsumptionViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.plug_consumption));
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -443,6 +211,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             TempViewHolder holder = (TempViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.temp));
             holder.room.setText(device.getRoom().getName());
             holder.temp.setText("Temp.: " + device.getTemp() + " " + context.getString(R.string.celcius));
@@ -457,6 +226,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             WhiteLampViewHolder holder = (WhiteLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_white));
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + context.getString(R.string.percent));
@@ -472,6 +242,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
             RGBLampViewHolder holder = (RGBLampViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.lamp_rgb));
             holder.room.setText(device.getRoom().getName());
             holder.dim.setText("Dim: " + device.getDim() + context.getString(R.string.percent));
@@ -501,6 +272,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             DoorSensor device = (DoorSensor) deviceList.get(position);
             DoorSensorViewHolder holder = (DoorSensorViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.door_sens));
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -514,6 +286,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             WindowSensor device = (WindowSensor) deviceList.get(position);
             WindowSensorViewHolder holder = (WindowSensorViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.window_sens));
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -527,6 +300,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             HumiditySensor device = (HumiditySensor) deviceList.get(position);
             HumidityViewHolder holder = (HumidityViewHolder) viewHolder;
             holder.name.setText(device.getName());
+            holder.topic.setText(device.getTopic());
             holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.humidity));
             holder.room.setText(device.getRoom().getName());
             holder.roomImg.setImageDrawable(getCorrectRoomImg(device.getRoom()));
@@ -611,6 +385,238 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         {
             return -1;
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+
+        TextView name;
+        TextView topic;
+        TextView room;
+        ImageView icon;
+        ImageView roomImg;
+        ImageView editBtn;
+        SwitchCompat switchOnOff;
+
+        public ViewHolder(View v) {
+            super(v);
+
+            this.icon = (ImageView) v.findViewById(R.id.image);
+            this.name = (TextView) v.findViewById(R.id.device_name);
+            this.topic = (TextView) v.findViewById(R.id.device_topic);
+            this.room = (TextView) v.findViewById(R.id.room_footer);
+            this.editBtn = (ImageView) v.findViewById(R.id.room_footer_edit);
+            this.roomImg = (ImageView) v.findViewById(R.id.room_footer_img);
+            this.switchOnOff = (SwitchCompat) v.findViewById(R.id.switch_on_off);
+            this.switchOnOff.setOnCheckedChangeListener(this);
+            this.editBtn.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+            if (!onBind) {
+                int adapterPosition = getAdapterPosition();
+                ((MainActivity) context).switchInItemHasBeenClicked(adapterPosition, b);
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (!onBind) {
+                int adapterPosition = getAdapterPosition();
+                ((MainActivity) context).editButtonHasBeenClicked(adapterPosition);
+            }
+        }
+    }
+
+    public class HumidityViewHolder extends ViewHolder {
+
+        TextView humidity;
+
+        public HumidityViewHolder(View v) {
+            super(v);
+
+            this.humidity = (TextView) v.findViewById(R.id.humidity);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, LIST_ITEM_HUMIDITY, view);
+                }
+            });
+        }
+    }
+
+    public class MovementSensorViewHolder extends ViewHolder {
+
+        TextView lastMovement;
+
+        public MovementSensorViewHolder(View v) {
+            super(v);
+
+            this.lastMovement = (TextView) v.findViewById(R.id.last_movement);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_MOVEMENT_SENSOR, view);
+                }
+            });
+        }
+    }
+
+    public class DoorSensorViewHolder extends ViewHolder {
+
+        TextView status;
+
+        public DoorSensorViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_DOOR_SENSOR, view);
+                }
+            });
+        }
+    }
+
+    public class WindowSensorViewHolder extends ViewHolder {
+
+        TextView status;
+
+        public WindowSensorViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_WINDOW_SENSOR, view);
+                }
+            });
+        }
+    }
+
+    public class RGBLampViewHolder extends ViewHolder {
+
+        TextView color;
+        TextView dim;
+        TextView status;
+
+
+        public RGBLampViewHolder(View v) {
+            super(v);
+
+            this.color = (TextView) v.findViewById(R.id.color);
+            this.dim = (TextView) v.findViewById(R.id.dim);
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_RGB, view);
+                }
+            });
+        }
+    }
+
+    public class WhiteLampViewHolder extends ViewHolder {
+        TextView dim;
+        TextView status;
+
+        public WhiteLampViewHolder(View v) {
+            super(v);
+
+            this.dim = (TextView) v.findViewById(R.id.dim);
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_LAMP_WHITE, view);
+                }
+            });
+        }
+    }
+
+    public class TempViewHolder extends ViewHolder {
+
+        TextView temp;
+
+
+        public TempViewHolder(View v) {
+            super(v);
+
+            this.temp = (TextView) v.findViewById(R.id.temperature);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_TEMP, view);
+                }
+            });
+        }
+    }
+
+    public class PlugViewHolder extends ViewHolder {
+
+        TextView status;
+
+        public PlugViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
+                }
+            });
+        }
+    }
+
+    public class PlugWithConsumptionViewHolder extends ViewHolder {
+
+        TextView status;
+        TextView consumption;
+
+        public PlugWithConsumptionViewHolder(View v) {
+            super(v);
+
+            this.status = (TextView) v.findViewById(R.id.status);
+            this.consumption = (TextView) v.findViewById(R.id.consumption);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    int adapterPosition = getAdapterPosition();
+                    listItemHasBeenClicked(adapterPosition, Constants.LIST_ITEM_PLUG, view);
+                }
+            });
         }
     }
 }

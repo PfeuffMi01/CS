@@ -21,12 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.michael.cs.Data.Profile;
+import com.example.michael.cs.Handler.InternetConnectionHandler;
+import com.example.michael.cs.Handler.MQTTHandler;
+import com.example.michael.cs.Handler.ProfileHandler;
 import com.example.michael.cs.Interfaces.OnConnectionListener;
 import com.example.michael.cs.Interfaces.OnConnectionLostListener;
-import com.example.michael.cs.InternetConnectionHandler;
-import com.example.michael.cs.MQTTHandler;
-import com.example.michael.cs.Profile;
-import com.example.michael.cs.ProfileHandler;
 import com.example.michael.cs.R;
 
 /**

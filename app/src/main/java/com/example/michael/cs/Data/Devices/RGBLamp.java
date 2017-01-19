@@ -37,8 +37,6 @@ public class RGBLamp extends Lamp {
     public RGBLamp(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, int selectedColor, String status, String topic) {
         super(deviceType, context, _id, isOn, name, room, group, dim, topic);
 
-        colorNames = context.getResources().getStringArray(R.array.colorMqtt);
-        colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
         setSelectedColor(selectedColor);
         this.status = status;
     }
@@ -59,6 +57,9 @@ public class RGBLamp extends Lamp {
 
     public void setSelectedColor(int selectedColor) {
 
+        colorNames = context.getResources().getStringArray(R.array.colorMqtt);
+        colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
+
         this.selectedColor = selectedColor;
 
         for (int i = 0; i < colorIntVals.length; i++) {
@@ -70,7 +71,23 @@ public class RGBLamp extends Lamp {
         Log.i(TAG, "setSelectedColor: " + selectedColor + " called " + selectedColorName);
     }
 
+    public void setColorByName(String name) {
+
+        colorNames = context.getResources().getStringArray(R.array.colorMqtt);
+        colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
+
+        for (int i = 0; i < colorNames.length; i++) {
+            if (colorNames[i].equalsIgnoreCase(name)) {
+                Log.i(TAG, "setColorByName: " + colorNames[i]);
+                setSelectedColor(colorIntVals[i]);
+            }
+        }
+    }
+
     public void setSelectedColor(MainActivity mainActivity, int selectedColor) {
+
+        colorNames = context.getResources().getStringArray(R.array.colorMqtt);
+        colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
 
         this.selectedColor = selectedColor;
 

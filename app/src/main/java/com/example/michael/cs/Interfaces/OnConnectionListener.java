@@ -1,7 +1,9 @@
 package com.example.michael.cs.Interfaces;
 
+import com.example.michael.cs.Handler.MQTTHandler;
+
 /**
- * Wird vom {@link com.example.michael.cs.MQTTHandler} aufgerufen, um die Listener über
+ * Wird vom {@link MQTTHandler} aufgerufen, um die Listener über
  * Erfolg oder Misserfolg des Verbindungsaufbaus zu informieren
  */
 public interface OnConnectionListener {
@@ -19,6 +21,6 @@ public interface OnConnectionListener {
      * @param forcedAppEntering Indikator ob man per langen Klick auf das "Verbindungsfehler"
      * @param connectionIP
      */
-    public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP);
+    void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP);
 
 }
