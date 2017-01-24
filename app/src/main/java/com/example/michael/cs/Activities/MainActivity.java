@@ -45,6 +45,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.michael.cs.Constants;
 import com.example.michael.cs.Data.Devices.Device;
 import com.example.michael.cs.Data.Devices.DoorSensor;
 import com.example.michael.cs.Data.Devices.HumiditySensor;
@@ -169,42 +170,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private int deviceToEditAdapterPos;
 
 
-    private static void CATEGORY_LIFECYCLE() {
-    /*
-    ############################## LIFECYCLE #################################################
-     */
-    }
-
-    private static void CATEGORY_INITS() {
-    /*
-    ############################## INITS #################################################
-     */
-    }
-
-    private static void CATEGORY_UI_AND_VIEWS() {
-    /*
-    ############################## UI & VIEWS #################################################
-     */
-    }
-
-    private static void CATEGORY_MQTT() {
-    /*
-    ############################## MQTT #################################################
-     */
-    }
-
-    private static void CATEGORY_USER_INTERACTION_ABFAGEN() {
-    /*
-    ############################## USER INTERACTION ABFAGEN #################################################
-     */
-    }
-
-    private static void CATEGORY_GETTER_AND_SETTER() {
-    /*
-    ############################## GETTER & SETTER #################################################
-     */
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         profileHandler = ProfileHandler.getInstance(this);
         mqttHandler = MQTTHandler.getInstance(this);
 
+        setThisAsMqttListeners();
         initUI();
         initRoomsAndGroups();
         initFragment();
@@ -221,12 +187,15 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         getSupportActionBar().setSubtitle("Verbunden zu Profil " + profileHandler.getCurrentProfile().getName());
     }
 
-    @Override
-    protected void onResume() {
+    private void setThisAsMqttListeners() {
         mqttHandler.setOnConnectionListener(this);
         mqttHandler.setOnConnectionLostListener(this);
         mqttHandler.setOnMQTTMessageArrivedListener(this);
+    }
 
+    @Override
+    protected void onResume() {
+        Log.i(TAG, "??? onResume: ");
         super.onResume();
     }
 
@@ -580,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         switch (view.getId()) {
             case R.id.floatingActionButton:
-                showNewDeviceDialog();
+                showDeviceEditorDialog();
                 break;
             default:
                 break;
@@ -588,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     }
 
-    private void showNewDeviceDialog() {
+    private void showDeviceEditorDialog() {
 
         final boolean createNewDevice = deviceToEdit == null;
 
@@ -947,17 +916,38 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     @Override
     public void onMQTTMessageArrived(String topic, String message) {
-        Toast.makeText(this, topic + " " + message, Toast.LENGTH_SHORT).show();
+
+        String topicPrefix = getTopicPrefix();
+        String s = "";
+
+        Log.i(TAG, "onMQTTMessageArrived: ");
+
+        if (topic.startsWith(topicPrefix)) {
+            s = topic.replace(topicPrefix, "");
+            Log.i(TAG, "onMQTTMessageArrived: topic starts with topicPrefix " + topicPrefix);
+        }
+
+        String[] roomTopics = Constants.MQTT_TOPICS_ROOMS;
+        for (String t : roomTopics) {
+            if (s.startsWith(t)) {
+                Log.i(TAG, "onMQTTMessageArrived: room found: " + t);
+                s = s.replace((t + "/"), "");
+            }
+        }
+
+        Log.i(TAG, "onMQTTMessageArrived: " + s);
+
+//        Toast.makeText(this, topic + " " + message, Toast.LENGTH_SHORT).show();
 
         String[] colorArray = getResources().getStringArray(R.array.colorMqtt);
         List<String> colors = Arrays.asList(colorArray);
 
         if (message.equalsIgnoreCase("an") || message.equalsIgnoreCase("aus")) {
-            handleArrivedOnOffMessage(topic, message);
+            handleArrivedOnOffMessage(s, message);
         } else if (colors.contains(message.substring(0, 1).toUpperCase() + message.substring(1))) {
-            handleArrivedColorMessage(topic, message);
+            handleArrivedColorMessage(s, message);
         } else if (isMessageNumber(message)) {
-            handleArrivedDimMessage(topic, message);
+            handleArrivedDimMessage(s, message);
         } else if (false) {
         }
     }
@@ -1189,7 +1179,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         String prefix = getTopicPrefix();
 
-        Log.i(TAG, "subscribeMQTTTopics: " + deviceList.size());
+        Log.i(TAG, "??? subscribeMQTTTopics: " + deviceList.size());
 
         for (Device d : deviceList) {
             String topic = prefix + d.getRoom().getTopic() + "/" + d.getTopic();
@@ -1304,7 +1294,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
         deviceToEdit = deviceList.get(adapterPosition);
         deviceToEditAdapterPos = adapterPosition;
-        showNewDeviceDialog();
+        showDeviceEditorDialog();
     }
 
     private void showUndoSnackbar(final Device d, final int adapterPosition) {

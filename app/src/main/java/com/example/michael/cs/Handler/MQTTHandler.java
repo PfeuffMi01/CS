@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Activities.StartActivity;
-import com.example.michael.cs.Constants;
 import com.example.michael.cs.Interfaces.OnConnectionListener;
 import com.example.michael.cs.Interfaces.OnConnectionLostListener;
 import com.example.michael.cs.Interfaces.OnMQTTMessageArrived;
@@ -117,7 +116,6 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
         Log.i(TAG, "connect: ");
         mqttClient = new MqttAndroidClient(context, connectionIP + ":" + connectionPort, "1234");
 
-
         MqttConnectOptions connectOptions = new MqttConnectOptions();
         connectOptions.setAutomaticReconnect(true);
 
@@ -159,7 +157,10 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
                 Log.i(TAG, "mqttPublish: " + topic + " " + message);
 
-                mqttClient.publish(topic, new MqttMessage(message.getBytes()), this, new IMqttActionListener() {
+                MqttMessage msg = new MqttMessage(message.getBytes());
+                msg.setQos(2);
+                msg.setRetained(true);
+                mqttClient.publish(topic, msg, this, new IMqttActionListener() {
 
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
@@ -221,7 +222,7 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     }
 
     public void setOnMQTTMessageArrivedListener(MainActivity mainActivity) {
-        Log.i(TAG, "setOnMQTTMessageArrivedListener: main");
+        Log.i(TAG, "??? setOnMQTTMessageArrivedListener: main");
         this.onMqttMessageArrivedListener = mainActivity;
     }
 
@@ -273,29 +274,16 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         Log.i(TAG, "messageArrived: " + topic + " " + message);
+
         mqttLogCreator(topic, message.toString(), "RECEIVED");
         findDeviceTopicIDFromMessage(topic, message);
     }
 
     private void findDeviceTopicIDFromMessage(String topic, MqttMessage message) {
 
-        String s = topic;
-        String[] roomTopics = Constants.MQTT_TOPICS_ROOMS;
-        if (topic.startsWith(topicPrefix)) {
-            s = topic.replace(topicPrefix, "");
-        }
-
-        for (String t : roomTopics) {
-            if (s.startsWith(t)) {
-                s = s.replace((t + "/"), "");
-            }
-        }
-
-        Log.i(TAG, "findDeviceTopicIDFromMessage: " + s);
-
+        Log.i(TAG, "findDeviceTopicIDFromMessage: " + topic + " " + message);
         if (onMqttMessageArrivedListener != null) {
-            onMqttMessageArrivedListener.onMQTTMessageArrived(s, String.valueOf(message));
-            Log.i(TAG, "findDeviceTopicIDFromMessage: " + s + " " + message);
+            onMqttMessageArrivedListener.onMQTTMessageArrived(topic, message.toString());
         } else {
             Log.e(TAG, "findDeviceTopicIDFromMessage: listener is null");
         }
@@ -309,11 +297,20 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
     @Override
     public void onSuccess(IMqttToken asyncActionToken) {
-        Log.i(TAG, "onSuccess: ");
+        Log.i(TAG, "??? onSuccess: ");
         isConnected = true;
 
         mqttClient.setCallback(this);
+        String message = "init";
 
+        try {
+            MqttMessage msg = new MqttMessage(message.getBytes());
+            msg.setQos(2);
+
+            mqttClient.publish("CS/init", msg);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     /*    try {
             mqttClient.subscribe("CS/buero/l2", 2);
         } catch (MqttException e) {
@@ -323,19 +320,21 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
         // Ist für den onConnectionListener der StartActivity gedacht
         if (onConnectionListener != null) {
-            Log.i(TAG, "onSuccess: set listener");
+            Log.i(TAG, "??? onSuccess: set listener");
             onConnectionListener.onMQTTConnection(true, false, mqttClient.getServerURI());
         }
     }
 
     public void subscribeToTopic(String t) {
 
-            try {
-                mqttClient.subscribe(t, 0);
-                Log.i(TAG, "subscribeToTopic: " + t + " subscribed");
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
+        Log.i(TAG, "??? subscribeToTopic: ");
+
+        try {
+            mqttClient.subscribe(t, 0);
+            Log.i(TAG, "subscribeToTopic: " + t + " subscribed");
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -354,12 +353,14 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     }
 
     public void unregisterConnectionListeners() {
+        Log.i(TAG, "??? unregisterConnectionListeners: ");
         onConnectionListener = null;
         onConnectionLostListener = null;
         onMqttMessageArrivedListener = null;
     }
 
     public void unsubscribeFromTopic(String topic) {
+        Log.i(TAG, "??? unsubscribeFromTopic: ");
         try {
             mqttClient.unsubscribe(topic);
         } catch (MqttException e) {
