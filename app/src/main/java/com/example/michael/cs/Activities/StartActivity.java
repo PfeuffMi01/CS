@@ -133,6 +133,7 @@ forceLogin.setOnCheckedChangeListener(this);
         final TextInputEditText pwd = (TextInputEditText) dialogView.findViewById(R.id.profile_pwd_et);
         final TextInputEditText topicPre = (TextInputEditText) dialogView.findViewById(R.id.profile_topic_prefix_et);
 
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle("Profil hinzufügen");
