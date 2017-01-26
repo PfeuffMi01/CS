@@ -193,4 +193,5 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
         adapter.notifyItemChanged(position);
         emptyViewHandler();
     }
+
 }

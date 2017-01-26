@@ -274,11 +274,20 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
     @Override
     public void onDataHasChanged() {
-
+        initDataLists();
+        adapter.notifyDataSetChanged();
+        emptyViewHandler();
     }
+
 
     @Override
     public void onDataHasChanged(int position) {
         adapter.notifyItemChanged(position);
+    }
+
+    public void editButtonHasBeenClicked(int adapterPosition) {
+
+        Device deviceTotEdit = onlyNeededDeviceCategory.get(adapterPosition);
+        mainActivity.editADeviceByItsName(deviceTotEdit.getName());
     }
 }

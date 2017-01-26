@@ -1,14 +1,11 @@
 package com.example.michael.cs.Activities;
 
-import android.animation.Animator;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
@@ -34,9 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -163,8 +158,9 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private MQTTHandler mqttHandler;
-    private boolean appWasEnteredByLongClickOnNoConnectionIcon;
     private ProfileHandler profileHandler;
+    private boolean appWasEnteredByLongClickOnNoConnectionIcon;
+
     private OnDataChangedListener onDataChangedListener;
     private Device deviceToEdit;
     private int deviceToEditAdapterPos;
@@ -216,12 +212,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         notificationManager.cancel(MQTT_CONNECTION_ERROR_NOTI_ID);
 
         mqttHandler.disconnect(TAG + " onDestroy");
-
-     /*   if (mqttHandler.isConnected()) {
-            Log.i(TAG, "onDestroy: ");
-            mqttHandler.disconnect();
-        }*/
-
         super.onDestroy();
     }
 
@@ -259,15 +249,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
     }
 
-    private void noInternetConnectionHandler() {
-
-        try {
-            viewPager.setVisibility(GONE);
-            tabLayout.setVisibility(GONE);
-        } catch (Exception e) {
-            Log.e(TAG, "noInternetConnectionHandler: Layout was null");
-        }
-    }
 
     /**
      * Vorbereitung aller Fragmente
@@ -399,82 +380,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         Collections.sort(groupList);
 
         loadDevicesFromProfileHandler();
-
-
-     /*   for (Device device : deviceList) {
-            Log.i(TAG, "initExampleData: " + device.getName() + " " + device.getTopic());
-        }*/
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    /**
-     * Lässt das Ladelayout in einer kreisförmigen Animation verschwinden
-     * Nur für OS Versionen ab Lollipop
-     */
-    private void animateLoadingLayout() {
-
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
-            Log.i(TAG, "animateLoadingLayout: ");
-            View myView = findViewById(R.id.mqtt_loading_layout);
-
-            // Animationszentrum bestimmen (Mitte des Screens)
-            int cx = (myView.getLeft() + myView.getRight()) / 2;
-            int cy = (myView.getTop() + myView.getBottom()) / 2;
-
-            // den finalen Radius bestimmen
-            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-            Animator animator = ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
-
-            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-            animator.setDuration(600);
-            animator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    letLoadingScreenDisappear();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            animator.start();
-        } else {
-            letLoadingScreenDisappear();
-        }
-    }
-
-    public void letLoadingScreenDisappear() {
-        if (snackbar != null) {
-            snackbar.dismiss();
-        }
-
-        appBarLayout.setVisibility(VISIBLE);
-        viewPager.setVisibility(VISIBLE);
-
-     /*   if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle("Verbunden mit tcp://schlegel2.ddns.net:1883");
-        }*/
-    }
 
     /**
      * Wechselt Fragmente
@@ -683,6 +590,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
 
                 unsubscribeMQTTTopic(deviceToEdit);
                 deviceList.remove(deviceToEdit);
+                deviceSingleSortListFragment.onDataHasChanged();
                 onDataChangedListener.onDataHasChanged();
 
                 showUndoSnackbar(deletedDevice, deviceToEditAdapterPos);
@@ -861,6 +769,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         } else {
             deviceList.add(deviceToEdit);
         }
+
+        deviceSingleSortListFragment.onDataHasChanged();
         onDataChangedListener.onDataHasChanged();
         subscribeMQTTTopics();
     }
@@ -966,9 +876,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
             if (d.getTopic().equals(topic)) {
                 if (d instanceof RGBLamp) {
                     ((RGBLamp) d).setDim(Integer.parseInt(message));
+                    deviceSingleSortListFragment.onDataHasChanged();
                     onDataChangedListener.onDataHasChanged();
                 } else if (d instanceof WhiteLamp) {
                     ((WhiteLamp) d).setDim(Integer.parseInt(message));
+                    deviceSingleSortListFragment.onDataHasChanged();
                     onDataChangedListener.onDataHasChanged();
                 }
             }
@@ -991,6 +903,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
                     Log.i(TAG, "handleArrivedColorMessage: 2");
                     ((RGBLamp) d).setColorByName(message);
                     Log.i(TAG, "handleArrivedColorMessage: " + ((RGBLamp) d).getSelectedColor() + " " + ((RGBLamp) d).getSelectedColorName());
+                    deviceSingleSortListFragment.onDataHasChanged();
                     onDataChangedListener.onDataHasChanged();
                 }
             }
@@ -1009,6 +922,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         for (Device d : deviceList) {
             if (d.getTopic().equals(topic)) {
                 d.setOn(message.equalsIgnoreCase("an"));
+                deviceSingleSortListFragment.onDataHasChanged();
                 onDataChangedListener.onDataHasChanged();
             }
         }
@@ -1290,37 +1204,36 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         }
     }
 
+    /**
+     * Wenn statt der Gesamtliste nur ein Raum oder Gruppe angezeigt wird, unterscheiden sich die Adapter Positionen.
+     * Wenn der Klick im AllFragment erfolgte, passt die Adapter Position. Wenn er aus der Liste eines Raums oder Gruppe
+     * erfolgt, muss erst der (eindeutige) Name des Geräts herausgefunden werden um es dann in der Gesamtliste zu finden und zu ändern.
+     *
+     * @param adapterPosition
+     */
     public void editButtonHasBeenClicked(final int adapterPosition) {
 
-        deviceToEdit = deviceList.get(adapterPosition);
-        deviceToEditAdapterPos = adapterPosition;
-        showDeviceEditorDialog();
+        if (CURRENT_FRAGMENT == ALL_FRAGMENT) {
+            Log.i(TAG, "editButtonHasBeenClicked: allfrag");
+            editADeviceByItsName(deviceList.get(adapterPosition).getName());
+        } else {
+            Log.i(TAG, "editButtonHasBeenClicked: singleSortFrag");
+            deviceSingleSortListFragment.editButtonHasBeenClicked(adapterPosition);
+        }
     }
 
-    private void showUndoSnackbar(final Device d, final int adapterPosition) {
+    public void editADeviceByItsName(String deviceName) {
 
-        Log.i(TAG, "showUndoSnackbar: " + d.getName() + " " + d.getRoom().getName());
-
-        Snackbar undoDeleteSnackbar = Snackbar
-                .make(coordinatorLayout, d.getName() + " wurde gelöscht", 5000)
-                .setActionTextColor(Color.RED)
-                .setAction("Rückgängig", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        if (deviceToEditAdapterPos != -1) {
-                            deviceList.add(adapterPosition, d);
-                        } else {
-                            deviceList.add(d);
-                        }
-                        onDataChangedListener.onDataHasChanged();
-
-                    }
-                });
-
-        setSnackbarTextSize(undoDeleteSnackbar);
-        undoDeleteSnackbar.show();
+        for (int i = 0; i < deviceList.size(); i++) {
+            if (deviceList.get(i).getName().equals(deviceName)) {
+                deviceToEdit = deviceList.get(i);
+                deviceToEditAdapterPos = i;
+                showDeviceEditorDialog();
+            }
+        }
     }
+
+
 
 
     /**
@@ -1340,6 +1253,31 @@ public class MainActivity extends AppCompatActivity implements OnConnectionListe
         } else {
             deviceSingleSortListFragment.openDialog(adapterPosition, listItemType);
         }
+    }
+
+    private void showUndoSnackbar(final Device d, final int adapterPosition) {
+
+        Log.i(TAG, "showUndoSnackbar: " + d.getName() + " " + d.getRoom().getName());
+
+        Snackbar undoDeleteSnackbar = Snackbar
+                .make(coordinatorLayout, d.getName() + " wurde gelöscht", 5000)
+                .setActionTextColor(Color.RED)
+                .setAction("Rückgängig", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (deviceToEditAdapterPos != -1) {
+                            deviceList.add(adapterPosition, d);
+                        } else {
+                            deviceList.add(d);
+                        }
+                        deviceSingleSortListFragment.onDataHasChanged();
+                        onDataChangedListener.onDataHasChanged();
+                    }
+                });
+
+        setSnackbarTextSize(undoDeleteSnackbar);
+        undoDeleteSnackbar.show();
     }
 
     public MQTTHandler getMqttHandler() {

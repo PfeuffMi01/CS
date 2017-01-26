@@ -36,6 +36,5 @@ dependencies {
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.0@aar'
     compile 'com.thebluealliance:spectrum:0.6.0'
-    compile 'id.arieridwan:pageloader:0.0.2'
     testCompile 'junit:junit:4.12'
 }

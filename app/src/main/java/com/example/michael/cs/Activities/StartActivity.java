@@ -81,7 +81,7 @@ public class StartActivity extends AppCompatActivity implements OnConnectionList
         });
 
         connectBtn.setOnClickListener(this);
-forceLogin.setOnCheckedChangeListener(this);
+        forceLogin.setOnCheckedChangeListener(this);
         newProfileBtn.setOnClickListener(new View.OnClickListener()
 
                                          {
@@ -207,7 +207,7 @@ forceLogin.setOnCheckedChangeListener(this);
     @Override
     protected void onStop() {
         Log.i(TAG, "onStop: Lifecycle");
-      //  mqttHandler.disconnect(TAG + " onStop");
+        //  mqttHandler.disconnect(TAG + " onStop");
         super.onStop();
     }
 
@@ -287,7 +287,7 @@ forceLogin.setOnCheckedChangeListener(this);
     public void onMQTTConnection(boolean isConnectionSuccessful, boolean forcedAppEntering, String connectionIP) {
 
         Log.i(TAG, "onMQTTConnection: ");
-        
+
         if (isConnectionSuccessful) {
 
             Log.i(TAG, "onMQTTConnection: success");
@@ -329,7 +329,7 @@ forceLogin.setOnCheckedChangeListener(this);
         if (sharedPreferences.getBoolean("pref_force_login", false)) {
             onMQTTConnection(true, true, "");
         } else {
-            
+
             // Nur wenn eine Internetverbindung besteht
             if (InternetConnectionHandler.isInternetAvailable(StartActivity.this)) {
 
@@ -357,7 +357,7 @@ forceLogin.setOnCheckedChangeListener(this);
                         + " "
                         + profileToConnectTo.getServerIP(), Toast.LENGTH_SHORT).show();
             } else {
-                
+
                 //TODO Trotzdem in die App gehen, aber mit Hinweis dass man offline ist.
                 loadingViewHandler(false, true);
                 InternetConnectionHandler.noInternetAvailable(StartActivity.this);
