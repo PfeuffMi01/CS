@@ -11,6 +11,7 @@ import com.example.michael.cs.Activities.StartActivity;
 import com.example.michael.cs.Interfaces.OnConnectionListener;
 import com.example.michael.cs.Interfaces.OnConnectionLostListener;
 import com.example.michael.cs.Interfaces.OnMQTTMessageArrived;
+import com.example.michael.cs.R;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -22,6 +23,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -39,7 +41,6 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     private String connectionIP, connectionTopic, connectionPort;
     private OnConnectionListener onConnectionListener;
     private Context context;
-    private boolean isConnected;
     private MqttAndroidClient mqttClient;
     private SharedPreferences sharedPreferences;
     private boolean mqttConnectionSucceded = false;
@@ -47,13 +48,13 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     private OnMQTTMessageArrived onMqttMessageArrivedListener;
     private char[] connectionPassword;
     private String connectionUsername;
+    private ArrayList<String> subscribedTopics;
     private boolean hasPasswordAndUsername;
     private String topic;
     private String topicPrefix;
 
-    public MQTTHandler(Context c) {
+    private MQTTHandler(Context c) {
         this.context = c;
-        isConnected = false;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -73,6 +74,8 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
     }
 
     public void setConnetionDetails(String ip, String port, String topicToSubscribe, String username, char[] password) {
+
+        subscribedTopics = new ArrayList<>();
 
         connectionIP = ip;
         connectionPort = port;
@@ -105,24 +108,13 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
      * - Listener informieren
      */
     public void connect() {
-      /*
-        - MQTT-Broker-Adresse: 82.165.207.248
-        - MQTT-Port: 1883 (Standard Port)
-        - MQTT-Login: MqttCsUser
-        - MQTT-Password: $tudent17
-       */
 
-
-        Log.i(TAG, "connect: ");
-        mqttClient = new MqttAndroidClient(context, connectionIP + ":" + connectionPort, "1234");
+        mqttClient = new MqttAndroidClient(context, connectionIP + ":" + connectionPort, "androidClient");
 
         MqttConnectOptions connectOptions = new MqttConnectOptions();
         connectOptions.setAutomaticReconnect(true);
 
-        Log.i(TAG, "connect: " + mqttClient.getServerURI() + " " + mqttClient.getClientId());
-
         if (hasPasswordAndUsername) {
-            Log.i(TAG, "connect: setting username:  " + connectionUsername + " and password: " + String.copyValueOf(connectionPassword));
             connectOptions.setPassword(connectionPassword);
             connectOptions.setUserName(connectionUsername);
         }
@@ -143,8 +135,6 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
      */
     public void mqttPublish(final String t, final String message) {
 
-        Log.i(TAG, "mqttPublish: " + t + " " + message);
-
         ProfileHandler profileHandler = ProfileHandler.getInstance(context);
         topicPrefix = profileHandler.getCurrentProfile().getTopicPrefix().equals("") ? "" : (profileHandler.getCurrentProfile().getTopicPrefix() + "/");
 
@@ -155,23 +145,18 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
             try {
 
-                Log.i(TAG, "mqttPublish: " + topic + " " + message);
-
                 MqttMessage msg = new MqttMessage(message.getBytes());
                 msg.setQos(2);
-                msg.setRetained(true);
                 mqttClient.publish(topic, msg, this, new IMqttActionListener() {
 
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {
-                        Log.i(TAG, "onSuccess: publish success");
                         mqttLogCreator(topic, message, "SENT");
                     }
 
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Log.i(TAG, "onFailure: publish failure");
-                        Toast.makeText(context, "Fehler beim Publish der Nachricht " + topic + " " + message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, context.getString(R.string.error_at_publishing_message) + topic + " " + message, Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (MqttException e) {
@@ -207,51 +192,39 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
      *
      * @return
      */
-    public String getDateTime() {
+    private String getDateTime() {
 
         Date now = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        String dateTime = formatter.format(now) + " Uhr";
-
-        return dateTime;
-    }
-
-
-    public boolean isMqttConnectionSucceded() {
-        return mqttConnectionSucceded;
+        return formatter.format(now) + " Uhr";
     }
 
     public void setOnMQTTMessageArrivedListener(MainActivity mainActivity) {
-        Log.i(TAG, "??? setOnMQTTMessageArrivedListener: main");
         this.onMqttMessageArrivedListener = mainActivity;
     }
 
     public void setOnConnectionListener(MainActivity mainActivity) {
-        Log.i(TAG, "setOnConnectionListener: main");
         this.onConnectionListener = mainActivity;
     }
 
     public void setOnConnectionListener(StartActivity startActivity) {
-        Log.i(TAG, "setOnConnectionListener: start");
         this.onConnectionListener = startActivity;
     }
 
     public void setOnConnectionLostListener(MainActivity mainActivity) {
-        Log.i(TAG, "setOnConnectionLostListener: main");
         this.onConnectionLostListener = mainActivity;
     }
 
     public void setOnConnectionLostListener(StartActivity startActivity) {
-        Log.i(TAG, "setOnConnectionLostListener: start");
         this.onConnectionLostListener = startActivity;
     }
 
-    public void disconnect(String from) {
-        Log.i(TAG, "disconnect: " + from);
+    public void disconnect() {
 
         try {
             if (mqttClient.isConnected()) {
                 try {
+                    mqttClient.unregisterResources();
                     mqttClient.disconnect();
                 } catch (MqttException e) {
                     e.printStackTrace();
@@ -267,7 +240,6 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
         Log.i(TAG, "Connection was lost!");
         if (onConnectionLostListener != null) {
             onConnectionLostListener.onMQTTConnectionLost();
-            isConnected = false;
         }
     }
 
@@ -281,11 +253,10 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
     private void findDeviceTopicIDFromMessage(String topic, MqttMessage message) {
 
-        Log.i(TAG, "findDeviceTopicIDFromMessage: " + topic + " " + message);
         if (onMqttMessageArrivedListener != null) {
             onMqttMessageArrivedListener.onMQTTMessageArrived(topic, message.toString());
         } else {
-            Log.e(TAG, "findDeviceTopicIDFromMessage: listener is null");
+            Log.i(TAG, "findDeviceTopicIDFromMessage: No Device");
         }
     }
 
@@ -297,43 +268,33 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
 
     @Override
     public void onSuccess(IMqttToken asyncActionToken) {
-        Log.i(TAG, "??? onSuccess: ");
-        isConnected = true;
-
         mqttClient.setCallback(this);
         String message = "init";
 
+        // eigentlich nicht nötig
         try {
             MqttMessage msg = new MqttMessage(message.getBytes());
             msg.setQos(2);
-
             mqttClient.publish("CS/init", msg);
         } catch (MqttException e) {
             e.printStackTrace();
         }
-    /*    try {
-            mqttClient.subscribe("CS/buero/l2", 2);
-        } catch (MqttException e) {
-            e.printStackTrace();
-            Log.e(TAG, "onSuccess: :-(");
-        }*/
+
 
         // Ist für den onConnectionListener der StartActivity gedacht
         if (onConnectionListener != null) {
-            Log.i(TAG, "??? onSuccess: set listener");
             onConnectionListener.onMQTTConnection(true, false, mqttClient.getServerURI());
         }
     }
 
     public void subscribeToTopic(String t) {
 
-        Log.i(TAG, "??? subscribeToTopic: ");
-
-        try {
-            mqttClient.subscribe(t, 0);
-            Log.i(TAG, "subscribeToTopic: " + t + " subscribed");
-        } catch (MqttException e) {
-            e.printStackTrace();
+        if (!subscribedTopics.contains(t)) {
+            try {
+                mqttClient.subscribe(t, 2);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -349,22 +310,28 @@ public class MQTTHandler implements MqttCallback, IMqttActionListener {
             onConnectionListener.onMQTTConnection(false, true, mqttClient.getServerURI());
         }
 
-        Toast.makeText(context, "Verbindungsfehler: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+        Toast.makeText(context, context.getString(R.string.conn_failure) + exception.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     public void unregisterConnectionListeners() {
-        Log.i(TAG, "??? unregisterConnectionListeners: ");
         onConnectionListener = null;
         onConnectionLostListener = null;
         onMqttMessageArrivedListener = null;
     }
 
-    public void unsubscribeFromTopic(String topic) {
-        Log.i(TAG, "??? unsubscribeFromTopic: ");
-        try {
-            mqttClient.unsubscribe(topic);
-        } catch (MqttException e) {
-            e.printStackTrace();
+    public void unsubscribeFromTopic(String t) {
+
+        if (subscribedTopics.contains(t)) {
+            try {
+                mqttClient.unsubscribe(t);
+                subscribedTopics.remove(t);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public boolean isConnected() {
+        return mqttClient.isConnected();
     }
 }

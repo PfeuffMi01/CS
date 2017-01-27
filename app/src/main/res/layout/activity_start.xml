@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.03"
         android:gravity="center"
-        android:text="Home Remote"
-        android:textColor="#262626"
+        android:text="@string/app_name"
+        android:textColor="@color/text_gray_dark"
         android:textSize="23sp"
         android:textStyle="bold" />
 
@@ -46,8 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="0.03"
-                android:text="Profile"
-                android:textColor="#262626"
+                android:text="@string/profiles"
+                android:textColor="@color/text_gray_dark"
                 android:textSize="18sp" />
 
             <Spinner
@@ -70,7 +70,7 @@
         android:layout_weight="0.03"
         android:background="@color/colorAccent"
         android:gravity="center"
-        android:text="Verbinden"
+        android:text="@string/connect"
         android:textColor="@color/white"
         android:textSize="20sp" />
 
@@ -83,7 +83,7 @@
         android:background="@drawable/button_outline"
         android:elevation="4dp"
         android:gravity="center"
-        android:text="Profil hinzufügen"
+        android:text="@string/add_profile"
         android:textColor="@color/colorAccent"
         android:textSize="20sp" />
 
@@ -116,7 +116,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:text="Force Login (Offline)  "
-        android:visibility="gone" />
+        android:text="@string/force_login_offline" />
 
 </LinearLayout>

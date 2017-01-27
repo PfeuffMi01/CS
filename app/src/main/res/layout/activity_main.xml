@@ -21,8 +21,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
-
-
         </android.support.v7.widget.Toolbar>
 
 
@@ -37,7 +35,6 @@
             app:tabTextColor="@color/white" />
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/mqtt_loading_layout" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

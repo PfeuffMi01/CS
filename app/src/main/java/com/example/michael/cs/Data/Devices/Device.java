@@ -2,7 +2,6 @@ package com.example.michael.cs.Data.Devices;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
@@ -39,8 +38,6 @@ public class Device implements Cloneable {
         this.room = room;
         this.group = group;
         this.topic = topic;
-
-        Log.i(TAG, "Device: " + name + " " + room.getName() + " " + group.getName());
     }
 
 

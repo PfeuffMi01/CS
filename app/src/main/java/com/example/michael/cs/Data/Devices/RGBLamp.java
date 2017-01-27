@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
@@ -18,20 +16,15 @@ import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.R;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
-import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
-/**
- * Created by Patrick PC on 31.10.2016.
- */
 
 public class RGBLamp extends Lamp {
 
-    public String[] colorNames;
-    public int[] colorIntVals;
-
     public String status;
-    public int selectedColor;
-    public String selectedColorName;
+    private String[] colorNames;
+    private int[] colorIntVals;
+    private int selectedColor;
+    private String selectedColorName;
 
 
     public RGBLamp(int deviceType, Context context, String _id, boolean isOn, String name, Room room, Group group, int dim, int selectedColor, String status, String topic) {
@@ -50,12 +43,11 @@ public class RGBLamp extends Lamp {
     }
 
 
-    public int getSelectedColor() {
-        Log.i(TAG, "getSelectedColor: " + selectedColor);
+    private int getSelectedColor() {
         return selectedColor;
     }
 
-    public void setSelectedColor(int selectedColor) {
+    private void setSelectedColor(int selectedColor) {
 
         colorNames = context.getResources().getStringArray(R.array.colorMqtt);
         colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
@@ -67,8 +59,6 @@ public class RGBLamp extends Lamp {
                 selectedColorName = colorNames[i];
             }
         }
-
-        Log.i(TAG, "setSelectedColor: " + selectedColor + " called " + selectedColorName);
     }
 
     public void setColorByName(String name) {
@@ -78,13 +68,12 @@ public class RGBLamp extends Lamp {
 
         for (int i = 0; i < colorNames.length; i++) {
             if (colorNames[i].equalsIgnoreCase(name)) {
-                Log.i(TAG, "setColorByName: " + colorNames[i]);
                 setSelectedColor(colorIntVals[i]);
             }
         }
     }
 
-    public void setSelectedColor(MainActivity mainActivity, int selectedColor) {
+    private void setSelectedColor(MainActivity mainActivity, int selectedColor) {
 
         colorNames = context.getResources().getStringArray(R.array.colorMqtt);
         colorIntVals = context.getResources().getIntArray(R.array.colorIntVals);
@@ -97,8 +86,6 @@ public class RGBLamp extends Lamp {
                 mqttBrokerNotifier(mainActivity, selectedColorName);
             }
         }
-
-        Log.i(TAG, "setSelectedColor: " + selectedColor + " called " + selectedColorName);
     }
 
     public String getStatus() {
@@ -109,8 +96,14 @@ public class RGBLamp extends Lamp {
         this.status = status;
     }
 
+    /**
+     * Zeigt den Dialog speziell für RGB Lampen mit Farb und Dim Auswahl
+     *
+     * @param mainActivity
+     * @param dataChangedListener
+     * @param adapterPosition
+     */
     public void showDialogForThisDevice(final MainActivity mainActivity, OnDataChangedListener dataChangedListener, final int adapterPosition) {
-//        mainActivity.startService(new Intent(context, MQTTService.class));
         final OnDataChangedListener listener = dataChangedListener;
 
 
@@ -127,11 +120,11 @@ public class RGBLamp extends Lamp {
         spectrumPalette.setOnColorSelectedListener(new SpectrumPalette.OnColorSelectedListener() {
                                                        @Override
                                                        public void onColorSelected(@ColorInt int color) {
-                                                           deviceActivator(mainActivity);
+                                                           deviceActivator();
 
-                                                           for (int i = 0; i < colorIntVals.length; i++) {
-                                                               if (color == colorIntVals[i]) {
-                                                                   setSelectedColor(mainActivity, colorIntVals[i]);
+                                                           for (int colorIntVal : colorIntVals) {
+                                                               if (color == colorIntVal) {
+                                                                   setSelectedColor(mainActivity, colorIntVal);
                                                                }
                                                            }
                                                            listener.onDataHasChanged(adapterPosition);
@@ -147,14 +140,14 @@ public class RGBLamp extends Lamp {
 
                                                @Override
                                                public void onStartTrackingTouch(SeekBar seekBar) {
-                                                   Log.i(TAG, "onStartTrackingTouch: ");
+
                                                }
 
                                                @Override
                                                public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   Log.i(TAG, "onStopTrackingTouch: ");
+
                                                    setDim(seekBar.getProgress());
-                                                   deviceActivator(mainActivity);
+                                                   deviceActivator();
 
                                                    String dim = "" + seekBar.getProgress();
                                                    mqttBrokerNotifier(mainActivity, dim);
@@ -167,9 +160,9 @@ public class RGBLamp extends Lamp {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
-        dialogBuilder.setTitle(getName() + "     ID: " + get_id());
+        dialogBuilder.setTitle(getName() + "     ID: ");
         dimSeek.setProgress(this.getDim());
-        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
+        dialogBuilder.setPositiveButton(context.getString(R.string.done), new DialogInterface.OnClickListener()
 
                 {
                     @Override
@@ -184,23 +177,19 @@ public class RGBLamp extends Lamp {
         alertDialog.show();
     }
 
-    public void toaster(MainActivity m, String s) {
-        Toast.makeText(m, s, Toast.LENGTH_SHORT).show();
-    }
-
-    private void deviceActivator(MainActivity mainActivity) {
+    /**
+     * Gerät aktivieren, wenn es aus war und eine Änderung z.B. Farbe getätigt wurde
+     */
+    private void deviceActivator() {
         if (!isOn()) {
             setOn(true);
-//            mqttBrokerNotifier(mainActivity, "/on");
         }
     }
 
-    public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
+    private void mqttBrokerNotifier(MainActivity mainActivity, String message) {
 
         String topic = getRoom().getTopic() + "/" + this.getTopic();
-
         mainActivity.getMqttHandler().mqttPublish(topic, message);
-        Log.i(TAG, "mqttBrokerNotifier: " + topic + message);
     }
 
 }

@@ -42,7 +42,7 @@ import static com.example.michael.cs.Constants.PROFILE_DEVICES_DIV;
 public class Profile {
 
     private static final String TAG = "Profile_tag";
-    public ArrayList<Device> deviceList;
+    private ArrayList<Device> deviceList;
     private String name;
     private String serverIP;
     private String serverPort;
@@ -65,8 +65,15 @@ public class Profile {
         this.deviceList = new ArrayList<>();
     }
 
+    /**
+     * Der übergebene String muss so zersplittet werden, dass daraus Geräte und Profildaten entstehen.
+     * Mehr dazu in der PROJEKT_DOKUMENTATION
+     *
+     * @param s
+     * @param rgh
+     * @param c
+     */
     public Profile(String s, RoomsAndGroupsHandler rgh, Context c) {
-
 
         this.deviceList = new ArrayList<>();
 
@@ -113,7 +120,7 @@ public class Profile {
                 int count = a.length() - a.replace("\\?", "").length();
                 Log.i(TAG, "Profile: COUNT: " + count);
 
-                Log.i(TAG, "Profile: " + devices.length + " Geräte sind gesplittet worden");
+                Log.i(TAG, "Profile: " + devices.length + " Geräte wurden gesplittet");
 
                 if (devices.length > 0) {
 
@@ -182,8 +189,6 @@ public class Profile {
             case LIST_ITEM_HUMIDITY:
                 deviceList.add((new HumiditySensor(LIST_ITEM_HUMIDITY, c, "", b, name, r, g, 76, topic)));
                 break;
-
-
         }
 
 

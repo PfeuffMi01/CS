@@ -28,7 +28,7 @@
                 android:background="@color/colorAccent"
                 android:gravity="left"
                 android:padding="10dp"
-                android:text=":-)"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="20sp" />
         </RelativeLayout>

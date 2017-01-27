@@ -12,10 +12,6 @@ import com.example.michael.cs.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Patrick PC on 31.10.2016.
- */
-
 public class RecyclerAdapterGroups extends RecyclerView.Adapter<ViewHolder> {
 
 
@@ -32,9 +28,7 @@ public class RecyclerAdapterGroups extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
-        View view = null;
-
-        view = LayoutInflater
+        View view = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.recycler_grid_item, viewGroup, false);
         return new ViewHolderGroup(context, view);
@@ -43,8 +37,6 @@ public class RecyclerAdapterGroups extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int pos) {
-        int type = getItemViewType(pos);
-
         ListItem item = groupList.get(pos);
         viewHolder.bindType(item);
     }

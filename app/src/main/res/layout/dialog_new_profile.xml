@@ -15,7 +15,7 @@
             android:id="@+id/profilename_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Profilname"
+            android:hint="@string/profile_name"
             android:inputType="textNoSuggestions" />
 
     </android.support.design.widget.TextInputLayout>
@@ -30,9 +30,9 @@
             android:id="@+id/profile_ip_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Server-IP"
+            android:hint="@string/server_ip"
             android:inputType="textNoSuggestions"
-            android:text="tcp://82.165.207.248"
+            android:text="@string/server_ip_hint"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
 
@@ -46,9 +46,9 @@
             android:id="@+id/profile_port_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Port"
+            android:hint="@string/port"
             android:inputType="number|textNoSuggestions"
-            android:text="1883"
+            android:text="@string/port_hint"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
 
@@ -61,9 +61,9 @@
             android:id="@+id/profile_topic_prefix_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Topic Prefix"
+            android:hint="@string/topic_prefix"
             android:inputType="textNoSuggestions"
-            android:text="CS"
+            android:text="@string/topic_prefix_hint"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
 
@@ -76,9 +76,8 @@
             android:id="@+id/profile_user_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Benutzername (Optional)"
-            android:inputType="textNoSuggestions"
-            android:text="MqttCsUser" />
+            android:hint="@string/username_optional"
+            android:inputType="textNoSuggestions" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -91,9 +90,8 @@
             android:id="@+id/profile_pwd_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Passwort (Optional)"
+            android:hint="@string/password_optional"
             android:inputType="textPassword|textNoSuggestions"
-            android:text="$tudent17"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
 

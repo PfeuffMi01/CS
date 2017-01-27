@@ -7,6 +7,7 @@
     <color name="white">#FFFF</color>
     <color name="fragment_background">#e6e6e6</color>
     <color name="text_gray">#4b565e</color>
+    <color name="text_gray_dark">#303335</color>
     <color name="text_light_gray">#8c8c8c</color>
 
 

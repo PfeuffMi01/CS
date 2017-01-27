@@ -5,8 +5,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.example.michael.cs.R;
+
 /**
- * Created by Patrick PC on 23.12.2016.
+ * Kontrolliert die Internetverbindung
  */
 
 public class InternetConnectionHandler {
@@ -21,6 +23,6 @@ public class InternetConnectionHandler {
     }
 
     public static void noInternetAvailable(Context c) {
-        Toast.makeText(c, "Es besteht keine Internetverbindung", Toast.LENGTH_LONG).show();
+        Toast.makeText(c, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
     }
 }

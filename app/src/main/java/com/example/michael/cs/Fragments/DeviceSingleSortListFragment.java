@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Devices.Device;
@@ -31,7 +30,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.OFF;
 import static com.example.michael.cs.Constants.ON;
-import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -131,8 +129,6 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             for (Group group : mainActivity.getGroupList()) {
                 if (group.getName().equals(sortToShow)) {
 
-                    Log.i(TAG, "initDataLists: " + group.getName() + " " + sortToShow);
-
                     isCategoryGroup = true;
                     isCategoryRoom = false;
                 }
@@ -143,7 +139,6 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
 
             mainActivity.setCURRENT_LIST_CATEGORY(MainActivity.GROUP_FRAGMENT);
 
-            Log.i(TAG, "initDataLists: group " + sortToShow);
             for (Device d : allDevicesList) {
                 if (d.getGroup().getName().equals(sortToShow)) {
                     onlyNeededDeviceCategory.add(d);
@@ -152,8 +147,6 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
         } else if (isCategoryRoom) {
 
             mainActivity.setCURRENT_LIST_CATEGORY(MainActivity.ROOM_FRAGMENT);
-            Log.i(TAG, "initDataLists: room " + sortToShow);
-
 
             for (Device d : allDevicesList) {
 
@@ -190,9 +183,9 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             recyclerView.setVisibility(GONE);
 
             if (isCategoryGroup) {
-                emptyTextView.setText("Keine " + sortToShow + " vorhanden");
+                emptyTextView.setText(getString(R.string.no) + sortToShow + getString(R.string.available));
             } else {
-                emptyTextView.setText("Keine Geräte in diesem Raum");
+                emptyTextView.setText(R.string.no_devices_room);
             }
 
             emptyImageView.setImageDrawable(convertToGrayscale(getContext().getResources().getDrawable(R.drawable.sad_face)));
@@ -239,7 +232,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             Device device = onlyNeededDeviceCategory.get(adapterPosition);
             mainActivity.getMqttHandler().mqttPublish(device.getRoom().getTopic() + "/" + device.getTopic(), message);
         } catch (Exception e) {
-            Log.e(TAG, "changeSwitchState: ");
+            Log.e(TAG, "switchTheSwitch: ");
         }
 
     }
@@ -258,9 +251,7 @@ public class DeviceSingleSortListFragment extends Fragment implements OnListItem
             initDataLists();
             onlyNeededDeviceCategory.get(adapterPosition).showDialogForThisDevice(mainActivity, this, adapterPosition);
         } catch (Exception e) {
-            if (isDebugEnabled) {
-                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
-            }
+            Log.e(TAG, "openDialog: ");
         }
 
 

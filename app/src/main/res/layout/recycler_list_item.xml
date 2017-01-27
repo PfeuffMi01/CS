@@ -14,13 +14,13 @@
 
         <TextView
             android:id="@+id/text"
-            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:gravity="center"
+            android:maxLines="1"
             android:padding="15dp"
-            android:text=":-)"
+            android:text=""
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>

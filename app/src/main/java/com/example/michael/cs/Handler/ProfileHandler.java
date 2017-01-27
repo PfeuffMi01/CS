@@ -5,19 +5,11 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.michael.cs.Data.Devices.Device;
-import com.example.michael.cs.Data.Group;
 import com.example.michael.cs.Data.Profile;
-import com.example.michael.cs.Data.Room;
 
 import java.util.ArrayList;
 
 import static com.example.michael.cs.Constants.DATA_DIV;
-
-/**
- * Created by Patrick PC on 22.12.2016.
- */
-
 
 public class ProfileHandler {
 
@@ -30,11 +22,8 @@ public class ProfileHandler {
     private Context context;
     private ArrayList<Profile> profileList;
     private Profile currentProfile;
-    private ArrayList<Device> deviceList;
-    private ArrayList<Room> roomsList;
-    private ArrayList<Group> groupList;
 
-    public ProfileHandler(Context c) {
+    private ProfileHandler(Context c) {
         this.context = c;
         this.profileList = new ArrayList<>();
         this.roomsAndGroupsHandler = RoomsAndGroupsHandler.getInstance(c);
@@ -112,7 +101,7 @@ public class ProfileHandler {
         }
     }
 
-    public void createProfilesFromSharedPreferences(String s) {
+    private void createProfilesFromSharedPreferences(String s) {
 
         Log.i(TAG, "createProfilesFromSharedPreferences: " + s);
 
@@ -121,68 +110,6 @@ public class ProfileHandler {
         Profile newProfile = new Profile(s, roomsAndGroupsHandler, context);
         profileList.add(newProfile);
 
-      /*  if (s.contains(PROFILE_DIV)) {
-
-            Log.i(TAG, "createProfilesFromSharedPreferences: 2");
-            Log.i(TAG, "createProfilesFromSharedPreferences: Contains " + PROFILE_DIV);
-
-            // Erst in Arrays für Profil und Geräte aufteilen
-
-            String[] profileAndDevicesSeparated = s.split(PROFILE_DIV);
-
-            addProfileDataToNewObject(newProfile, profileAndDevicesSeparated[0]);
-
-            // Wenn Geräte vorhanden sind...
-            if (profileAndDevicesSeparated.length > 1) {
-
-                Log.i(TAG, "createProfilesFromSharedPreferences: 5");
-
-                String devicesData = profileAndDevicesSeparated[1];
-
-                // Gerätedaten in Array splitten
-                String[] devicesDataArray = devicesData.split(DEVICES_DIV);
-
-                // Anzahl an Geräteparametern muss passen
-                // 3 aufeinanderfolgende Daten gehören zu einem Gerät
-                if (devicesDataArray.length % 3 == 0) {
-
-                    Log.i(TAG, "createProfilesFromSharedPreferences: 6");
-
-                    // Dieser Index bezieht sich auf der gesamte Gerätearray
-                    int indexToUse = 0;
-
-                    // Für jedes Gerät... ( = Gesamtzahl : 3 )
-                    for (int i = 0; i < devicesDataArray.length / 3; i++) {
-
-                        Log.i(TAG, "createProfilesFromSharedPreferences: 7");
-
-                        newProfile.addDeviceToDeviceList(new Device(
-                                context,
-                                "",
-                                false,
-                                devicesDataArray[indexToUse++],
-                                roomsAndGroupsHandler.getRoomByName(devicesDataArray[indexToUse++]),
-                                roomsAndGroupsHandler.getGroupByName(devicesDataArray[indexToUse++]),
-                                ""));
-                    }
-
-                } else {
-
-                    Log.i(TAG, "createProfilesFromSharedPreferences: 8");
-
-                    // Abbrechen, wenn die Daten nicht stimmen
-                    break;
-                }
-            }
-
-            addNewProfile(newProfile);
-
-            // Wenn keine Geräte im Profil sind
-        } else {
-            Log.i(TAG, "createProfilesFromSharedPreferences: 11");
-            addProfileDataToNewObject(newProfile, str);
-            addNewProfile(newProfile);
-        }*/
     }
 
     private void addNewProfile(Profile newProfile) {
@@ -201,17 +128,16 @@ public class ProfileHandler {
 
             }
         } catch (Exception e) {
-
+            Log.e(TAG, "addNewProfile: ");
         }
     }
 
-    public String[] getStringToSaveToPrefs() {
+    private String[] getStringToSaveToPrefs() {
 
         String[] result = new String[profileList.size()];
 
         for (int i = 0; i < profileList.size(); i++) {
             result[i] = profileList.get(i).getStringForSharedPreferences();
-            Log.i(TAG, "getStringToSaveToPrefs: " + result[i]);
         }
 
         return result;
@@ -223,6 +149,27 @@ public class ProfileHandler {
 
     public void setCurrentProfile(Profile profile) {
         this.currentProfile = profile;
+    }
+
+    public void saveProfilesToPrefs() {
+
+        Log.i(TAG, "thingsToDoBeforeOnDestroy: ");
+
+        String[] profiles = getStringToSaveToPrefs();
+        int amountProfiles = profiles.length;
+
+        Log.i(TAG, "thingsToDoBeforeOnDestroy: " + amountProfiles);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("pref_amount_profiles", amountProfiles);
+
+        for (int i = 0; i < amountProfiles; i++) {
+            editor.putString("pref_profiles_" + (i + 1), profiles[i]);
+            Log.i(TAG, "thingsToDoBeforeOnDestroy: " + profiles[i]);
+        }
+
+        editor.apply();
     }
 }
 

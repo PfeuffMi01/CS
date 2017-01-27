@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.michael.cs.Activities.MainActivity;
 import com.example.michael.cs.Data.Group;
@@ -17,11 +15,6 @@ import com.example.michael.cs.Data.Room;
 import com.example.michael.cs.Interfaces.OnDataChangedListener;
 import com.example.michael.cs.R;
 
-import static com.example.michael.cs.List_Stuff.ListItem.TAG;
-
-/**
- * Created by Patrick PC on 31.10.2016.
- */
 
 public class WhiteLamp extends Lamp {
 
@@ -63,14 +56,12 @@ public class WhiteLamp extends Lamp {
 
                                                @Override
                                                public void onStartTrackingTouch(SeekBar seekBar) {
-                                                   Log.i(TAG, "onStartTrackingTouch: ");
                                                }
 
                                                @Override
                                                public void onStopTrackingTouch(SeekBar seekBar) {
-                                                   Log.i(TAG, "onStopTrackingTouch: ");
                                                    setDim(seekBar.getProgress());
-                                                   deviceActivator(mainActivity);
+                                                   deviceActivator();
 
                                                    String dim = "" + seekBar.getProgress();
                                                    mqttBrokerNotifier(mainActivity, dim);
@@ -84,10 +75,10 @@ public class WhiteLamp extends Lamp {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mainActivity);
         dialogBuilder.setView(dialogView);
 
-        dialogBuilder.setTitle(getName() + "     ID: " + get_id());
+        dialogBuilder.setTitle(getName());
         dimSeek.setProgress(this.getDim());
 
-        dialogBuilder.setPositiveButton("Fertig", new DialogInterface.OnClickListener()
+        dialogBuilder.setPositiveButton(context.getString(R.string.done), new DialogInterface.OnClickListener()
 
                 {
                     @Override
@@ -101,18 +92,14 @@ public class WhiteLamp extends Lamp {
         alertDialog.show();
     }
 
-    public void toaster(MainActivity m, String s) {
-        Toast.makeText(m, s, Toast.LENGTH_LONG).show();
-    }
 
-    private void deviceActivator(MainActivity mainActivity) {
+    private void deviceActivator() {
         if (!isOn()) {
-//            mqttBrokerNotifier(mainActivity, "/on");
             setOn(true);
         }
     }
 
-    public void mqttBrokerNotifier(MainActivity mainActivity, String message) {
+    private void mqttBrokerNotifier(MainActivity mainActivity, String message) {
 
         String topic = getRoom().getTopic() + "/" + this.getTopic();
         mainActivity.getMqttHandler().mqttPublish(topic, message);

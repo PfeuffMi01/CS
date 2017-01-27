@@ -7,6 +7,7 @@ package com.example.michael.cs;
 
 public class Constants {
 
+
     public static final int LIST_ITEM_TEMP = 0;
     public static final int LIST_ITEM_PLUG = 1;
     public static final int LIST_ITEM_PLUG_CONSUMPTION = 2;
@@ -52,8 +53,6 @@ public class Constants {
     public static final String[] CATEGORY_ARRAY = {CAT_MOVE, CAT_WINDOW, CAT_HUMID,
             CAT_LAMP_RGB, CAT_LAMP_W, CAT_PLUG, CAT_PLUG_C, CAT_TEMP, CAT_DOOR};
 
-
-    public static final boolean isDebugEnabled = true;
     public static final String ON = "an";
     public static final String OFF = "aus";
     public static final String NO_PWD = "NO_PASSWORD";
@@ -73,8 +72,6 @@ public class Constants {
             MQTT_TOPIC_BEDROOM, MQTT_TOPIC_FLOOR, MQTT_TOPIC_GARAGE, MQTT_TOPIC_GARDEN};
 
     public static final String MQTT_LOG_DIVIDER = "|";
-
-    public static final int MQTT_CONNECTION_ERROR_NOTI_ID = 666;
 
     /**
      * EXAMPLE

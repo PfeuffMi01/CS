@@ -24,7 +24,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.example.michael.cs.Constants.OFF;
 import static com.example.michael.cs.Constants.ON;
-import static com.example.michael.cs.Constants.isDebugEnabled;
 import static com.example.michael.cs.List_Stuff.ListItem.TAG;
 
 /**
@@ -65,8 +64,6 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all, container, false);
         mainActivity = (MainActivity) getActivity();
-
-        mainActivity.setOnDataChangedListener(this);
 
         emptyView = (LinearLayout) view.findViewById(R.id.empty_view_all);
 
@@ -134,9 +131,7 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
             refreshList();
             allDevicesList.get(adapterPosition).showDialogForThisDevice(mainActivity, this, adapterPosition);
         } catch (Exception e) {
-            if (isDebugEnabled) {
-//                Toast.makeText(getContext(), "Exception: Opening dialog for " + listItemType + " at pos " + adapterPosition, Toast.LENGTH_LONG).show();
-            }
+            Log.e(TAG, "openDialog: ");
         }
 
     }
@@ -150,20 +145,21 @@ public class AllFragment extends Fragment implements OnListItemClick, OnDataChan
      */
     public void switchTheSwitch(int adapterPosition, boolean isOn) {
         try {
-            allDevicesList.get(adapterPosition).setOn(isOn);
+
+            Device device = allDevicesList.get(adapterPosition);
+            device.setOn(isOn);
             adapter.notifyItemChanged(adapterPosition);
 
             String message = isOn ? ON : OFF;
 
-            Device device = allDevicesList.get(adapterPosition);
             mainActivity.getMqttHandler().mqttPublish(device.getRoom().getTopic() + "/" + device.getTopic(), message);
         } catch (Exception e) {
-            Log.e(TAG, "changeSwitchState: ");
+            Log.e(TAG, "switchTheSwitch: ");
         }
     }
 
     /**
-     * Hanlder um bei einer leeren Liste das traurige Gesicht und den "Keine Geräte vorhanden" Text anzuzeigen
+     * Handler um bei einer leeren Liste das traurige Gesicht und den "Keine Geräte vorhanden" Text anzuzeigen
      */
     private void emptyViewHandler() {
 
